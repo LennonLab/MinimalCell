@@ -1,0 +1,9 @@
+ID,Strain,Genomepartition,dNdS_gdtools,dNdS_gdtools__targetSize.function.has.typo,dNdS_spectrum.unaware,
+mm1,Wildtype,nonessential,0.961673814,0.759246805,1.290020216,
+mm3,Wildtype,nonessential,0.22438478,0.177151365,0.301001223,
+mm4,Wildtype,nonessential,0.336580925,0.265731023,0.451504172,
+mm6,Wildtype,nonessential,0.577001689,0.455545193,0.774010643,0.524910302
+mm1,Wildtype,essential,0.472653431,0.382736068,0.708653451,
+mm3,Wildtype,essential,0.708982874,0.574106441,1.062982798,
+mm4,Wildtype,essential,0.472653431,0.382736068,0.708653451,
+mm6,Wildtype,essential,1.417975682,1.148224504,2.125970218,0.768066355

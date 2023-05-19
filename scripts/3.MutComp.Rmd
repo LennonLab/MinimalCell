@@ -1,0 +1,140 @@
+---
+title: "Evolution of the minimal cell"
+author: "Roy Moger-Reischer and Jay T. Lennon"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+header-includes:
+   - \usepackage{array}
+output: pdf_document
+geometry: margin=2.54cm
+---
+
+# Making Figure 3: ordination of mutated genes
+
+# Clear workspace and set directory
+```{r setup}
+rm(list=ls())
+getwd()
+setwd("~/GitHub/MinimalCell")
+```
+
+# Load packages and functions
+```{r}
+require("png")
+require("dplyr")
+require("grid")
+require("vegan")
+```
+
+# Load data
+```{r}
+# Load data
+g.essent.raw <- read.csv("~/GitHub/MinimalCell/datafiles/GxP_Mm_essential.csv")
+g.essent.raw$sample <- as.factor(g.essent.raw$sample)
+g.essent.raw$treatment <- as.factor(g.essent.raw$treatment)
+levels(g.essent.raw$treatment)[levels(g.essent.raw$treatment)=="s1"] <- "Non-minimal"
+levels(g.essent.raw$treatment)[levels(g.essent.raw$treatment)=="s3"] <- "Minimal"
+g.essent <- as_tibble(g.essent.raw)
+g.essent <- as.matrix(g.essent[,3:ncol(g.essent)])
+```
+
+# Permutational mulivariate analyis of variance (PERMANOVA)
+```{r}
+g.essent.adonis <- adonis2(g.essent ~ g.essent.raw$treatment, method = "bray", permutations = 9999)
+
+#            Df SumsOfSqs MeanSqs  F.Model  R2        Pr(>F)  
+# strain     1   0.95301  0.95301  4.1217   0.40721   0.029 *
+# Residuals  6   1.38731  0.23122           0.59279          
+# Total      7   2.34032                    1.00000     
+# (same qualitative result with jaccard, canberra, gower, horn, and Kulczynski)
+```
+
+# Principal Coordinates Analysis (PCoA)
+```{r}
+# Create a distance matrix
+g.essent.dist <- vegdist(g.essent, method = 'bray', upper = TRUE, diag = TRUE)
+g.essent.dist <- as_tibble(data.matrix(g.essent.dist))
+
+# Run PCoA and quantify explained variance
+pcoa.eig <- cmdscale(g.essent.dist, eig = TRUE, k = 3)
+explainvar1 <- round(pcoa.eig$eig[1] / sum(pcoa.eig$eig), 3) * 100 # 42.1 %
+explainvar2 <- round(pcoa.eig$eig[2] / sum(pcoa.eig$eig), 3) * 100 # 16.5 %
+explainvar3 <- round(pcoa.eig$eig[3] / sum(pcoa.eig$eig), 3) * 100 # 15.1 %
+sum.eig <- sum(explainvar1, explainvar2, explainvar3) # 73 %
+
+# Add sample and treatment IDs
+g.essent.pcoa <- as.data.frame(pcoa.eig[1])
+g.essent.pcoa$treatment <- g.essent.raw$treatment
+row.names(g.essent.pcoa) <- g.essent.raw$sample
+g.essent.pcoa$sample <- g.essent.raw$sample
+names(g.essent.pcoa)[1:3] <- c('PC1', 'PC2', 'PC3')
+
+gd <- vegdist(g.essent, method = 'bray', upper = TRUE, diag = TRUE)
+compare.variance <- betadisper(d=gd, group = c("minimal","minimal","minimal","minimal","WT","WT","WT","WT"))
+c.v.result <- anova(compare.variance)
+TukeyHSD(compare.variance)
+###No significant difference in the amount of variance, i.e. beta diversity, between the Non-minimal and minimal cell.
+```
+
+# PCoA Plot
+```{r, results = "hide"}
+png(filename="~/GitHub/MinimalCell/figures/1.main.text/Fig3.png",
+    width = 1200, height = 1200, res = 96*2) 
+
+plot.new()
+par(mar = c(7, 7, 5, 7))
+
+plot(g.essent.pcoa[ ,1], g.essent.pcoa[ ,2],
+     ylim = c(-1, 1), xlim = c(-0.55, 0.55),
+     xlab = "", ylab = "", xaxt = "n", yaxt = "n",
+     pch = 22, cex = 2.0, type = "n", cex.lab = 1.5, cex.axis = 1,
+     axes = FALSE)
+
+# Add axes
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("-1.0", "-0.5", "0.0", "0.5", "1.0"), at = c(-1, -0.5, 0, 0.5, 1))
+axis(side = 4, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at=c(-1, -0.5, 0, 0.5, 1), labels = F)
+axis(side = 1, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("-0.5", "0.0", "0.5"), at = c(-0.5, 0, 0.5))
+axis(side = 3, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at = c(-0.5, 0, 0.5), labels = F)
+abline(h = 0, v = 0, lty = 3)
+box(lwd = 2)
+
+# Add axis labels
+mtext(expression(paste("PCoA 1 (42.1 %)", sep = "")), side = 1,
+      outer = TRUE, cex = 1.5, line = -3.0)
+mtext(expression(paste("PCoA 2 (16.5 %)", sep = "")), side = 2,
+      outer = TRUE, cex = 1.5, line = -3.0)
+
+# Add ellipses 
+ordiellipse(cbind(g.essent.pcoa$PC1, g.essent.pcoa$PC2), g.essent.pcoa$treatment, 
+            kind = "sd", conf = 0.95, lwd = 2, lty = 3, draw = "lines", 
+            col = c("blue","red"), label = FALSE)
+
+# Subset PCoA scores by strain
+essent.wt <- g.essent.pcoa[which(g.essent.pcoa$treatment == "Non-minimal"), ]
+essent.min <- g.essent.pcoa[which(g.essent.pcoa$treatment == "Minimal"), ]
+
+# Plot points by strain
+points(essent.wt[ ,1], essent.wt[ ,2], pch = 21,
+       cex = 2, col = "blue", bg = "blue", lwd = 2)
+
+points(essent.min[ ,1], essent.min[ ,2], pch = 21,
+       cex = 2, col = "red", bg = "red", lwd = 2)   
+
+# Add P-value associated with PERMANOVA
+mtext(expression(~italic("P")~"= 0.029"), line = -1.75, cex = 1.0, at = -0.4)
+
+# Add treatment labels
+mtext("Minimal", line = -19, cex = 1.2, at = -0.3)
+mtext("Non-minimal", line = -19, cex = 1.2, at = 0.3)
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/1.main.text/Fig3.png")
+grid.raster(img)
+```
