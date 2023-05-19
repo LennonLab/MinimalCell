@@ -1,0 +1,482 @@
+---
+title: "Evolution of the minimal cell"
+author: "Roy Moger-Reischer and Jay T. Lennon"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+header-includes:
+   - \usepackage{array}
+output: pdf_document
+geometry: margin=2.54cm
+---
+
+## Clear workspace and set directory
+```{r setup}
+rm(list=ls())
+getwd()
+setwd("~/GitHub/MinimalCell") 
+```
+
+## Load packages and functions
+```{r}
+require("png")
+require("dplyr")
+require("vioplot")
+require("grid")
+require("dplyr")
+require("knitr")
+require("extrafont")
+```
+
+## Mutation accumulation (MA)
+
+# Load mutation rate data for Fig. 1A
+
+```{r}
+# Load mutation rate data
+ma.raw <- read.csv("~/GitHub/MinimalCell/datafiles/MA_summary_for_R.csv", header = TRUE, sep =",")
+
+# Preserve row names
+ma <- as_tibble(ma.raw)
+
+# Set data as factors and rename levels
+ma$strain <- as.factor(ma$strain)
+levels(ma$strain)[levels(ma$strain)=="MA_s1"] <- "Non-minimal"
+levels(ma$strain)[levels(ma$strain)=="MA_3B"] <- "Minimal"
+ma$strain <- factor(ma$strain, levels=c("Non-minimal","Minimal"))
+
+# Subset mutation rate data by strain
+mr.wt  <- filter(ma, strain== "Non-minimal") %>%
+          dplyr::select(per_nt_per_gen)
+
+mr.min  <- filter(ma, strain== "Minimal") %>%
+          dplyr::select(per_nt_per_gen)
+
+# Test for equal variance: P = 0.42 --> homogeneous variance
+equal.var <- var.test(mr.wt$per_nt_per_gen, mr.min$per_nt_per_gen)
+
+# Test for differences between treatments: P = 0.54 --> no difference
+mr.ttest <- t.test(mr.wt$per_nt_per_gen, mr.min$per_nt_per_gen, var.equal = TRUE)
+```
+
+# Load mutation type data (i.e., insertions, deletions, and SMSs) for Fig. 1B)
+
+```{r}
+# Load data
+ma.type.raw <- read.csv("~/GitHub/MinimalCell/datafiles/MA_grouped_bar_mut.types.csv")
+
+# Preserve row names
+ma.type <- as_tibble(ma.type.raw)
+
+# Set data as factors and rename levels
+ma.type$strain <- as.factor(ma.type$strain)
+ma.type$mut <- as.factor(ma.type$mut)
+levels(ma.type$strain)[levels(ma.type$strain)=="s1"] <- "Non-minimal"
+levels(ma.type$strain)[levels(ma.type$strain)=="3B"] <- "Minimal"
+levels(ma.type$mut)[levels(ma.type$mut)=="SNM"] <- "Single-nucleotide"
+ma.type$strain <- factor(ma.type$strain, levels=c("Non-minimal","Minimal"))
+ma.type$mut <- factor(ma.type$mut, levels = c("Insertion", "Deletion", 
+                    "Over 100 bp","Single-nucleotide"))
+ma.type <- ma.type %>% mutate(prop2 = sprintf("%0.2f", prop))
+
+# Reorder for plotting
+order.1 <- c(2, 4, 6, 1, 3, 5) 
+ma.type <- data.frame(ma.type, order.1)
+ma.type <- ma.type[order(ma.type$order.1),] 
+
+# Make table for contingency analyses
+ma.type.mat <- matrix(ma.type$count, ncol = 2, byrow = T)
+colnames(ma.type.mat) <- c("minimal", "non-minimal")
+rownames(ma.type.mat) <- c("insertion", "deletion", "snm")
+ma.type.tab <- as.table(ma.type.mat)
+ma.type.tab.margins <- addmargins(ma.type.tab)
+
+# X-squared = 4.1617, df = 2, p-value = 0.1248
+ma.type.chi <- chisq.test(ma.type.tab)
+
+# Posthoc analysis
+ma.type.z <- as.data.frame(ma.type.chi$stdres)
+ma.type.x2 <- ma.type.z$Freq^2
+ma.type.p <- pchisq(ma.type.x2, df = 1, lower.tail = FALSE)
+ma.type.p.adj <- p.adjust(ma.type.p, method="BH")
+ma.type.post.hoc <- data.frame(ma.type.z, ma.type.x2, ma.type.p, ma.type.p.adj)
+colnames(ma.type.post.hoc) <- c("type", "strain", "z", "chi2", "p", "p.adj")
+
+#       type   strain         z       chi2         p      p.adj
+# 1 insertion  minimal    -1.444750 2.087301 0.14852825 0.1721046
+# 2  deletion  minimal    -1.365472 1.864515 0.17210460 0.1721046
+# 3       snm  minimal     1.931879 3.732157 0.05337443 0.1601233
+# 4 insertion non-minimal  1.444750 2.087301 0.14852825 0.1721046
+# 5  deletion non-minimal  1.365472 1.864515 0.17210460 0.1721046
+# 6       snm non-minimal -1.931879 3.732157 0.05337443 0.1601233
+```
+
+# Load single nucleotide mutation data for Fig. 1C
+
+```{r}
+# Load data
+ma.snm.raw <- read.csv("~/GitHub/MinimalCell/datafiles/MA_grouped_bar_SNM.csv")
+
+# Preserve row names
+ma.snm <- as_tibble(ma.snm.raw)
+
+# Set data as factors and rename levels
+ma.snm$strain <- as.factor(ma.snm$strain)
+ma.snm$mut <- as.factor(ma.snm$mut)
+levels(ma.snm$strain)[levels(ma.snm$strain)=="s1"] <- "Non-minimal"
+levels(ma.snm$strain)[levels(ma.snm$strain)=="3B"] <- "Minimal"
+ma.snm$strain <- factor(ma.snm$strain, levels=c("Non-minimal", "Minimal"))
+ma.snm$mut <- factor(ma.snm$mut, levels = 
+          c("A:T to C:G","A:T to G:C","A:T to T:A",
+          "C:G to G:C", "C:G to T:A", "C:G to A:T"))
+ma.snm <- ma.snm %>% mutate(prop2 = sprintf("%0.2f", prop))
+
+# Reorder table for plotting
+order.2 <- c(2, 4, 6, 8, 10, 12, 1, 3, 5, 7, 9, 11) 
+ma.snm <- data.frame(ma.snm,order.2)
+ma.snm <- ma.snm[order(ma.snm$order.2),] 
+
+
+# Make table for contingency analyses
+ma.snm.mat <- matrix(ma.snm$count, ncol = 2, byrow = T)
+colnames(ma.snm.mat) <- c("non-minimal","minimal")
+rownames(ma.snm.mat) <- c("A:T to C:G","A:T to G:C","A:T to T:A", "C:G to G:C",
+              "C:G to T:A", "C:G to A:T")
+ma.snm.tab <- as.table(ma.snm.mat)
+ma.snm.tab.margins <- addmargins(ma.snm.tab)
+
+# X-squared = 69.92, df = NA, p-value = 9.999e-05
+ma.snm.chi <- chisq.test(ma.snm.tab, simulate.p.value = TRUE, B = 10000)
+
+# Posthoc analysis
+ma.snm.z <- as.data.frame(ma.snm.chi$stdres)
+ma.snm.x2 <- ma.snm.z$Freq^2
+ma.snm.p <- pchisq(ma.snm.x2, df = 1, lower.tail = FALSE)
+ma.snm.p.adj <- p.adjust(ma.snm.p, method="BH")
+ma.snm.post.hoc <- data.frame(ma.snm.z, ma.snm.x2, ma.snm.p, ma.snm.p.adj)
+colnames(ma.snm.post.hoc) <- c("type", "strain", "z", "chi2", "p", "p.adj")
+
+#         type   strain           z     chi2          p          p.adj
+# 1  A:T to C:G  minimal   0.44851026  0.201161457 6.537850e-01 0.785
+# 2  A:T to G:C  minimal  -4.84321140 23.456696673 1.277572e-06 2.555145e-06
+# 3  A:T to T:A  minimal   0.08639216  0.007463605 9.311547e-01 0.931
+# 4  C:G to G:C  minimal  -6.90461823 47.673752850 5.033862e-12 1.510159e-11
+# 5  C:G to T:A  minimal   9.47528700 89.781063769 2.660284e-21 1.596170e-20
+# 6  C:G to A:T  minimal  -3.68512950 13.580179403 2.285864e-04 0.00034
+
+# 7  A:T to C:G non-minimal -0.44851026  0.201161457 6.537850e-01 0.785
+# 8  A:T to G:C non-minimal  4.84321140 23.456696673 1.277572e-06 2.555145e-06
+# 9  A:T to T:A non-minimal -0.08639216  0.007463605 9.311547e-01 0.931
+# 10 C:G to G:C non-minimal  6.90461823 47.673752850 5.033862e-12 1.510159e-11
+# 11 C:G to T:A non-minimal -9.47528700 89.781063769 2.660284e-21 1.596170e-20
+# 12 C:G to A:T non-minimal  3.68512950 13.580179403 2.285864e-04 0.00034
+```
+
+
+# Make Figure 1
+
+```{r}
+### Initiate figure
+#font_import()
+#fonts()
+
+png(filename="~/GitHub/MinimalCell/figures/Fig1.png",
+    width = 1200, height = 1200, res = 96*2) 
+
+plot.new()
+layout(matrix(c(1:3), byrow = T))
+par(mar = c(2.5, 4, 1, 1), oma = c(3, 4, 1, 1))
+
+### Make panel A ###
+
+# Add ghost points
+plot(jitter(rep(0.75, nrow(mr.wt)), amount = 0.1), mr.wt$per_nt_per_gen, 
+     ylim = c(1e-09, 8e-08), xlim = c(0, 3), pch = 21, col = "white", 
+     bg = "white", lwd = 2, cex = 1.7, yaxt = "n", xaxt = "n", cex.lab = 2, 
+     cex.axis= 1.25, las = 1, ylab = "", xlab = "")
+box(lwd = 2) 
+
+# Add violins
+vioplot(mr.wt, col="lightblue", horizontal = F, at = 0.75, add = T, 
+                lty = 1, drawRect = F)
+vioplot(mr.min, col="pink", horizontal = F, at = 2.25, add = T, 
+                lty = 1, drawRect = F)
+
+# Add points on top of violins
+points(jitter(rep(0.75, nrow(mr.wt)), amount = 0.1), mr.wt$per_nt_per_gen,
+       pch = 21, col = "blue", bg = "blue", cex = 0.5)
+points(jitter(rep(2.25, nrow(mr.min)), amount = 0.1), mr.min$per_nt_per_gen,
+       pch = 21, col = "red", bg = "red", cex = 0.5)
+
+# Add axes
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c(expression(paste("1·10"^"-8")), expression(paste("3·10"^"-8")), 
+      expression(paste("5·10"^"-8")), expression(paste("7·10"^"-8"))), 
+      at = c(1e-08, 3e-08, 5e-08, 7e-08))
+axis(side = 4, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at=c(1e-08, 3e-08, 5e-08, 7e-08), labels = F)
+axis(side = 3, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at = c(0.75, 2.25), labels = F)
+axis(side = 1, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("Non-minimal", "Minimal"), at = c(0.75, 2.25))
+
+# Add y-axis label
+mtext("Mutation rate", side = 2, outer = TRUE, cex = 1.25, line = 2, adj = 0.94)
+mtext(expression(paste('(mut · nt'^-1*' · gen' ^-1*')')), 
+      side = 2, outer = TRUE, cex = 0.70, line = 0.55, adj = 0.925)      
+
+#Add panel label
+text(0, 7.5e-08, labels = "A", cex = 2)
+
+#Add P-value for t-test
+mtext(expression(~italic("P")~"= 0.54"), line = -1.8, cex = 0.80, at = 2.87)
+
+
+### Make panel B ###
+
+barplot(ma.type$prop, col = c("blue", "red", "blue", "red", "blue", "red"), 
+        ylim = c(0, 1.2), space = c(1, 0, 1, 0, 1, 0), las = 1, 
+        yaxt = "n", xaxt = "n")
+box(lwd = 2) 
+
+# Add axes
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("0.00", "0.50", "1.00"), 
+      at = c(0, 0.5, 1.0))
+axis(side = 4, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at=c(0, 0.5,1.0), labels = F)
+
+# Add x-axis labels
+text(2.0, -0.1, expression("Insertions"), cex= 1.25, srt = 0, xpd = NA)
+text(5.0, -0.1, expression("Deletions"), cex= 1.25, srt = 0, xpd = NA)
+text(8.0, -0.1, expression("SNM"), cex= 1.25, srt = 0, xpd = NA)
+
+# Add y-axis label
+mtext("Proportion", side = 2, outer = TRUE, cex = 1.25, line = 1.9, adj = 0.52)
+
+# Add bar value
+#text(1.5, 0.10, expression("0.02"), cex= 0.85)
+#text(2.5, 0.09, expression("0.03"), cex= 0.85)
+#text(4.5, 0.15, expression("0.09"), cex= 0.85)
+#text(5.5, 0.16, expression("0.10"), cex= 0.85)
+#text(7.5, 0.95, expression("0.89"), cex= 0.85)
+#text(8.5, 0.92, expression("0.86"), cex= 0.85)
+
+# Add panel label
+text(1, 1.05, labels = "B", cex = 2)
+
+# Add vertical dashed lines
+abline(v = c(3.5, 6.5), col=c("grey"), lty = 3, lwd = 2)
+
+# Add legend
+legend(1.2, 1.18, c("Non-minimal", "Minimal"), pch = 22, 
+       pt.bg = c("blue", "red"), pt.cex = 2, pt.lwd = 1.5, 
+       bty = 'n', y.intersp = 1)
+
+# Add P-value for t-test
+mtext(expression(~italic("P")~"= 0.125"), line = -1.7, cex = 0.80, at = 8.6)
+
+### Make panel C ###
+
+barplot(ma.snm$prop, col = c("blue", "red", "blue", "red", "blue", "red", 
+        "blue", "red", "blue", "red", "blue", "red"), ylim = c(0, 1.2), 
+        space = c(1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0), 
+        las =1, yaxt = "n", xaxt = "n")
+box(lwd = 2) 
+
+# Add axes
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("0.00", "0.50", "1.00"), 
+      at = c(0, 0.5, 1.0))
+axis(side = 4, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at=c(0, 0.5, 1.0), labels = F)
+
+# Add x-axis labels
+text(2, -0.075, "A:T \u2192 C:G", cex= 1, srt = 0, xpd = NA, col = "darkgrey")
+text(5, -0.075, "A:T \u2192 G:C", cex= 1, srt = 0, xpd = NA, col = "darkgrey")
+text(8, -0.075, "A:T \u2192 T:A", cex= 1, srt = 0, xpd = NA, col = "darkgrey")
+text(11, -0.075, "C:G \u2192 G:C", cex= 1, srt = 0, xpd = NA, col = "darkgrey")
+text(14, -0.075, "C:G \u2192 T:A", cex= 1, srt = 0, xpd = NA, col = "darkgrey")
+text(17, -0.075, "C:G \u2192 A:T", cex= 1, srt = 0, xpd = NA, col = "darkgrey")
+
+# Add mutation types on x-axis
+#mtext(expression("("~italic("transversion")~")"), line = -13.5, cex = 0.65, at = 2, col = "grey")
+#mtext(expression("("~italic("transition")~")"), line = -13.5, cex = 0.65, at = 5, col = "grey")
+#mtext(expression("("~italic("transversion")~")"), line = -13.5, cex = 0.65, at = 8, col = "grey")
+#mtext(expression("("~italic("transversion")~")"), line = -13.5, cex = 0.65, at = 11, col = "grey")
+#mtext(expression("("~italic("transition")~")"), line = -13.5, cex = 0.65, at = 14, col = "grey")
+#mtext(expression("("~italic("transition")~")"), line = -13.5, cex = 0.65, at = 17, col = "grey")
+
+# Add x-axis labels
+#text(2.0, -0.1, expression("Insertions"), cex= 1.25, srt = 0, xpd = NA)
+#text(5.0, -0.1, expression("Deletions"), cex= 1.25, srt = 0, xpd = NA)
+#text(8.0, -0.1, expression("SNM"), cex= 1.25, srt = 0, xpd = NA)
+
+# Add y-axis label
+mtext("Proportion", side = 2, outer = TRUE, cex = 1.25, line = 2, adj = 0.125)
+
+# Add bar value
+#text(1.5, 0.06, expression("0.01"), cex= 0.85)
+#text(2.5, 0.06, expression("0.01"), cex= 0.85)
+#text(4.5, 0.13, expression("0.07"), cex= 0.85)
+#text(5.5, 0.08, expression("0.02"), cex= 0.85)
+#text(7.5, 0.10, expression("0.04"), cex= 0.85)
+#text(8.5, 0.10, expression("0.04"), cex= 0.85)
+#text(10.5, 0.16, expression("0.10"), cex= 0.85)
+#text(11.5, 0.07, expression("0.01"), cex= 0.85)
+#text(13.5, 0.48, expression("0.42"), cex= 0.85)
+#text(14.5, 0.71, expression("0.65"), cex= 0.85)
+#text(16.5, 0.40, expression("0.36"), cex= 0.85)
+#text(17.5, 0.33, expression("0.27"), cex= 0.85)
+
+# Add panel label
+text(1, 1.05, labels = "C", cex = 2)
+
+# Add legend
+legend(1.4, 1.2, c("Non-minimal", "Minimal"), pch = 22, 
+       pt.bg = c("blue", "red"), pt.cex = 2, pt.lwd = 1.5, 
+       bty = 'n', y.intersp = 1)
+
+# Add P-value for t-test
+mtext(expression(~italic("P")~"< 0.0001"), line = -1.7, cex = 0.80, at = 17)
+
+# Add vertical dashed lines
+abline(v = c(6.5, 12.5), col=c("grey"), lty = 3, lwd = 2)
+
+# Add symbols for posthoc significance
+text(2, 0.10, expression("ns"), cex= 1.2)
+text(5, 0.165, expression("***"), cex= 1.5)
+text(8, 0.15, expression("ns"), cex= 1.2)
+text(11, 0.16, expression("***"), cex= 1.5)
+text(14, 0.75, expression("***"), cex= 1.5)
+text(17, 0.45, expression("***"), cex= 1.5)
+
+# Add mutation type labels
+text(3.5, -0.25, expression("G:C bias"), cex= 1.25, srt = 0, xpd = NA)
+text(9.5, -0.25, expression("Neutral"), cex= 1.25, srt = 0, xpd = NA)
+text(15.5, -0.25, expression("A:T bias"), cex= 1.25, srt = 0, xpd = NA)
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/Fig1.png")
+grid.raster(img)
+```
+
+
+# Statistical tests to evaluate mutation spectrum
+
+```{r}
+myALL<-read.csv("~/GitHub/MinimalCell/datafiles/MA_summary_for_R.csv")
+my3B<-read.csv("~/GitHub/MinimalCell/datafiles/MA_3B_summary_for_R.csv")
+mys1<-read.csv("~/GitHub/MinimalCell/datafiles/MA_s1_summary_for_R.csv")
+MAALL<-as_tibble(myALL)
+MA3B<-as_tibble(my3B)
+MAs1<-as_tibble(mys1)
+
+MAALL$strain <- as.factor(MAALL$strain)
+levels(MAALL$strain)[levels(MAALL$strain)=="MA_s1"] <- "Non-minimal"
+levels(MAALL$strain)[levels(MAALL$strain)=="MA_3B"] <- "Minimal"
+MAALL$strain <- factor(MAALL$strain, levels=c("Non-minimal","Minimal"))
+
+#####Description of annotation for all proportion tests:
+#X: This variable name represents X, the count of successes, as defined: https://en.wikipedia.org/wiki/Population_proportion
+#n: This variable name represents N, the number of trials, as defined: https://en.wikipedia.org/wiki/Population_proportion
+#p: In prop.test, p is the null hypothesis proportion. It is P as defined here: https://en.wikipedia.org/wiki/Population_proportion
+#s1: This variable name represents the non-minimal cell, JCVI-syn1.0. (syn --> s, 1.0 --> 1)
+#3B: This variable name represents the minimal cell, JCVI-syn3B. (syn3B --> 3B)
+#Variables are typically named with a prefix, a number representing the ordinal index of the corresponding test, and a suffix
+#For example, x1s1 represents: x (X as defined); 1 (the first proportion test...); s1 (...for JCVI-syn1.0)
+
+
+# Part 1: test for insertion bias or deletion bias, not counting the large deletions >100 bp
+x1s1<-sum(MAs1$'in.')+sum(MAs1$SVin)
+n1s1<-sum(MAs1$'in.')+sum(MAs1$SVin)+sum(MAs1$del)
+indelprops1 <- prop.test(x = x1s1, n = n1s1, alternative = 'two.sided');indelprops1
+#sample prop = 0.215; P-val < 2.2e-16
+
+x13B <- sum(MA3B$'in.')+sum(MAs1$SVin)
+n13B<-sum(MA3B$'in.')+sum(MAs1$SVin)+sum(MA3B$del)
+indelprop3B<-prop.test(x=x13B,n=n13B,p=0.5,alternative="two.sided"); indelprop3B
+#sample prop = 0.241; P-val = 4.0e-06
+
+#Significant deletion bias, in terms of number-of-dels > number-of-ins, by chisq test for both strains
+
+twoprop_indel<-prop.test(x=c(x1s1, x13B),n=c(n1s1,n13B),alternative = "two.sided"); twoprop_indel
+#p-val > 0.05
+#infer that there is not a significant difference in the magnitude of the deletion bias between the two strains
+
+# PART 2: investigate to-AT-biased or to-GC-biased mutation spectrum
+x3s1<-sum(MAs1$to_AT_tot);n3s1<-x3s1+sum(MAs1$to_CG_tot)
+#toATprops1<-prop.test(x=x3s1,n=n3s1,p=(1-0.760011272),alternative = 'two.sided');toATprops1
+toATprops1<-prop.test(x=x3s1,n=n3s1,p=(1-0.76),alternative = 'two.sided');toATprops1
+#sample prop = 0.903, p-val < 2.2e-16
+
+x33B<-sum(MA3B$to_AT_tot);n33B<-x33B+sum(MA3B$to_CG_tot)
+#toATprop3B<-prop.test(x=x33B,n=n33B,p=(1-0.757152926),alternative = 'two.sided');toATprop3B
+toATprop3B<-prop.test(x=x33B,n=n33B,p=(1-0.76),alternative = 'two.sided');toATprop3B
+#sample prop = 0.970, p-val <2.2e-16
+
+#the two strains have identical expectation proportions to 2 significant figures. I will go ahead and compare them.
+twoprop_ATbias<-prop.test(x=c(x3s1, x33B),n=c(n3s1,n33B),alternative = "two.sided"); twoprop_ATbias
+#p-val = 3.1e-06 signif difference suggesting that AT bias is stronger in syn3B. Note that syn3B had a very slightly higher expectation proportion. We do know that they are significantly different because the confidence interval does not include the actual expected difference--- CI = [-0.089, -0.045], when the expected difference is -0.003
+#Expected difference is -0.002858346 (i.e., higher for 3B).
+#95 percent confidence interval:
+# -0.08939673 -0.04458173
+#The confidence interval does not include the expected difference, which is -0.003.
+#conclude: Both strains have AT biased mutation. The AT bias is stronger in 3B.
+
+#there was an excess of AT mutation bias in the minimal cell. Was this reflected in the mutation spectrum of mutations in significant genes in the NSE?
+x3s1_NSE<-23;n3s1_NSE<-23+9
+toATprops1_NSE<-prop.test(x=x3s1_NSE,n=n3s1_NSE,p=(1-0.76),alternative = 'two.sided');toATprops1_NSE
+
+x33B_NSE<-34;n33B_NSE<-34+1
+#toATprop3B<-prop.test(x=x33B,n=n33B,p=(1-0.757152926),alternative = 'two.sided');toATprop3B
+toATprop3B_NSE<-prop.test(x=x33B_NSE,n=n33B_NSE,p=(1-0.76),alternative = 'two.sided');toATprop3B_NSE
+#stronger AT bias in the NSE's significant genes. So this aspect of the mutation spectrum did influence adaptation.
+
+twoprop_ATbias_NSE<-prop.test(x=c(x3s1_NSE, x33B_NSE),n=c(n3s1_NSE,n33B_NSE),alternative = "two.sided"); twoprop_ATbias_NSE
+
+##the gene ung was deleted from the minimal cell. Is there a higher proportion of C-->T mutations in the minimal cell's MA? In its significant NSE genes?
+x3s1_MA_ung<-759;n3s1_MA_ung<-1591
+x33B_MA_ung<-341;n33B_MA_ung<-521
+twoprop_ATbias_MA_ung<-prop.test(x=c(x3s1_MA_ung, x33B_MA_ung),n=c(n3s1_MA_ung,n33B_MA_ung),alternative = "two.sided"); twoprop_ATbias_MA_ung
+##Yes, there is an apparent effect of ung gene deletion!
+
+x3s1_NSE_ung<-18;n3s1_NSE_ung<-41
+x33B_NSE_ung<-21;n33B_NSE_ung<-43
+twoprop_ATbias_NSE_ung<-prop.test(x=c(x3s1_NSE_ung, x33B_NSE_ung),n=c(n3s1_NSE_ung,n33B_NSE_ung),alternative = "two.sided"); twoprop_ATbias_NSE_ung
+#no difference in the relative proportions of C-->T mutations between the strains. Suggests that this aspect of the mutation spectrum did not influence adaptation.
+
+# Part 3: Compare proportion of called SNMs in CDS regions versus non-CDS regions to the theoretical null expectation.
+
+#For each strain, look at the total number of CDS SNMs and non-CDS SNMs. Do they occur in proportions significantly different from the null expectation?
+x6s1<-sum(MAs1$in_CDS)
+n6s1<-sum(MAs1$in_CDS)+sum(MAs1$not_in_CDS)
+#Define p empirically: Total length of CDS: 926310 bp. Total length of genome (CDS + non-CDS): 1078809 bp. Hence, p = (926310/1078809)
+CDSprops1 <- prop.test(x = x6s1, n = n6s1, p = (926310/1078809), alternative = 'two.sided');CDSprops1
+# Sample prop: 0.860
+# P = 0.876. There is not significant deviation from the proportion of mutations falling in CDS regions expected due to chance alone. 86% compared to expected 86%
+
+x63B<-sum(MA3B$in_CDS)
+n63B<-sum(MA3B$in_CDS)+sum(MA3B$not_in_CDS)
+#Define p empirically: Total length of CDS: 479721 bp. Total length of genome (CDS + non-CDS): 543379 bp. Hence, p = (479721/543379)
+CDSprops1 <- prop.test(x = x63B, n = n63B, p = (479721/543379), alternative = 'two.sided');CDSprops1
+#sample prop = 0.856
+#P 0.069. There is a marginally significant deviation from the proportion of mutations falling in CDS regions expected due to chance alone. 86%, compared to expected 88%
+
+# Part 4: Comparison of essential and non-essential genes in the non-minimal cell
+# Genes under putatively positive selection: any bias between non-essential and essential genes
+x7s1e <- 6 #From Extended Data Table S2
+n7s1tot<-14#From Extended Data Table S2
+x7s1emax <- 493#Number of genes shared with syn3B
+n7s1totmax<- 901#Total number of genes
+twoprop_essentialins1 <- prop.test(x = c(x7s1e, x7s1emax), n = c(14,901), alternative = 'two.sided')
+# Results: X-squared = 0.37687, df = 1, p-value = 0.5393 --> No bias.
+
+# Differences in the number of mutations falling into non-essential vs. essential categories in non-minimal cell
+nmin.mut.numbers <- read.csv("~/GitHub/MinimalCell/datafiles/nonmin_mutation.numbers.csv", header = TRUE, sep = ",")
+nmin.bias <- t.test(x = nmin.mut.numbers$essential, y = nmin.mut.numbers$nonessential.corrected, alternative = 'two.sided', mu = 0, paired = TRUE)
+# Results: t = -0.64553, df = 3, p-value = 0.5646 --> no bias
+# 
+```
