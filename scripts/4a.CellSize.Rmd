@@ -1,0 +1,795 @@
+---
+title: "Evolution of the minimal cell"
+author: "Roy Moger-Reischer and Jay T. Lennon"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+header-includes:
+   - \usepackage{array}
+output: pdf_document
+geometry: margin=2.54cm
+---
+
+# Cell size in response to experimental evolution
+
+## Clear workspace and set directory
+```{r setup, include=FALSE, echo=FALSE}
+rm(list=ls())
+require("knitr")
+getwd()
+setwd("~/GitHub/MinimalCell")
+getwd()
+```
+
+## Load packages and functions
+```{r}
+require("png")
+require("dplyr")
+require("grid")
+require("tidyverse")
+sem <- function(x) sqrt(var(x)/length(x))
+cv <- function(x) (sd(x)/mean(x))*100
+```
+
+# Load and process data
+```{r}
+# Load data
+size.raw <-read.csv("~/GitHub/MinimalCell/datafiles/SEM_Stein_cases.csv")
+size.raw <- as_tibble(size.raw)
+colnames(size.raw) <- c("strain", "timepoint", "sub.strain", "diameter")
+size.raw <- mutate(size.raw, volume = 4/3*pi*(diameter/2)^3)
+
+size <- size.raw %>% 
+  filter(timepoint != "Mutant") %>%
+  group_by(strain, timepoint) %>% 
+  summarise(mean = mean(diameter), sem = sem(diameter), 
+  mean.v=mean(volume),sem.v=sem(volume), n = length(diameter))
+size$strain <- as.factor(size$strain)
+size$timepoint <- as.factor(size$timepoint)
+
+# Add x-values for plotting
+time.x <- c(1,3,1,3)
+size <- data.frame(size, time.x)
+#fsize <- data.frame(fsize, time.x)
+#esize <- data.frame(esize, time.x)
+```
+
+## Statistical tests
+```{r}
+# Subset data
+size.reps <- size.raw %>% 
+   dplyr::select(strain, timepoint, sub.strain, diameter, volume) %>%
+   group_by(timepoint, strain, sub.strain) %>%
+   summarize(mean.diam = mean(diameter),mean.vol=mean(volume)) 
+
+s1_anc.reps <- filter(size.raw, sub.strain == "s1_anc")
+B_anc.reps <- filter(size.raw, sub.strain == "B_anc")
+
+# Coefficient of variation
+min.cv <- cv(B_anc.reps$diameter) # 37.8%
+non.min.cv <- cv(s1_anc.reps$diameter) # 22.8%
+
+# Cell diameter
+
+# 1. Differences in cell size between ancestors (non-minimal vs. minimal)?
+# There is only one ancestor for non-minimal and minimal cell
+# Answer = Yes: t = 7.1993, df = 135, p-value = 3.813e-11
+# Non-minimal mean diameter: 439 nm; minimal mean diameter: 305 nm
+# Genome minimization led to a 70% or 1.4-fold reduction diameter
+
+equal.var.anc <- var.test(s1_anc.reps$diameter, B_anc.reps$diameter)
+# Test for equal variance: p-value = 0.2658 --> homogeneous variance
+anc.t.test <- t.test(x = s1_anc.reps$diameter, B_anc.reps$diameter, 
+          alternative = "two.sided", var.equal = TRUE, mu = 0)
+
+# 2. Differences in cell size between evolved lines (non-minimal vs. minimal)?
+# Four replicate lines for each cell type. 
+# Answer = Yes: t = -3.9561, df = 4, p-value = 0.01189
+# Mean of evolved min: 439 nm; mean of evolved non-min: 811 nm
+# Evolved non-min is 87%  larger than evolved minimal
+
+evo.reps <- filter(size.reps, timepoint == "Evolved") %>%
+   group_by(strain, sub.strain)
+equal.var.evo <- var.test(evo.reps$mean.diam[1:4], evo.reps$mean.diam[5:8])
+# Test for equal variance: p-value = 0.05954 
+evo.t.test <- t.test(log10(evo.reps$mean.diam) ~ evo.reps$strain)
+
+# 3. Test evolutionary trajectories of minimal and non-minimal cell
+# First step is to calculate size differences for all treatment combinations
+# Then run GLM without intercept to test whether treatments are different from zero
+# Then run same GLM with intercept to test for different is means among treatments
+
+# Nonminimal - nonminimal
+delta.nm.nm <- log10(evo.reps$mean.diam[5:8]) - log10(mean(s1_anc.reps$diameter))
+delta.nm.nm.mean <- mean(delta.nm.nm)
+delta.nm.nm.sem <- sem(delta.nm.nm)
+delta.nm.nm.95.UL <- delta.nm.nm.mean + qnorm(0.975) * delta.nm.nm.sem
+delta.nm.nm.95.LL <- delta.nm.nm.mean + qnorm(0.025) * delta.nm.nm.sem
+
+# Minimal - minimal
+delta.m.m <- log10(evo.reps$mean.diam[1:4]) - log10(mean(B_anc.reps$diameter))
+delta.m.m.mean <- mean(delta.m.m)
+delta.m.m.sem <- sem(delta.m.m)
+delta.m.m.95.UL <- delta.m.m.mean + qnorm(0.975) * delta.m.m.sem
+delta.m.m.95.LL <- delta.m.m.mean + qnorm(0.025) * delta.m.m.sem
+
+# Nonminimal - minimal (this comparison is not relevant to questions)
+delta.nm.m <- evo.reps$mean.diam[5:8] - mean(B_anc.reps$diameter)
+delta.nm.m.mean <- mean(delta.nm.m)
+delta.nm.m.sem <- sem(delta.nm.m)
+delta.nm.m.95.UL <- delta.nm.m.mean + qnorm(0.975) * delta.nm.m.sem
+delta.nm.m.95.LL <- delta.nm.m.mean + qnorm(0.025) * delta.nm.m.sem
+
+# Minimal- nonminimal 
+delta.m.nm <- evo.reps$mean.diam[1:4] - mean(s1_anc.reps$diameter)
+delta.m.nm.mean <- mean(delta.m.nm)
+delta.m.nm.sem <- sem(delta.m.nm)
+delta.m.nm.95.UL <- delta.m.nm.mean + qnorm(0.975) * delta.m.nm.sem
+delta.m.nm.95.LL <- delta.m.nm.mean + qnorm(0.025) * delta.m.nm.sem
+
+# Create dataframe for test
+
+# Code for two comparisons (mm and nm)
+delta <- data.frame(delta.w = c(delta.nm.nm, delta.m.m),
+  comp = c(rep("nm.nm", 4), rep("m.m", 4)))
+delta$comp <- factor(delta$comp)
+colnames(delta) <- c("delta.d", "comp")
+
+# # Code for all four comparisons
+# delta <- data.frame(delta.d = c(delta.nm.nm, delta.m.m, delta.nm.m, delta.m.nm),
+#   comp = c(rep("nm.nm", 4), rep("m.m", 4), rep("nm.m",4), rep("m.nm", 4)))
+# delta$comp<-factor(delta$comp)
+# 
+# delta <- data.frame(delta.d = c(delta.nm.nm, delta.m.m, delta.nm.m, delta.m.nm),
+#   comp = c(rep("nm.nm", 4), rep("m.m", 4), rep("nm.m",4), rep("m.nm", 4)))
+# delta$comp<-factor(delta$comp)
+# 
+# 
+# delta.scale <- delta$delta.d - min(delta$delta.d) / max(delta$delta.d) - min(delta$delta.d)
+# delta <- data.frame(delta.scale, comp = c(rep("nm.nm", 4), 
+#             rep("m.m", 4), rep("nm.m",4), rep("m.nm", 4)))  
+# delta$comp<-factor(delta$comp)
+# colnames(delta) <- c("delta.d", "comp")
+              
+
+# GLM with intercept: test whether groups of delta size different from zero
+# (picks first [m.m] alphabetically and compares the others relative to that)
+# Minimal cell did not change; non-miminimal cell got bigger
+#          Estimate Std. Error t value Pr(>|t|)   
+# m.m    0.08476    0.05602   1.513  0.18101   
+# nm.nm  0.23960    0.05602   4.277  0.00522 **
+
+delta.fit1 <- lm(delta.d ~ comp - 1, data = delta)
+
+
+# GLM without intercept: test whether groups of delta fitness equal to each other
+# (picks first [m.m] alphabetically and compares the others relative to that)
+#            Estimate Std. Error t value Pr(>|t|)  
+# Int      0.07034    0.09362   0.751   0.4809  
+# nm.nm    0.28260    0.13240   2.134   0.0767 .
+# Non-minimal increase is size is marginally greater than minimal cell
+
+delta.fit2 <- lm(delta.d ~ comp, data = delta)
+
+
+# Correct p-values for multiple comparisons
+
+p.val.anc <- anc.t.test$p.value 
+p.val.evo <- evo.t.test$p.value 
+p.values.fit1.all <- summary(delta.fit1)$coefficients[,c(4)]
+p.val.ind <- as.numeric(unlist(summary(delta.fit1)$coefficients[,c(4)]))
+p.val.fit2.all <- summary(delta.fit2)$coefficients[,c(4)]
+p.val.intx <- as.numeric(unlist(p.val.fit2.all[2]))   
+p.vals <- c(p.val.anc, p.val.evo, p.val.ind, p.val.intx)
+rank <- rank(p.vals)
+#m <- length(p.values.sorted)
+m <- length(p.vals)
+
+# Calculate the Benjamini-Hochberg adjusted p-values
+adjusted.p.vals <- (m / rank) * p.vals
+adjusted.p.vals <- pmin(adjusted.p.vals, 1) # Set adjusted p-values to 1 if they exceed 1
+
+# Sort the adjusted p-values by their corresponding original p-values
+sorted.indices <- order(p.vals)
+adjusted.p.vals <- adjusted.p.vals[sorted.indices]
+
+# Identify the significant tests using the adjusted p-value threshold
+alpha <- 0.05
+adjusted.alpha <- alpha / m
+significant.tests <- which(adjusted.p.vals <= adjusted.alpha)
+
+cat("Adjusted p-values:", adjusted.p.vals, "\n")
+cat("Significant tests:", significant.tests, "\n")
+```
+
+
+
+```{r}
+## Cell volume
+
+## Ancestral lines
+equal.var.anc.v <- var.test(s1_anc.reps$volume, B_anc.reps$volume)
+# Test for equal variance: p-value = 0.2.974EE-05 --> heterogeneous variance
+anc.t.test.v <- t.test(x = s1_anc.reps$volume, B_anc.reps$volume, 
+                    alternative = "two.sided", var.equal = F, mu = 0)
+# Difference in cell size between non-minimal and minimal of ancestors?
+# Results: t = 5.8935, df = 95.517, p-value = 5.667EE-08
+# non-minimal mean vol: 0.051 um3; minimal mean diameter: 0.021 um3
+# Genome minimization led to a 41% or 2.4-fold reduction in volume
+
+## Evolved lines
+
+# 1. comparison of evolved minimal and evolved non-minimal
+equal.var.evo.v <- var.test(evo.reps$mean.vol[1:4], evo.reps$mean.vol[5:8])
+# Test for equal variance: p-value = 0.000302 --> heterogeneous variance
+#evo.t.test.v <- t.test(evo.reps$mean.vol ~ evo.reps$strain, var.equal = F)
+# log-10 transformed to deal with variance
+evo.t.test.v <- t.test(log10(evo.reps$mean.vol) ~ evo.reps$strain, var.equal = T)
+# log-10 transformed results: t = -3.7008, df = 6, p-value = 0.01008
+# mean of evolved minimal: 0.0399 um3; mean of evolved non-minimal: 0.5087 um3
+# evolved non-min is 1175% or 12.8-fold larger than evolved non-min
+
+# 2. Evolution of cell size in non-minimal cell
+s1_delta.t.test.v <- t.test(x = log10(evo.reps$mean.vol[5:8]), 
+              mu = log10(size.reps$mean.vol[2]), alternative = 'two.sided')
+# non-log10-transformed results: t = 1.6478, df = 3, p-value = 0.1979
+# log-10 transformed results: t = 3.3869, df = 3, p-value = 0.04287
+# mean of non-minimal ancestor: 0.0512 um3; mean of non-minimal evolved: 0.5087 um3 
+# evolved non-min is 917% or 10-fold larger than evolved non-min
+
+# 3. Evolution of cell size in minimal cell
+B_delta.t.test.v <- t.test(x = evo.reps$mean.vol[1:4],
+              mu = size.reps$mean.vol[1], alternative = 't')
+# non-log10-transformed results: t = 1.4667, df = 3, p-value = 0.2387
+# log-10 transformed results: t = 1.7141, df = 3, p-value = 0.185
+# mean of non-minimal ancestor: 0.0213 um3; mean of non-minimal evolved: 0.0399 um3 
+# no significant increase in volume
+```
+
+## Resample raw data for visualization in figure
+```{r}
+
+# randomly sample from ancestors
+min.anc.rand.all <- size.raw %>%
+  filter(strain == "Minimal" & timepoint == "Ancestor")
+set.seed(2)
+min.anc.rand <- sample(min.anc.rand.all$diameter, size = 60)
+
+nmin.anc.rand.all <- size.raw %>%
+  filter(strain == "Non-minimal" & timepoint == "Ancestor")
+set.seed(2)
+nmin.anc.rand <- sample(nmin.anc.rand.all$diameter, size = 60)
+
+# randomly sample from evolved replicate populations
+min.evo.rand.B_1.all <- size.raw %>%
+  filter(strain == "Minimal" & timepoint == "Evolved" & sub.strain == "B_1")
+set.seed(2)
+min.evo.rand.B_1 <- sample(min.evo.rand.B_1.all$diameter, size = 15)
+
+min.evo.rand.B_2.all <- size.raw %>%
+  filter(strain == "Minimal" & timepoint == "Evolved" & sub.strain == "B_2")
+set.seed(2)
+min.evo.rand.B_2 <- sample(min.evo.rand.B_2.all$diameter, size = 15)
+
+min.evo.rand.B_3.all <- size.raw %>%
+  filter(strain == "Minimal" & timepoint == "Evolved" & sub.strain == "B_3")
+set.seed(2)
+min.evo.rand.B_3 <- sample(min.evo.rand.B_3.all$diameter, size = 15)
+
+min.evo.rand.B_5.all <- size.raw %>%
+  filter(strain == "Minimal" & timepoint == "Evolved" & sub.strain == "B_3")
+set.seed(2)
+min.evo.rand.B_5 <- sample(min.evo.rand.B_5.all$diameter, size = 15)
+
+nmin.evo.rand.s1_1.all <- size.raw %>%
+  filter(strain == "Non-minimal" & timepoint == "Evolved" & sub.strain == "s1_1")
+set.seed(2)
+nmin.evo.rand.s1_1 <- sample(nmin.evo.rand.s1_1.all$diameter, size = 15)
+
+nmin.evo.rand.s1_3.all <- size.raw %>%
+  filter(strain == "Non-minimal" & timepoint == "Evolved" & sub.strain == "s1_3")
+set.seed(2)
+nmin.evo.rand.s1_3 <- sample(nmin.evo.rand.s1_3.all$diameter, size = 15)
+
+nmin.evo.rand.s1_4.all <- size.raw %>%
+  filter(strain == "Non-minimal" & timepoint == "Evolved" & sub.strain == "s1_4")
+set.seed(2)
+nmin.evo.rand.s1_4 <- sample(nmin.evo.rand.s1_4.all$diameter, size = 15)
+
+nmin.evo.rand.s1_6.all <- size.raw %>%
+  filter(strain == "Non-minimal" & timepoint == "Evolved" & sub.strain == "s1_6")
+set.seed(2)
+nmin.evo.rand.s1_6 <- sample(nmin.evo.rand.s1_6.all$diameter, size = 15)
+
+# concatenate resampled evolved data
+
+min.evo.rand <- as.data.frame(c(min.evo.rand.B_1, 
+    min.evo.rand.B_2, min.evo.rand.B_3, min.evo.rand.B_5))
+colnames(min.evo.rand) <- "diam"
+
+nmin.evo.rand <- as.data.frame(c(nmin.evo.rand.s1_1, 
+    nmin.evo.rand.s1_3, nmin.evo.rand.s1_4, nmin.evo.rand.s1_6))
+colnames(nmin.evo.rand) <- "diam"
+```
+
+# Initiate figure
+
+```{r}
+## Create main plot (minus photos)
+png(filename="~/GitHub/MinimalCell/figures/1.main.text/Fig4.no.photos.png",
+    width = 1200, height = 1200, res = 96*2)
+
+plot.new()
+par(mar = c(7, 7, 5, 7))
+
+# Add non-minimal ancestor: resampled raw points 
+
+plot(jitter(rep(size$time.x[3],length(nmin.anc.rand)), amount = 0.5), nmin.anc.rand, xlim = c(0.25, 3.75),
+     ylim = c(-0.05, 1.25), type = "p", pch = 21, bg = "lightblue", 
+     col = "lightblue", cex = 0.75, ylab = "", xlab = "", 
+     cex.lab = 1.5, las = 1, lwd = 2, yaxt = "n", xaxt = "n")
+box(lwd = 2)
+
+# Add minimal ancestor: resmapled points
+points(jitter(rep(size$time.x[3],length(min.anc.rand)), amount = 0.5), min.anc.rand,
+       pch = 21, bg = "pink", col = "pink", lwd = 2, cex = 0.75)
+
+# # Add non-minimal evolved: resmapled points
+
+# points(jitter(rep(size$time.x[2],dim(nmin.evo.rand)[1]), amount = 0.25), nmin.evo.rand$diam,
+#        pch = 21, bg = "lightblue", col = "lightblue", lwd = 2, cex = 0.75)
+
+points(jitter(rep(size$time.x[2],length(nmin.evo.rand.s1_1)), amount = 0.25), nmin.evo.rand.s1_1,
+       pch = 22, bg = "lightblue", col = "lightblue", lwd = 2, cex = 0.75)
+
+points(jitter(rep(size$time.x[2],length(nmin.evo.rand.s1_3)), amount = 0.25), nmin.evo.rand.s1_3,
+       pch = 23, bg = "lightblue", col = "lightblue", lwd = 2, cex = 0.75)
+
+points(jitter(rep(size$time.x[2],length(nmin.evo.rand.s1_4)), amount = 0.25), nmin.evo.rand.s1_4,
+       pch = 24, bg = "lightblue", col = "lightblue", lwd = 2, cex = 0.75)
+
+points(jitter(rep(size$time.x[2],length(nmin.evo.rand.s1_6)), amount = 0.25), nmin.evo.rand.s1_6,
+       pch = 25, bg = "lightblue", col = "lightblue", lwd = 2, cex = 0.75)
+
+# Add minimal evolved: resmapled points
+
+# points(jitter(rep(size$time.x[4],dim(nmin.evo.rand)[1]), amount = 0.25), min.evo.rand$diam,
+#        pch = 21, bg = "pink", col = "pink", lwd = 2, cex = 0.75)
+
+points(jitter(rep(size$time.x[4],length(min.evo.rand.B_1)), amount = 0.25), min.evo.rand.B_1,
+       pch = 22, bg = "pink", col = "pink", lwd = 2, cex = 0.75)
+
+points(jitter(rep(size$time.x[4],length(min.evo.rand.B_2)), amount = 0.25), min.evo.rand.B_2,
+       pch = 23, bg = "pink", col = "pink", lwd = 2, cex = 0.75)
+
+points(jitter(rep(size$time.x[4],length(min.evo.rand.B_3)), amount = 0.25), min.evo.rand.B_3,
+       pch = 24, bg = "pink", col = "pink", lwd = 2, cex = 0.75)
+
+points(jitter(rep(size$time.x[4],length(min.evo.rand.B_5)), amount = 0.25), min.evo.rand.B_5,
+       pch = 25, bg = "pink", col = "pink", lwd = 2, cex = 0.75)
+
+# Add error bars
+
+  # Non-minimal
+arrows(x0 = size$time.x[3:4], y0 = size$mean[3:4], 
+       y1 = size$mean[3:4] + size$sem[3:4], 
+       angle = 90, length = 0.1, lwd = 2, col = "blue")
+
+arrows(x0 = size$time.x[3:4], y0 = size$mean[3:4], 
+       y1 = size$mean[3:4] - size$sem[3:4], 
+       angle = 90, length = 0.1, lwd = 2, col = "blue")
+
+  # Minimal
+arrows(x0 = size$time.x[1:2], y0 = size$mean[1:2], 
+       y1 = size$mean[1:2] + size$sem[1:2], 
+       angle = 90, length = 0.1, lwd = 2, col = "red")
+
+arrows(x0 = size$time.x[1:2], y0 = size$mean[1:2], 
+       y1 = size$mean[1:2] - size$sem[1:2], 
+       angle = 90, length = 0.1, lwd = 2, col = "red")
+
+# Add axes and labels
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("0.0", "0.5", "1.0", "1.5", "2.0"), at = c(0, 0.5, 1, 1.5, 2))
+axis(side = 4, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at=c(0, 0.5, 1, 1.5, 2), labels = F)
+axis(side = 3, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at = c(1, 3), labels = F)
+axis(side = 1, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("Ancestor", "Evolved"), 
+     col.axis = "darkgray", at = c(1, 3))
+mtext(expression('Timepoint'), side = 1,
+      outer = TRUE, cex = 1.5, line = -3.5, adj = 0.5)
+
+mtext(expression(paste("Cell diameter (",mu, "m)")), side = 2, 
+      outer = TRUE, cex = 1.5, line = -3, adj = 0.55)
+
+# Add line segments
+segments(size$time.x[3], size$mean[3], size$time.x[4], 
+         size$mean[4], col = "blue", lwd = 2)
+segments(size$time.x[1], size$mean[1], size$time.x[2], 
+         size$mean[2], col = "red", lwd = 2)
+
+
+# Add non-minimal points
+points(size$time.x[3:4], size$mean[3:4], pch = 22, 
+      bg = "blue", col = "blue", lwd = 2, cex = 2)
+
+points(size$time.x[1:2], size$mean[1:2], pch = 22, 
+      bg = "red", col = "red", lwd = 2, cex = 2)
+
+
+# Add strain identifier
+#text(3.9, size.wt$mean[2], labels = "Non-minimal", cex = 1.0)
+#text(3.8, size.min$mean[2], labels = "Minimal", cex = 1.0)
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/1.main.text/Fig4.no.photos.png")
+
+grid.raster(img)
+```
+
+
+## Create figure (plus photos)
+
+```{r}
+png(filename="~/GitHub/MinimalCell/figures/1.main.text/Fig4.png",
+               width = 1200, height = 1200, res = 96*2)
+
+img.plot <- readPNG("~/GitHub/MinimalCell/figures/1.main.text/Fig4.no.photos.png")
+img.non.min <- readPNG("~/GitHub/MinimalCell/figures/1.main.text/size.images/nonmin_04_014.png")
+img.min <- readPNG("~/GitHub/MinimalCell/figures/1.main.text/size.images/min_11_010.png")
+
+grid.newpage()
+grid.raster(img.plot, x = 0.4, y = 0.5, width = 0.83)
+grid.raster(img.non.min, x = 0.83, y = 0.66, width = 0.25)
+grid.raster(img.min, x = 0.83, y = 0.395, width = 0.25)
+
+# white box for non-minimal text
+grid.rect(unit(0.625, "npc"), unit(0.61, "npc"),
+          width = unit(0.15, "npc"), height = unit(0.05, "npc"), default.units = "npc",
+          gp=gpar(col = "white"))
+
+# white box for minimal text
+grid.rect(unit(0.625, "npc"), unit(0.45, "npc"),
+          width = unit(0.15, "npc"), height = unit(0.05, "npc"), default.units = "npc",
+          gp=gpar(col = "white"))
+
+# white box for "B"
+#grid.rect(unit(0.73, "npc"), unit(0.755, "npc"),
+#          width = unit(0.05, "npc"), height = unit(0.05, "npc"), default.units = "npc",
+#          gp=gpar(col = "white"))
+
+# white box for "C"
+#grid.rect(unit(0.73, "npc"), unit(0.49, "npc"),
+#          width = unit(0.05, "npc"), height = unit(0.05, "npc"), default.units = "npc",
+#          gp=gpar(col = "white"))
+
+# text for non-minimal
+grid.text("Non-minimal", x = 0.625, y = 0.61, 
+            gp = gpar(fontsize = 12, col = "black"))
+
+# text for minimal
+grid.text("Minimal", x = 0.63, y = 0.45, 
+            gp = gpar(fontsize = 12, col = "black"))
+
+# text for panel A
+grid.text("A", x = 0.2, y = 0.76, 
+            gp = gpar(fontsize = 14, col = "black"))
+
+# text for panel B
+grid.text("B", x = 0.73, y = 0.76, 
+            gp = gpar(fontsize = 14, col = "white"))
+
+# text for panel C
+grid.text("C", x = 0.73, y = 0.49, 
+            gp = gpar(fontsize = 14, col = "white"))
+
+#grid.polyline(x=c(0.865, 0.935),
+#             y=c(0.76, 0.76),
+#             gp=gpar(col= "white", lwd = 1.5))
+
+#grid.text(expression("1" ~ mu~"m"), x = 0.9, y = 0.74, 
+#          gp = gpar(fontsize = 12, col = "white"))
+
+# Panel B scale bar
+grid.polyline(x=c(0.875, 0.945),
+             y=c(0.58, 0.58),
+             gp=gpar(col= "white", lwd = 1.5))
+
+grid.text(expression("1" ~ mu~"m"), x = 0.905, y = 0.56, 
+          gp = gpar(fontsize = 12, col = "white"))
+
+# Panel C scale bar
+grid.polyline(x=c(0.875, 0.945),
+             y=c(0.31, 0.31),
+             gp=gpar(col= "white", lwd = 1.5))
+
+grid.text(expression("1" ~ mu~"m"), x = 0.905, y = 0.29, 
+          gp = gpar(fontsize = 12, col = "white"))
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/1.main.text/Fig4.png")
+
+grid.raster(img)
+```
+
+
+
+# Create figure for delta cell size (Fig. S6)
+
+```{r}
+png(filename="~/GitHub/MinimalCell/figures/4.figshare/2.delta_cell_size.png",
+    width = 1200, height = 1200, res = 96*2) 
+
+par(mar = c(8, 7, 5, 7))
+
+delta.fig <- plot(jitter(rep(1, length(delta.m.m)), amount = 0.1), 
+      delta.m.m, ylim = c(-0.25, 0.9), xlim = c(0.5, 2.5), pch = 21, 
+      col = "lightgrey", bg = "lightgrey", lwd = 3.5, cex = 1.7, yaxt = "n", 
+      xaxt = "n", cex.lab = 2, cex.axis = 2, las = 1, ylab = "", xlab = "")
+      box(lwd = 2)
+      
+points(jitter(rep(2, length(delta.nm.nm)), amount = 0.1), delta.nm.nm, 
+       pch = 21, bg = "lightgrey", col = "lightgrey", lwd = 2, cex = 1.7)
+
+#points(jitter(rep(3, length(delta.nm.nm)), amount = 0.1), delta.nm.nm, 
+#       pch = 21, bg = "lightgrey", col = "lightgrey", lwd = 2, cex = 1.7)
+
+#points(jitter(rep(4, length(delta.nm.m)), amount = 0.1), delta.nm.m, 
+#       pch = 21, bg = "lightgrey", col = "lightgrey", lwd = 2, cex = 1.7)
+
+abline(h= 0, lty = 2, lwd = 1, col="grey")
+
+# Add mean  
+#points(1, delta.m.nm.mean, pch = 21, col = "red", 
+#       bg = "blue", lwd = 3, cex = 2)  
+points(1, delta.m.m.mean, pch = 21, col = "red", 
+       bg = "red", lwd = 2, cex = 2)
+points(2, delta.nm.nm.mean, pch = 21, col = "blue", 
+       bg = "blue", lwd = 2, cex = 2)
+#points(4, delta.nm.m.mean, pch = 21, col = "blue", 
+#       bg = "red", lwd = 3, cex = 2)  
+
+# Y-axis label # 
+
+mtext(expression(Delta~"cell diameter ("~mu~"m)"), side = 2, outer = TRUE, cex = 1.5, line = -4, adj = 0.62)
+
+mtext(expression('Ancestor-evolved comparison'), side = 1,
+      outer = TRUE, cex = 1.5, line = -1, adj = 0.5)
+
+# Major Axes
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("0.0", "0.4", "0.8", "1.2" ), at = c(0, 0.4, 0.8, 1.2))
+axis(side = 4, lwd.ticks = 2, cex.axis = 1.5, las = 1,
+     at=c(0, 0.4, 0.8, 1.2), labels = F, tck = -0.02)
+axis(side = 1, lwd.ticks = 2, cex.axis = 0.4, las = 1,
+     at = c(1, 2, 3, 4), labels = F, tck = -0.02)
+axis(side = 3, lwd.ticks = 2, cex.axis = 0.4, las = 1,
+     at = c(1, 2, 3, 4), labels = F, tck = -0.02)
+
+
+#text(x = 1, y = -0.57, label = "min-min", col = "grey", srt = 90, xpd = NA, cex = 0.85)
+#text(x = 2, y = -0.5, label = "nonmin-nonmin", col = "grey", srt = 90, xpd = NA, cex = 0.85)
+
+text(x = 1, y = -0.38, label = "min-min", col = "grey", srt = 90, 
+     xpd = NA, cex = 0.85, adj = 1)
+text(x = 2, y = -0.38, label = "nonmin-nonmin", col = "grey", srt = 90, 
+     xpd = NA, cex = 0.85, adj = 1)
+
+# Add confidence intervals 
+arrows(x0 = 1, y0 = delta.m.m.mean, y1 = delta.m.m.95.UL, angle = 90,
+       length = 0.15, lwd = 2)
+arrows(x0 = 1, y0 = delta.m.m.mean, y1 = delta.m.m.95.LL, angle = 90,
+       length = 0.15, lwd = 2)
+
+arrows(x0 = 2, y0 = delta.nm.nm.mean, y1 = delta.nm.nm.95.UL, angle = 90,
+       length = 0.15, lwd = 2)
+arrows(x0 = 2, y0 = delta.nm.nm.mean, y1 = delta.nm.nm.95.LL, angle = 90,
+       length = 0.15, lwd = 2)
+
+
+# Add P-values
+text(x = 1, y = -0.15, expression(~ italic("P")~ "= 0.481"), cex = 0.95, col = "grey")
+text(x = 2, y = -0.15, expression(~ italic("P")~ "= 0.003"), cex = 0.95, col = "grey")
+
+# Add comparison of interaction terms
+segments(1, 0.74, 2, 0.74, col = "grey", lwd = 1.25, xpd = NA)
+segments(1, 0.5, 1, 0.74, col = "grey", lwd = 1.25, xpd = NA)
+segments(2, 0.65, 2, 0.74, col = "grey", lwd = 1.25, xpd = NA)
+text(x = 1.5, y = 0.8, expression(~ italic("P")~ "= 0.077"), cex = 0.95, col = "grey")
+
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/4.figshare/2.delta_cell_size.png")
+
+grid.raster(img)
+```
+
+
+# Percent change in size (Supplementary figure)
+```{r}
+# Calculate percent change in cell diameter
+
+m.per.diam <- size.reps %>% 
+  filter(strain == "Minimal" & timepoint != "Mutant") %>%
+  group_by(strain) %>%
+  mutate(per = ((mean.diam-first(mean.diam))/first(mean.diam))) %>%
+  filter(timepoint != "Ancestor")
+
+m.per.diam.summary <- m.per.diam %>%
+  group_by(strain) %>%
+  dplyr::summarise(mean = mean(per), sem = sem(per))
+
+nm.per.diam <- size.reps %>% 
+  filter(strain == "Non-minimal" & timepoint != "Mutant") %>%
+  group_by(strain) %>%
+  mutate(per = ((mean.diam-first(mean.diam))/first(mean.diam))) %>%
+  filter(timepoint != "Ancestor")
+
+nm.per.diam.summary <- nm.per.diam %>%
+  group_by(strain) %>%
+  dplyr::summarise(mean = mean(per), sem = sem(per))
+
+# Percent change diameter statistics 
+equal.var.per.diam <- var.test(m.per.diam$per, nm.per.diam$per)
+# Test for equal variance: p-value = 0.1568 --> variance are equal
+
+#m.per.diam$per <-log10(m.per.diam$per+0.1)
+#nm.per.diam$per <-log10(nm.per.diam$per+0.1)
+
+oneway.m.per.diam <- t.test(x = m.per.diam$per, mu = log(0.01), alternative = 'two.sided')
+# Percent change not different from zero: t = 2.0305, df = 3, p-value = 0.06764
+# Log transform (mu = log(0.01)): t = 9.5383, df = 3, p-value = 0.002444
+
+oneway.nm.per.diam <- t.test(x = nm.per.diam$per, mu = log(0.01), alternative = 'two.sided')
+# Percent change marginally increased: t = 2.7619, df = 3, p-value = 0.07004
+# Log transform (mu = log(0.01)): t = 23.939, df = 3, p-value = 0.0001597
+
+ttest.per.diam <- t.test(m.per.diam$per, nm.per.diam$per)
+# Percent change not different between strains: t = -1.8339, df = 3.8944, p-value = 0.1425
+# Log transform: t = -1.7204, df = 4.3033, p-value = 0.1554
+
+
+# Percent change volume statistics 
+
+m.per.vol <- size.reps %>% 
+  filter(strain == "Minimal" & timepoint != "Mutant") %>%
+  group_by(strain) %>%
+  mutate(per = ((mean.vol-first(mean.vol))/first(mean.vol))) %>%
+  filter(timepoint != "Ancestor")
+
+m.per.vol.summary <- m.per.vol %>%
+  group_by(strain) %>%
+  dplyr::summarise(mean = mean(per), sem = sem(per))
+
+nm.per.vol <- size.reps %>% 
+  filter(strain == "Non-minimal" & timepoint != "Mutant") %>%
+  group_by(strain) %>%
+  mutate(per = ((mean.vol-first(mean.vol))/first(mean.vol))) %>%
+  filter(timepoint != "Ancestor")
+
+nm.per.vol.summary <- nm.per.vol %>%
+  group_by(strain) %>%
+  dplyr::summarise(mean = mean(per), sem = sem(per))
+
+
+# Make figure
+png(filename="~/GitHub/MinimalCell/figures/3.supplementary/FigS6.png",
+               width = 1200, height = 1200, res = 96*2)
+
+plot.new()
+#layout(matrix(c(1:2), byrow = T))
+
+par(mfrow=c(1,2))
+par(mar=c(6,4,4,1), xpd = TRUE)
+par(oma=c(4,4,6,0))
+
+#plot.new()
+#par(mar = c(7, 7, 5, 7))
+
+# Add minimal points
+plot(jitter(rep(1, length(m.per.diam$per)), amount = 0.2), m.per.diam$per, 
+     xlim = c(0, 4), ylim = c(0.07, 2.5), type = "p", pch = 21, bg = "pink", 
+     col = "pink", cex = 1.0, ylab = "", xlab = "", log = "y",
+     cex.lab = 2.0, las = 1, lwd = 2, yaxt = "n", xaxt = "n")
+box(lwd=2)
+
+# Add non-minimal points
+points(jitter(rep(3, length(nm.per.diam$per)), amount = 0.2), nm.per.diam$per, 
+       pch = 21, bg = "lightblue", col = "lightblue", lwd = 2, cex = 1.0)
+
+# Add confidence intervals
+arrows(x0 = c(1), y0 = m.per.diam.summary$mean, y1 =  m.per.diam.summary$mean +  
+         m.per.diam.summary$sem, angle = 90,length = 0.1, lwd = 2, col = "red")
+arrows(x0 = c(1), y0 = m.per.diam.summary$mean, y1 = m.per.diam.summary$mean - 
+         m.per.diam.summary$sem, angle = 90, length=0.1, lwd = 2, col = "red")
+arrows(x0 = c(3), y0 =  nm.per.diam.summary$mean, y1 = nm.per.diam.summary$mean + 
+         nm.per.diam.summary$sem, angle = 90, length = 0.1, lwd = 2, col = "blue")
+arrows(x0 = c(3), y0 = nm.per.diam.summary$mean, y1 = nm.per.diam.summary$mean - 
+         nm.per.diam.summary$sem, angle = 90, length=0.1, lwd = 2, col = "blue")
+
+# Add means
+points(1, m.per.diam.summary$mean, pch = 22, col = "red", 
+       bg = "red", lwd = 2, cex = 2) 
+points(3, nm.per.diam.summary$mean, pch = 22, col = "blue", 
+       bg = "blue", lwd = 2, cex = 2) 
+
+# Add axes and labels
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("10", "100"), at = c(0.1, 1))
+axis(side = 4, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at=c(0.1, 1), labels = F)
+axis(side = 3, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at = c(1, 3), labels = F)
+axis(side = 1, lwd.ticks = 2, cex.axis = 0.85, las = 1,
+     labels = c("Minimal", "Non-minimal"), 
+     col.axis = "darkgray", at = c(1, 3))
+mtext(expression('Strain'), side = 1,
+      outer = TRUE, cex = 1.5, line = -2, adj = 0.55)
+mtext(expression("Change in cell size (%)"), side = 2,
+      outer = TRUE, cex = 1.5, line = 0, adj = 0.6)
+#text(1,3, "Diameter", cex = 1)
+text(x= 2, y = 5, "Diameter", srt = 0, xpd = NA, cex = 1.5)
+
+# Create volume plot
+
+# Add minimal points
+plot(jitter(rep(1, length(m.per.vol$per)), amount = 0.2), log = "y", m.per.vol$per, 
+     xlim = c(0, 4), ylim = c(0.05, 30), type = "p", pch = 21, bg = "pink", 
+     col = "pink", cex = 1.0, ylab = "", xlab = "", 
+     cex.lab = 2.0, las = 1, lwd = 2, yaxt = "n", xaxt = "n")
+box(lwd=2)
+
+# Add non-minimal points
+points(jitter(rep(3, length(nm.per.vol$per)), amount = 0.2), nm.per.vol$per, 
+       pch = 21, bg = "lightblue", col = "lightblue", lwd = 2, cex = 1.0)
+
+# Add confidence intervals
+arrows(x0 = c(1), y0 = m.per.vol.summary$mean, y1 =  m.per.vol.summary$mean +  
+         m.per.vol.summary$sem, angle = 90,length = 0.1, lwd = 2, col = "red")
+arrows(x0 = c(1), y0 = m.per.vol.summary$mean, y1 = m.per.vol.summary$mean - 
+         m.per.vol.summary$sem, angle = 90, length=0.1, lwd = 2, col = "red")
+arrows(x0 = c(3), y0 =  nm.per.vol.summary$mean, y1 = nm.per.vol.summary$mean + 
+         nm.per.vol.summary$sem, angle = 90, length = 0.1, lwd = 2, col = "blue")
+arrows(x0 = c(3), y0 = nm.per.vol.summary$mean, y1 = nm.per.vol.summary$mean - 
+         nm.per.vol.summary$sem, angle = 90, length=0.1, lwd = 2, col = "blue")
+
+# Add means
+points(1, m.per.vol.summary$mean, pch = 22, col = "red", 
+       bg = "red", lwd = 2, cex = 2) 
+points(3, nm.per.vol.summary$mean, pch = 22, col = "blue", 
+       bg = "blue", lwd = 2, cex = 2) 
+
+# Add axes and labels
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("10", "100", "1000"), at = c(0.1, 1, 10))
+axis(side = 4, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at=c(0.1, 1, 2.5), labels = F)
+axis(side = 3, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at = c(1, 3), labels = F)
+axis(side = 1, lwd.ticks = 2, cex.axis = 0.85, las = 1,
+     labels = c("Minimal", "Non-minimal"), 
+     col.axis = "darkgray", at = c(1, 3))
+
+text(x= 2, y = 105, "Volume", srt = 0, xpd = NA, cex = 1.5)
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/3.supplementary/FigS6.png")
+
+grid.raster(img)
+```

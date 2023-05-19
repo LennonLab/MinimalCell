@@ -178,7 +178,7 @@ colnames(ma.snm.post.hoc) <- c("type", "strain", "z", "chi2", "p", "p.adj")
 #font_import()
 #fonts()
 
-png(filename="~/GitHub/MinimalCell/figures/Fig1.png",
+png(filename="~/GitHub/MinimalCell/figures/1.main.text/Fig1.png",
     width = 1200, height = 1200, res = 96*2) 
 
 plot.new()
@@ -359,7 +359,7 @@ dev.off()
 graphics.off()
 
 # Show Plot
-img <- readPNG("~/GitHub/MinimalCell/figures/Fig1.png")
+img <- readPNG("~/GitHub/MinimalCell/figures/1.main.text/Fig1.png")
 grid.raster(img)
 ```
 
@@ -367,12 +367,12 @@ grid.raster(img)
 # Statistical tests to evaluate mutation spectrum
 
 ```{r}
-myALL<-read.csv("~/GitHub/MinimalCell/datafiles/MA_summary_for_R.csv")
-my3B<-read.csv("~/GitHub/MinimalCell/datafiles/MA_3B_summary_for_R.csv")
-mys1<-read.csv("~/GitHub/MinimalCell/datafiles/MA_s1_summary_for_R.csv")
-MAALL<-as_tibble(myALL)
-MA3B<-as_tibble(my3B)
-MAs1<-as_tibble(mys1)
+myALL <- read.csv("~/GitHub/MinimalCell/datafiles/MA_summary_for_R.csv")
+my3B <- read.csv("~/GitHub/MinimalCell/datafiles/MA_3B_summary_for_R.csv")
+mys1 <- read.csv("~/GitHub/MinimalCell/datafiles/MA_s1_summary_for_R.csv")
+MAALL <- as_tibble(myALL)
+MA3B <- as_tibble(my3B)
+MAs1 <- as_tibble(mys1)
 
 MAALL$strain <- as.factor(MAALL$strain)
 levels(MAALL$strain)[levels(MAALL$strain)=="MA_s1"] <- "Non-minimal"
@@ -390,35 +390,35 @@ MAALL$strain <- factor(MAALL$strain, levels=c("Non-minimal","Minimal"))
 
 
 # Part 1: test for insertion bias or deletion bias, not counting the large deletions >100 bp
-x1s1<-sum(MAs1$'in.')+sum(MAs1$SVin)
-n1s1<-sum(MAs1$'in.')+sum(MAs1$SVin)+sum(MAs1$del)
+x1s1 <- sum(MAs1$'in.') + sum(MAs1$SVin)
+n1s1 <- sum(MAs1$'in.') + sum(MAs1$SVin) + sum(MAs1$del)
 indelprops1 <- prop.test(x = x1s1, n = n1s1, alternative = 'two.sided');indelprops1
 #sample prop = 0.215; P-val < 2.2e-16
 
-x13B <- sum(MA3B$'in.')+sum(MAs1$SVin)
-n13B<-sum(MA3B$'in.')+sum(MAs1$SVin)+sum(MA3B$del)
-indelprop3B<-prop.test(x=x13B,n=n13B,p=0.5,alternative="two.sided"); indelprop3B
+x13B <- sum(MA3B$'in.') + sum(MAs1$SVin)
+n13B <- sum(MA3B$'in.') + sum(MAs1$SVin) + sum(MA3B$del)
+indelprop3B <- prop.test(x = x13B, n = n13B, p = 0.5, alternative = "two.sided"); indelprop3B
 #sample prop = 0.241; P-val = 4.0e-06
 
 #Significant deletion bias, in terms of number-of-dels > number-of-ins, by chisq test for both strains
 
-twoprop_indel<-prop.test(x=c(x1s1, x13B),n=c(n1s1,n13B),alternative = "two.sided"); twoprop_indel
+twoprop_indel <- prop.test(x = c(x1s1, x13B), n = c(n1s1,n13B), alternative = "two.sided"); twoprop_indel
 #p-val > 0.05
 #infer that there is not a significant difference in the magnitude of the deletion bias between the two strains
 
 # PART 2: investigate to-AT-biased or to-GC-biased mutation spectrum
-x3s1<-sum(MAs1$to_AT_tot);n3s1<-x3s1+sum(MAs1$to_CG_tot)
+x3s1 <- sum(MAs1$to_AT_tot); n3s1 <- x3s1 + sum(MAs1$to_CG_tot)
 #toATprops1<-prop.test(x=x3s1,n=n3s1,p=(1-0.760011272),alternative = 'two.sided');toATprops1
-toATprops1<-prop.test(x=x3s1,n=n3s1,p=(1-0.76),alternative = 'two.sided');toATprops1
+toATprops1 <- prop.test(x = x3s1, n = n3s1, p = (1-0.76), alternative = 'two.sided'); toATprops1
 #sample prop = 0.903, p-val < 2.2e-16
 
-x33B<-sum(MA3B$to_AT_tot);n33B<-x33B+sum(MA3B$to_CG_tot)
+x33B <- sum(MA3B$to_AT_tot); n33B<-x33B + sum(MA3B$to_CG_tot)
 #toATprop3B<-prop.test(x=x33B,n=n33B,p=(1-0.757152926),alternative = 'two.sided');toATprop3B
-toATprop3B<-prop.test(x=x33B,n=n33B,p=(1-0.76),alternative = 'two.sided');toATprop3B
+toATprop3B <- prop.test(x = x33B, n = n33B, p = (1-0.76), alternative = 'two.sided'); toATprop3B
 #sample prop = 0.970, p-val <2.2e-16
 
 #the two strains have identical expectation proportions to 2 significant figures. I will go ahead and compare them.
-twoprop_ATbias<-prop.test(x=c(x3s1, x33B),n=c(n3s1,n33B),alternative = "two.sided"); twoprop_ATbias
+twoprop_ATbias <- prop.test(x = c(x3s1, x33B), n = c(n3s1,n33B), alternative = "two.sided"); twoprop_ATbias
 #p-val = 3.1e-06 signif difference suggesting that AT bias is stronger in syn3B. Note that syn3B had a very slightly higher expectation proportion. We do know that they are significantly different because the confidence interval does not include the actual expected difference--- CI = [-0.089, -0.045], when the expected difference is -0.003
 #Expected difference is -0.002858346 (i.e., higher for 3B).
 #95 percent confidence interval:
@@ -427,50 +427,50 @@ twoprop_ATbias<-prop.test(x=c(x3s1, x33B),n=c(n3s1,n33B),alternative = "two.side
 #conclude: Both strains have AT biased mutation. The AT bias is stronger in 3B.
 
 #there was an excess of AT mutation bias in the minimal cell. Was this reflected in the mutation spectrum of mutations in significant genes in the NSE?
-x3s1_NSE<-23;n3s1_NSE<-23+9
-toATprops1_NSE<-prop.test(x=x3s1_NSE,n=n3s1_NSE,p=(1-0.76),alternative = 'two.sided');toATprops1_NSE
+x3s1_NSE <- 23; n3s1_NSE <- 23+9
+toATprops1_NSE <- prop.test(x = x3s1_NSE, n = n3s1_NSE, p = (1-0.76), alternative = 'two.sided'); toATprops1_NSE
 
-x33B_NSE<-34;n33B_NSE<-34+1
+x33B_NSE <- 34;n33B_NSE <- 34+1
 #toATprop3B<-prop.test(x=x33B,n=n33B,p=(1-0.757152926),alternative = 'two.sided');toATprop3B
-toATprop3B_NSE<-prop.test(x=x33B_NSE,n=n33B_NSE,p=(1-0.76),alternative = 'two.sided');toATprop3B_NSE
+toATprop3B_NSE <- prop.test(x = x33B_NSE, n = n33B_NSE, p = (1-0.76), alternative = 'two.sided'); toATprop3B_NSE
 #stronger AT bias in the NSE's significant genes. So this aspect of the mutation spectrum did influence adaptation.
 
 twoprop_ATbias_NSE<-prop.test(x=c(x3s1_NSE, x33B_NSE),n=c(n3s1_NSE,n33B_NSE),alternative = "two.sided"); twoprop_ATbias_NSE
 
 ##the gene ung was deleted from the minimal cell. Is there a higher proportion of C-->T mutations in the minimal cell's MA? In its significant NSE genes?
-x3s1_MA_ung<-759;n3s1_MA_ung<-1591
-x33B_MA_ung<-341;n33B_MA_ung<-521
-twoprop_ATbias_MA_ung<-prop.test(x=c(x3s1_MA_ung, x33B_MA_ung),n=c(n3s1_MA_ung,n33B_MA_ung),alternative = "two.sided"); twoprop_ATbias_MA_ung
+x3s1_MA_ung <- 759; n3s1_MA_ung <- 1591
+x33B_MA_ung <- 341; n33B_MA_ung <- 521
+twoprop_ATbias_MA_ung <- prop.test(x = c(x3s1_MA_ung, x33B_MA_ung), n = c(n3s1_MA_ung,n33B_MA_ung), alternative = "two.sided"); twoprop_ATbias_MA_ung
 ##Yes, there is an apparent effect of ung gene deletion!
 
-x3s1_NSE_ung<-18;n3s1_NSE_ung<-41
-x33B_NSE_ung<-21;n33B_NSE_ung<-43
-twoprop_ATbias_NSE_ung<-prop.test(x=c(x3s1_NSE_ung, x33B_NSE_ung),n=c(n3s1_NSE_ung,n33B_NSE_ung),alternative = "two.sided"); twoprop_ATbias_NSE_ung
+x3s1_NSE_ung <- 18; n3s1_NSE_ung <- 41
+x33B_NSE_ung <- 21; n33B_NSE_ung <- 43
+twoprop_ATbias_NSE_ung <- prop.test(x = c(x3s1_NSE_ung, x33B_NSE_ung), n =c(n3s1_NSE_ung, n33B_NSE_ung), alternative = "two.sided"); twoprop_ATbias_NSE_ung
 #no difference in the relative proportions of C-->T mutations between the strains. Suggests that this aspect of the mutation spectrum did not influence adaptation.
 
 # Part 3: Compare proportion of called SNMs in CDS regions versus non-CDS regions to the theoretical null expectation.
 
 #For each strain, look at the total number of CDS SNMs and non-CDS SNMs. Do they occur in proportions significantly different from the null expectation?
-x6s1<-sum(MAs1$in_CDS)
-n6s1<-sum(MAs1$in_CDS)+sum(MAs1$not_in_CDS)
+x6s1 <- sum(MAs1$in_CDS)
+n6s1 <- sum(MAs1$in_CDS) + sum(MAs1$not_in_CDS)
 #Define p empirically: Total length of CDS: 926310 bp. Total length of genome (CDS + non-CDS): 1078809 bp. Hence, p = (926310/1078809)
-CDSprops1 <- prop.test(x = x6s1, n = n6s1, p = (926310/1078809), alternative = 'two.sided');CDSprops1
+CDSprops1 <- prop.test(x = x6s1, n = n6s1, p = (926310/1078809), alternative = 'two.sided'); CDSprops1
 # Sample prop: 0.860
 # P = 0.876. There is not significant deviation from the proportion of mutations falling in CDS regions expected due to chance alone. 86% compared to expected 86%
 
-x63B<-sum(MA3B$in_CDS)
-n63B<-sum(MA3B$in_CDS)+sum(MA3B$not_in_CDS)
+x63B <- sum(MA3B$in_CDS)
+n63B <-sum(MA3B$in_CDS) + sum(MA3B$not_in_CDS)
 #Define p empirically: Total length of CDS: 479721 bp. Total length of genome (CDS + non-CDS): 543379 bp. Hence, p = (479721/543379)
-CDSprops1 <- prop.test(x = x63B, n = n63B, p = (479721/543379), alternative = 'two.sided');CDSprops1
+CDSprops1 <- prop.test(x = x63B, n = n63B, p = (479721/543379), alternative = 'two.sided'); CDSprops1
 #sample prop = 0.856
 #P 0.069. There is a marginally significant deviation from the proportion of mutations falling in CDS regions expected due to chance alone. 86%, compared to expected 88%
 
 # Part 4: Comparison of essential and non-essential genes in the non-minimal cell
 # Genes under putatively positive selection: any bias between non-essential and essential genes
 x7s1e <- 6 #From Extended Data Table S2
-n7s1tot<-14#From Extended Data Table S2
+n7s1tot <- 14#From Extended Data Table S2
 x7s1emax <- 493#Number of genes shared with syn3B
-n7s1totmax<- 901#Total number of genes
+n7s1totmax <- 901#Total number of genes
 twoprop_essentialins1 <- prop.test(x = c(x7s1e, x7s1emax), n = c(14,901), alternative = 'two.sided')
 # Results: X-squared = 0.37687, df = 1, p-value = 0.5393 --> No bias.
 

@@ -1,0 +1,272 @@
+---
+title: "Evolution of the minimal cell"
+author: "Roy Moger-Reischer and Jay T. Lennon"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+header-includes:
+   - \usepackage{array}
+output: pdf_document
+geometry: margin=2.54cm
+---
+
+## Ratio of nonsynoymous to synonmyous mutations (dN/dS)
+
+## Clear workspace and set directory
+```{r setup}
+rm(list=ls())
+getwd()
+setwd("~/GitHub/MinimalCell")
+```
+
+## Load packages and functions
+```{r}
+require("png")
+require("dplyr")
+require("grid")
+LL.95 <- function(x) t.test(x)$conf.int[1]
+UL.95 <- function(x) t.test(x)$conf.int[2]
+sem <- function(x) sqrt(var(x)/length(x))
+cv <- function(x) sd(x)/sqrt(mean(x))
+```
+
+# Load and process data
+```{r}
+# Load data
+dnds <- read.csv("~/GitHub/MinimalCell/datafiles/cases_Mm.300.csv")
+colnames(dnds)[12] <- "dnds"
+colnames(dnds)[2] <- "strain"
+
+# Convert strain to factor
+dnds$strain <- as.factor(dnds$strain)
+dnds<-dnds[1:8,]
+
+# Add x-values for plotting
+x <- c(1,1,1,1,3,3,3,3)
+dnds <- data.frame(dnds, x)
+
+# Subset dN/dS by strain and summary statistics
+dnds.wt  <- filter(dnds, strain == "Non-minimal") %>%
+  dplyr::select(strain, dnds, x)
+
+dnds.min  <- filter(dnds, strain == "Minimal") %>%
+  dplyr::select(strain, dnds, x)
+
+median.dnds.wt <-median(dnds.wt$dnds)
+LL.95.dnds.wt <- LL.95(dnds.wt$dnds)
+UL.95.dnds.wt <- UL.95(dnds.wt$dnds)
+mean.dnds.wt<-mean(dnds.wt$dnds)
+sem.dnds.wt<-sem(dnds.wt$dnds)
+
+median.dnds.min <-median(dnds.min$dnds)
+LL.95.dnds.min <- LL.95(dnds.min$dnds)
+UL.95.dnds.min <- UL.95(dnds.min$dnds)
+mean.dnds.min<-mean(dnds.min$dnds)
+sem.dnds.min<-sem(dnds.min$dnds)
+
+# Non-minimal data: essential vs. non-essential 
+dndds.nonmin <- read.csv("~/GitHub/MinimalCell/datafiles/non-minimal.DNDS_freqs.csv")
+```
+
+## Essential genes in the minimal vs. non-minal cell
+```{r}
+equal.var <- var.test(dnds.wt$dnds, dnds.min$dnds)
+# Test for equal variance : P = 0.392 --> homogeneous variance
+
+# Non-minimal vs. minimal 
+dnds.ttest <- t.test(dnds.wt$dnds, dnds.min$dnds, var.equal = TRUE, alternative = 'two.sided')
+# Results: t = 0.81011, df = 6, p-value = 0.488 --> no difference
+
+# Non-minimal: dN/dS different from 1?
+dnds.nonmin.ttest <- t.test(dnds.wt$dnds, mu = 1, alternative ="two.sided")
+# Results: t = -0.34, df = 3, p-value = 0.7446. Not different
+
+# Minimal: dN/dS different from 1?
+dnds.min.ttest <- t.test(dnds.min$dnds, mu = 1, alternative ="two.sided")
+# Results: t = -0.92, df = 3, p-value = 0.4238. Not different from 1.
+
+# what if we remove the potential outlier?
+dnds.wt.noout <- dnds.wt %>%
+  filter(dnds < "2")
+
+equal.var <- var.test(dnds.wt.noout$dnds, dnds.min$dnds)
+# Test for equal variance : P = 0.132 --> homogeneous variance
+
+# Non-minimal vs. minimal 
+dnds.ttest <- t.test(dnds.wt.noout$dnds, dnds.min$dnds, 
+                    var.equal = TRUE, alternative = 'two.sided')
+# Results: t = -0.252, df = 5, p-value = 0.8114 --> no difference
+
+# Non-minimal: dN/dS different from 1?
+dnds.nonmin.ttest <- t.test(dnds.wt.noout$dnds, mu = 1, alternative ="two.sided")
+# Results: t = -11.025, df = 2, p-value = 0.008. Significantly less than 1. 
+
+
+# Make figure
+
+png(filename="~/GitHub/MinimalCell/figures/2.extended.data/FigExt2.png",
+    width = 1200, height = 1200, res = 96*2) 
+
+plot.new()
+par(mar = c(7, 7, 5, 7))
+
+# Add Non-minimal points
+plot(jitter(rep(1, length(dnds.wt$dnds)), amount = 0.2), dnds.wt$dnds, 
+     xlim = c(0, 4), ylim = c(0.0, 2.5), type = "p", pch = 21, bg = "lightblue", 
+     col = "lightblue", cex = 1.0, ylab = "", xlab = "", 
+     cex.lab = 2.0, las = 1, lwd = 2, yaxt = "n", xaxt = "n")
+box(lwd=2)
+
+# Add horizontal line
+abline(h = 1, col="darkgray", lty = 2, lwd = 2)
+
+# Add minimal points
+points(jitter(rep(3, length(dnds.min$dnds)), amount = 0.2), dnds.min$dnds, 
+       pch = 21, bg = "pink", col = "pink", lwd = 2, cex = 1.0)
+
+# Add confidence intervals
+arrows(x0 = c(1), y0 = mean.dnds.wt, y1 = mean.dnds.wt + sem.dnds.wt, angle = 90,
+       length = 0.1, lwd = 2, col = "blue")
+arrows(x0 = c(1), y0 = mean.dnds.wt, y1 = mean.dnds.wt - sem.dnds.wt, angle = 90,
+       length=0.1, lwd = 2, col = "blue")
+arrows(x0 = c(3), y0 = mean.dnds.min, y1 = mean.dnds.min + sem.dnds.min, angle = 90,
+       length = 0.1, lwd = 2, col = "red")
+arrows(x0 = c(3), y0 = mean.dnds.min, y1 = mean.dnds.min - sem.dnds.min, angle = 90,
+       length=0.1, lwd = 2, col = "red")
+
+# Add means
+points(1, mean.dnds.wt, pch = 22, col = "blue", 
+       bg = "blue", lwd = 2, cex = 2) 
+points(3, mean.dnds.min, pch = 22, col = "red", 
+       bg = "red", lwd = 2, cex = 2) 
+
+# Add axes and labels
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("0.0", "1.0", "2.0", "3.0"), at = c(0,1, 2, 3))
+axis(side = 4, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at=c(0, 1, 2, 3), labels = F)
+axis(side = 3, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at = c(1, 3), labels = F)
+axis(side = 1, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("Non-minimal", "Minimal"), 
+     col.axis = "darkgray", at = c(1, 3))
+mtext(expression('Strain'), side = 1,
+      outer = TRUE, cex = 1.5, line = -3.5, adj = 0.5)
+mtext(expression(italic("dN/dS")), side = 2,
+      outer = TRUE, cex = 1.5, line = -3.0)
+
+# Add P-values
+#mtext(expression(~italic("P")~"= 0.488"), line = -2.0, cex = 1.0, at = 0.5)
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/2.extended.data/FigExt2.png")
+
+grid.raster(img)
+```
+
+
+# Essential vs. non-essential genes in non-minimal cell
+```{r}
+# Non-minimal: essential vs. non-essential
+equal.var.nmin <- var.test(dndds.nonmin$dNdS_gdtools[1:4], y = dndds.nonmin$dNdS_gdtools[5:8])
+# Test for equal variance : P = 0.6169 --> homogeneous variance
+
+dnds.nomin.ttest <- t.test(x = dndds.nonmin$dNdS_gdtools[1:4], y = dndds.nonmin$dNdS_gdtools[5:8], 
+          mu = 0, alternative ="two.sided", paired = TRUE)
+# Results: t = -0.85824, df = 3, p-value = 0.4539 --> no difference
+
+# Non-minimal: non-essential dN/dS different from 1?
+dnds.nomin.nonessential.ttest <- t.test(dndds.nonmin$dNdS_gdtools[1:4], 
+                          mu = 1, alternative ="two.sided")
+# Results: t = -2.9127, df = 3, p-value = 0.06186. Marginally different neutral (mean = 0.52)
+
+# Non-minimal: essential dN/dS different from 1?
+dnds.nomin.essential.ttest <- t.test(dndds.nonmin$dNdS_gdtools[5:8], mu = 1, 
+                          alternative ="two.sided")
+# Results: t = -1.0369, df = 3, p-value = 0.3760. Not different from neutral
+
+# Calculations for figure
+nonessdf<-filter(dndds.nonmin,Genomepartition=="nonessential")
+colnames(nonessdf)[4] <- "dnds"
+essdf<-filter(dndds.nonmin,Genomepartition=="essential")
+colnames(essdf)[4] <- "dnds"
+
+median.dnds.noness <-median(nonessdf$dnds)
+LL.95.dnds.noness <- LL.95(nonessdf$dnds)
+UL.95.dnds.noness <- UL.95(nonessdf$dnds)
+mean.dnds.noness<-mean(nonessdf$dnds)
+sem.dnds.noness<-sem(nonessdf$dnds)
+
+median.dnds.ess <-median(essdf$dnds)
+LL.95.dnds.ess <- LL.95(essdf$dnds)
+UL.95.dnds.ess <- UL.95(essdf$dnds)
+mean.dnds.ess<-mean(essdf$dnds)
+sem.dnds.ess<-sem(essdf$dnds)
+
+# Make figure
+
+png(filename="~/GitHub/MinimalCell/figures/3.supplementary/FigS7.png",
+    width = 1200, height = 1200, res = 96*2)
+
+plot.new()
+par(mar = c(7, 7, 5, 7))
+
+# Add nonessential points
+plot(jitter(rep(1, length(nonessdf$dnds)), amount = 0.2), nonessdf$dnds, 
+     xlim = c(0, 4), ylim = c(0.0, 1.5), type = "p", pch = 21, bg = "lightblue", 
+     col = "lightblue", cex = 1.0, ylab = "", xlab = "", 
+     cex.lab = 2.0, las = 1, lwd = 2, yaxt = "n", xaxt = "n")
+box(lwd=2)
+
+# Add horizontal line
+abline(h = 1, col="darkgray", lty = 2, lwd = 2)
+
+# Add essential points
+points(jitter(rep(3, length(essdf$dnds)), amount = 0.2), essdf$dnds, 
+       pch = 21, bg = "pink", col = "pink", lwd = 2, cex = 1.0)
+
+# Add confidence intervals
+arrows(x0 = c(1), y0 = mean.dnds.noness, y1 = mean.dnds.noness + sem.dnds.noness, angle = 90,
+       length = 0.1, lwd = 2, col = "blue")
+arrows(x0 = c(1), y0 = mean.dnds.noness, y1 = mean.dnds.noness - sem.dnds.noness, angle = 90,
+       length=0.1, lwd = 2, col = "blue")
+arrows(x0 = c(3), y0 = mean.dnds.ess, y1 = mean.dnds.ess + sem.dnds.ess, angle = 90,
+       length = 0.1, lwd = 2, col = "red")
+arrows(x0 = c(3), y0 = mean.dnds.ess, y1 = mean.dnds.ess - sem.dnds.ess, angle = 90,
+       length=0.1, lwd = 2, col = "red")
+
+# Add means
+points(1, mean.dnds.noness, pch = 22, col = "blue", 
+       bg = "blue", lwd = 2, cex = 2) 
+points(3, mean.dnds.ess, pch = 22, col = "red", 
+       bg = "red", lwd = 2, cex = 2) 
+
+# Add axes and labels
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("0.0", "1.0", "2.0"), at = c(0,1, 2))
+axis(side = 4, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at=c(0, 1, 2, 3), labels = F)
+axis(side = 3, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at = c(1, 3), labels = F)
+axis(side = 1, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("Nonessential", "Essential"), 
+     col.axis = "darkgray", at = c(1, 3))
+mtext(expression('Genome partition'), side = 1,
+      outer = TRUE, cex = 1.5, line = -3.5, adj = 0.5)
+mtext(expression(italic("dN/dS")), side = 2,
+      outer = TRUE, cex = 1.5, line = -3.0)
+
+# Add P-values
+mtext(expression(~italic("P")~"= 0.429"), line = -2.0, cex = 1.0, at = 0.5)
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/3.supplementary/FigS7.png")
+
+grid.raster(img)
+```
