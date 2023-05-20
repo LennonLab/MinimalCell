@@ -1,0 +1,262 @@
+---
+title: "Evolution of the minimal cell"
+author: "Jay T. Lennon"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+header-includes:
+   - \usepackage{array}
+output: pdf_document
+geometry: margin=2.54cm
+---
+
+## Phenol red growth curves: palte reader and most probable number
+
+## Clear workspace and set directory
+```{r setup}
+rm(list=ls())
+getwd()
+setwd("~/Github/MinimalCell/scripts/5.GrowthCurves/test")
+```
+
+## Load packages and functions
+```{r}
+require("png")
+require("dplyr")
+require("grid")
+require("gtools")
+require("MPN")
+require("nlme")
+require("MuMIn")
+source("../bin/modified_Gomp_diagnostic3.R")
+library(tidyverse)
+LL.95 <- function(x) t.test(x)$conf.int[1]
+UL.95 <- function(x) t.test(x)$conf.int[2]
+sem <- function(x) sqrt(var(x)/length(x))
+cv <- function(x) sd(x)/sqrt(mean(x))
+```
+
+# MPN data
+
+```{r}
+# Experiment based on most probable number
+# Six dilution-to-extinction series of four biological replicates over a growth curve
+data <- read.csv("~/Github/MinimalCell/scripts/5.GrowthCurves/data/mpn.csv")
+
+# MPN parameters
+# tubes <- rep(6, 12)# ni = number of "tubes" or aliquots of same dilution
+# d <- 10^(-1:-11)
+# d <- 10^(0:-11) # volume in microliters
+# v <- 20 * d #zi transfer volume of original culture
+
+q = 20 # transfer volume in dilution = 20 uL
+i = 10 # initial dilution = 20 uL of culture added to 180 uL medium 
+
+data <- data  %>%
+  mutate(vol = dilutions * q * i, .before = pos) %>%
+  mutate(tubes = rep(6, nrow(data)), .before = pos)
+
+# Minimal
+m.group <- filter(data, cell == "min") %>%
+  group_by(time, biorep) %>%
+  dplyr::summarise(MPN = mpn(pos, tubes, vol))
+
+# Pull out each MPN estimate from function
+m.mpn.out <- m.group[seq(1, nrow(m.group), 9), ] 
+
+# Convert,transpose, and plot MPN values 
+m.mpn.out <- t(do.call(rbind.data.frame, m.mpn.out))
+#plot(m.mpn.out[,1],log10(m.mpn.out[,3]))
+
+# Non-minimal
+nm.group <- filter(data, cell == "nm") %>%
+  group_by(time, biorep) %>%
+  dplyr::summarise(MPN = mpn(pos, tubes, vol))
+
+# Pull out each mpn estimate from function
+nm.mpn.out <- nm.group[seq(1, nrow(nm.group), 9), ] 
+
+# Convert, transpose, and plot MPN values 
+nm.mpn.out <- t(do.call(rbind.data.frame, nm.mpn.out))
+#plot(nm.mpn.out[,1],log10(nm.mpn.out[,3]))
+```
+
+# Plate reader data 
+
+```{r}
+# Load data and run Gompertz
+
+nm.plate <- read.csv("~/Github/MinimalCell/scripts/5.GrowthCurves/data/mpn.platereader.NM.csv")
+m.plate <- read.csv("~/Github/MinimalCell/scripts/5.GrowthCurves/data/mpn.platereader.M.csv")
+
+# Change times to numeric
+nm.plate$Time <- as.numeric(sub("^(\\d+):(\\d+).*", "\\1.\\2", nm.plate$Time))
+head(nm.plate, header = T)
+
+m.plate$Time <- as.numeric(sub("^(\\d+):(\\d+).*", "\\1.\\2", m.plate$Time))
+head(m.plate, header = T)
+
+# Pull out wells over time
+nm.wells <-  nm.plate[,c(1:48)]
+m.wells <-  m.plate[,c(1,11:16,19:24,27:32,36:40,43:48,52:56)]
+
+# Run Gompertz (only need to run once then comment out)
+
+#nm.curves <- growth.modGomp(input = nm.wells, output.name = "nm.platereader.parms",
+#               synergy = F, temp = F, smooth = T, trim = T)
+#m.curves <- growth.modGomp(input = m.wells, output.name = "m.platereader.parms",
+#               synergy = F, temp = F, smooth = T, trim = T)
+
+nm.curves.out <- read.table("~/Github/MinimalCell/scripts/5.GrowthCurves/output/nm.platereader.parms.txt", 
+                            sep = ",", header=TRUE)
+
+m.curves.out <- read.table("~/Github/MinimalCell/scripts/5.GrowthCurves/output/m.platereader.parms.txt", 
+                            sep = ",", header=TRUE)
+```
+
+# Calculate summaries of plate reader data
+```{r}
+nm.umax.range <- nm.curves.out %>%
+  filter(umax == min(umax) | umax == max(umax))
+nm.mean.parms <- nm.curves.out %>%
+  plyr::summarise(b0 = mean(b0), A = mean(A), umax = mean(umax), lag = mean(L))
+nm.cv.parms <- nm.curves.out %>%
+  plyr::summarise(cv.A = cv(A), cv.umax = cv(umax), cv.lag = cv(L))
+  
+m.umax.range <- m.curves.out %>%
+  filter(umax == min(umax) | umax == max(umax))
+m.mean.parms <- m.curves.out %>%
+  dplyr::summarise(b0 = mean(b0), A = mean(A), umax = mean(umax), lag = mean(L))
+m.cv.parms <- m.curves.out %>%
+  plyr::summarise(cv.A = cv(A), cv.umax = cv(umax), cv.lag = cv(L))
+
+# Calculate Gompertz lines to plot
+t <- seq(1, 28, 0.5)
+
+nm.plot <- nm.mean.parms[1,1] + nm.mean.parms[1,2] * exp(-exp(nm.mean.parms[1,3]
+               * exp(1) * (nm.mean.parms[1,4] - t)/ nm.mean.parms[1,2] + 1))
+
+m.plot <- m.mean.parms[1,1] + m.mean.parms[1,2] * exp(-exp(m.mean.parms[1,3]
+               * exp(1) * (m.mean.parms[1,4] - t)/ m.mean.parms[1,2] + 1))
+```
+
+# Make figure
+```{r}
+png(filename="~/GitHub/MinimalCell/figures/3.supplementary/FigS1.png",
+               width = 1200, height = 1200, res = 96*2)
+plot.new()
+par(mfrow=c(2,1))
+#par(mar=c(2,8,2,8), xpd = TRUE)
+par(xpd=FALSE)
+par(mar=c(2,8,2,8))
+par(oma=c(4,0,2,0))
+
+# Non-minimal points
+
+# Create plot with absorbance data first
+plot(t, nm.plot, xlim = c(-2, 32), ylim = c(0.5, 2), type = "l", 
+     col = "white", cex = 1.0, ylab = "", xlab = "",
+     cex.lab = 2.0, las = 1, lwd = 2, yaxt = "n", xaxt = "n")
+box(lwd=2)
+
+# Add axes and labels for absorbance data
+axis(side = 1, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("0", "10", "20", "30"), at = c(0, 10, 20, 30))
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1, 
+     labels = c("0.75", "1.25", "1.75"), at = c(0.75, 1.25, 1.75))
+axis(side = 3, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at = c(0, 10, 20, 30), labels = F)
+mtext(expression('Time (h)'), side = 1,
+     outer = TRUE, cex = 2, line = 2.5, adj = 0.5)
+mtext(expression('Absorbance (a'[415]*')'), side = 2, outer = TRUE, 
+      cex = 2, line = -2.5, adj = 0.55)
+mtext(expression('Cells mL'^-1), side = 4, outer = TRUE, 
+      cex = 2, line = -2.5, adj = 0.55)
+text(25, 0.65, labels = "Non-minimal", cex = 1.25)
+text(10, 0.6, labels = "Lag", cex = 0.85, col = "grey")
+text(3, 1.5, labels = "Yield", cex = 0.85, col = "grey")
+text(17, 1.75, expression(paste(mu, "max")), cex = 0.85, col = "grey")
+
+# Add lines for yield
+abline(h = nm.mean.parms[1,2] + nm.mean.parms[1,1], lty = 2, 
+       col = "grey", lwd = 2)
+# Add lines for umax
+abline(-nm.mean.parms[1,3]*(nm.mean.parms[1,4] -
+       (nm.mean.parms[1,1]/nm.mean.parms[1,3])), nm.mean.parms[1,3], 
+       lty = 2, col = "grey", lwd = 2)
+# Add lines for lag
+abline(v = nm.mean.parms[1,4], lty = 2, col = "gray", lwd = 2)
+
+# Add second axis for MPN values
+par(new = TRUE) 
+plot(nm.mpn.out[,1], nm.mpn.out[,3], xlim = c(-2,32), ylim = c(10000, 1e+10), 
+     type = "p", pch = 21, col = "lightblue", bg = "lightblue", 
+     cex = 1.0, log = "y", ylab = "", xlab = "", cex.lab = 2.0, las = 1, 
+     lwd = 2, yaxt = "n", xaxt = "n")
+
+# Add axes and labels
+x.ticks <- c(5,6,7,8,9)
+x.labels <- sapply(x.ticks, function(i) as.expression(bquote(10^ .(i))))
+
+axis(4, at=c(1e+05, 1e+06, 1e+07, 1e+08, 1e+09), labels=x.labels, 
+     lwd.ticks = 2, cex.axis = 1.25, las = 1)
+axis(side = 1, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("0", "10", "20", "30"), at = c(0, 10, 20, 30))
+
+# Add Gompertz line in front of other data
+par(new = TRUE) 
+plot(t, nm.plot, xlim = c(-2, 32), ylim = c(0.5, 2), type = "l", 
+     col = "blue", cex = 1.0, ylab = "", xlab = "",
+     cex.lab = 2.0, las = 1, lwd = 2, yaxt = "n", xaxt = "n")
+
+# Minimal points
+
+# Create plot with absorbance data first
+plot(t, m.plot, xlim = c(-2, 32), ylim = c(0.65, 1.25), type = "l", 
+     col = "red", cex = 1.0, ylab = "", xlab = "",
+     cex.lab = 2.0, las = 1, lwd = 2, yaxt = "n", xaxt = "n")
+box(lwd=2)
+
+# Add axes and labels for absorbance data
+axis(side = 1, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("0", "10", "20", "30"), at = c(0, 10, 20, 30))
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1, 
+     labels = c("0.85", "1.00", "1.15"), at = c(0.85, 1, 1.15))
+axis(side = 3, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at = c(0, 10, 20, 30), labels = F)
+text(26, 0.7, labels = "Minimal", cex = 1.25)
+text(15, 0.68, labels = "Lag", cex = 0.85, col = "grey")
+text(5, 1.08, labels = "Yield", cex = 0.85, col = "grey")
+text(28, 1.15, expression(paste(mu, "max")), cex = 0.85, col = "grey")
+
+# Add lines for yield
+abline(h = m.mean.parms[1,2] + m.mean.parms[1,1], lty = 2, 
+       col = "grey", lwd = 2)
+# Add lines for umax
+abline(-m.mean.parms[1,3]*(m.mean.parms[1,4] -
+       (m.mean.parms[1,1]/m.mean.parms[1,3])), m.mean.parms[1,3], 
+       lty = 2, col = "grey", lwd = 2)
+# Add lines for lag
+abline(v = m.mean.parms[1,4], lty = 2, col = "gray", lwd = 2)
+
+# Add second axis for MPN values
+par(new = TRUE) 
+plot(m.mpn.out[,1], m.mpn.out[,3], xlim = c(-2,32), ylim = c(100, 1e+10), 
+     type = "p", pch = 21, col = "pink", bg = "pink", 
+     cex = 1.0, log = "y", ylab = "", xlab = "", cex.lab = 2.0, las = 1, 
+     lwd = 2, yaxt = "n", xaxt = "n")
+
+# Add axes and labels
+x.ticks <- c(4,5,6,7,8,9)
+x.labels <- sapply(x.ticks, function(i) as.expression(bquote(10^ .(i))))
+
+axis(4, at=c(1e+04, 1e+05, 1e+06, 1e+07, 1e+08, 1e+09), labels=x.labels, 
+     lwd.ticks = 2, cex.axis = 1.25, las = 1)
+
+
+# Close plot device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/3.supplementary/FigS1.png")
+grid.raster(img)
+```

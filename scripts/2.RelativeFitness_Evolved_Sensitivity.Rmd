@@ -1,0 +1,439 @@
+---
+title: "Evolution of the minimal cell"
+author: "Roy Moger-Reischer and Jay T. Lennon"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+header-includes:
+   - \usepackage{array}
+output: pdf_document
+geometry: margin=2.54cm
+---
+
+## This file corresponds with Figshare analysis where a sensivity analysis was  
+## perfomred withFACS data to see whether regating affected estimates of relative
+## fitness depicted in Fig. 2
+
+## Clear workspace and set directory
+```{r setup}
+rm(list=ls())
+getwd()
+setwd("~/GitHub/MinimalCell")
+```
+
+## Load packages and functions
+```{r}
+require("png")
+require("dplyr")
+require("grid")
+sem <- function(x) sqrt(var(x)/length(x))
+cv <- function(x) (sd(x)/mean(x))*100
+```
+
+# Load data
+```{r}
+# Load data
+rel.fit.raw <-read.csv("~/GitHub/MinimalCell/datafiles/Interaction_data_fitness_altered.gating.a.little.more.stringent.csv")
+rel.fit.raw <- as_tibble(rel.fit.raw)
+
+# Subset data
+rel.fit <- rel.fit.raw %>% group_by(timepoint, strain) %>% 
+  summarise(mean = mean(W_1.0), sd = sd(W_1.0), sem = sem(W_1.0), CV = cv(W_1.0))
+
+# Set data as factors and rename levels
+rel.fit$strain <- as.factor(rel.fit$strain)
+levels(rel.fit$strain)[levels(rel.fit$strain)=="JCVI-syn1.0"] <- "Nonminimal"
+levels(rel.fit$strain)[levels(rel.fit$strain)=="JCVI-syn3B"] <- "Minimal"
+rel.fit$strain <- factor(rel.fit$strain, levels=c("Nonminimal","Minimal"))
+
+# Add x-values for plotting
+time.x <- c(1, 1, 3, 3)
+rel.fit <- data.frame(rel.fit, time.x)
+
+# Subset relative fitness by strain
+rel.fit.nm  <- filter(rel.fit, strain == "Nonminimal") %>%
+  dplyr::select(timepoint, mean, sd, sem, time.x)
+
+rel.fit.m  <- filter(rel.fit, strain== "Minimal") %>%
+  dplyr::select(timepoint, mean, sd, sem, time.x)
+```
+
+## Tests significance
+
+```{r}
+# 1. Differences in relative fitness between ancestors (non-minimal vs. minimal)?
+# There is only one ancestor for non-minimal and minimal cell.
+# Answer = Yes: t = 8.5901, df = 3.055, P = 0.003048
+# Minimization led to 60 % reduction in fitness (compared to 53% with original gate)
+
+rel.fit.anc  <- filter(rel.fit.raw, timepoint == "Ancestor") %>%
+  dplyr::select(strain, W_1.0)
+
+# Test for equal variance: P = 0.0166 --> non-homogeneous variance
+equal.var.anc <-var.test(rel.fit.anc$W_1.0[1:3], rel.fit.anc$W_1.0[4:7])
+
+test.anc <- t.test(rel.fit.anc$W_1.0 ~ rel.fit.anc$strain, var.equal = F)
+
+# 2. Differences in relative fitness between evolved lines (non-minimal vs. minimal)?
+# Four replicate lines for each cell type. 
+# Answer = Yes: t = 5.501, df = 6, p-value = 0.001513
+# After evolution, minimization had 31% cost (compared to 28% with original gate)
+
+rel.fit.evo  <- filter(rel.fit.raw, timepoint == "Evolved") %>%
+  dplyr::select(strain, W_1.0)
+
+# Test for equal variance: P = 0.28 --> homogeneous variance
+equal.var.evo <-var.test(rel.fit.evo$W_1.0[1:4], rel.fit.evo$W_1.0[5:8])
+
+test.evo <- t.test(rel.fit.evo$W_1.0 ~ rel.fit.evo$strain, var.equal = T)
+
+# 3. Test evolutionary trajectories of minimal and non-minimal cell
+# First step is to calculate fitness differences for all treatment combinations
+# Then run GLM without intercept to test whether treatments are different from zero
+# Then run same GLM with intercept to test for different is means among treatments
+
+# Nonminimal - nonminimal
+nm.evo.w  <- filter(rel.fit.evo, strain == "JCVI-syn1.0") %>%
+  dplyr::select(W_1.0) 
+nm.evo.w <- as.numeric(unlist(nm.evo.w))
+delta.nm.nm <- nm.evo.w - rel.fit.nm[1,2] 
+delta.nm.nm.mean <- mean(delta.nm.nm)
+delta.nm.nm.sem <- sem(delta.nm.nm)
+delta.nm.nm.95.UL <- delta.nm.nm.mean + qnorm(0.975) * delta.nm.nm.sem
+delta.nm.nm.95.LL <- delta.nm.nm.mean + qnorm(0.025) * delta.nm.nm.sem
+
+# Minimal - minimal
+m.evo.w  <- filter(rel.fit.evo, strain == "JCVI-syn3B") %>%
+  dplyr::select(W_1.0)
+m.evo.w <- as.numeric(unlist(m.evo.w))
+delta.m.m <- m.evo.w - rel.fit.m[1,2]
+delta.m.m.mean <- mean(delta.m.m)
+delta.m.m.sem <- sem(delta.m.m)
+delta.m.m.95.UL <- delta.m.m.mean + qnorm(0.975) * delta.m.m.sem
+delta.m.m.95.LL <- delta.m.m.mean + qnorm(0.025) * delta.m.m.sem
+
+# Nonminimal - minimal (this comparison is not relevant to questions)
+delta.nm.m <- nm.evo.w  - rel.fit.m[1,2]
+delta.nm.m.mean <- mean(delta.nm.m)
+delta.nm.m.sem <- sem(delta.nm.m)
+delta.nm.m.95.UL <- delta.nm.m.mean + qnorm(0.975) * delta.nm.m.sem
+delta.nm.m.95.LL <- delta.nm.m.mean + qnorm(0.025) * delta.nm.m.sem
+
+# Minimal- nonminimal 
+delta.m.nm <- m.evo.w  - rel.fit.nm[1,2]
+delta.m.nm.mean <- mean(delta.m.nm)
+delta.m.nm.sem <- sem(delta.m.nm)
+delta.m.nm.95.UL <- delta.m.nm.mean + qnorm(0.975) * delta.m.nm.sem
+delta.m.nm.95.LL <- delta.m.nm.mean + qnorm(0.025) * delta.m.nm.sem
+
+# Create dataframe for test
+
+# Code for all four comparisons
+#delta <- data.frame(delta.w = c(delta.nm.nm, delta.m.m, delta.nm.m, delta.m.nm),
+#  comp = c(rep("nm.nm", 4), rep("m.m", 4), rep("nm.m",4), rep("m.nm", 4)))
+#delta$comp<-factor(delta$comp)
+
+# Code for three comparisons
+delta <- data.frame(delta.w = c(delta.nm.nm, delta.m.m, delta.m.nm),
+  comp = c(rep("nm.nm", 4), rep("m.m", 4), rep("m.nm", 4)))
+delta$comp<-factor(delta$comp)
+
+# GLM without intercept: test whether groups of delta fitness values different from zero
+# All delta fitness are highly significant
+
+#       Estimate Std. Error t value Pr(>|t|)    
+#m.m    0.41598    0.03724  11.170 1.41e-06 ***
+#m.nm  -0.17950    0.03724  -4.820 0.000947 ***
+#nm.nm  0.19591    0.03724   5.261 0.000520 ***
+
+delta.fit1 <- lm(delta.w ~ comp - 1, data = delta)
+
+# GLM with intercept: test whether groups of delta fitness equal to each other
+# (picks first [m.m] alphabetically and compares the others relative to that)
+# Relevant test = `nm.nm`: fitness differences for minimal vs. non-minimal 
+
+#       Estimate Std. Error t value Pr(>|t|)    
+#(Int)   0.41598    0.03724  11.170 1.41e-06 ***
+#m.nm   -0.59548    0.05267 -11.307 1.28e-06 ***
+#m.nm   -0.22007    0.05267  -4.179  0.00238 ** 
+
+delta.fit2 <- lm(delta.w ~ comp, data = delta)
+
+# Correct p-values for multiple comparisons
+
+p.val.anc <- test.anc$p.value
+p.val.evo <- test.evo$p.value
+p.values.fit1.all <- summary(delta.fit1)$coefficients[,c(4)]
+p.val.restore <- as.numeric(unlist(p.values.fit1.all[2]))
+p.val.fit2.all <- summary(delta.fit2)$coefficients[,c(4)]
+p.val.intx <- as.numeric(unlist(p.val.fit2.all[3]))   
+p.vals <- c(p.val.anc, p.val.evo, p.val.restore, p.val.intx)
+rank <- rank(p.vals)
+#m <- length(p.values.sorted)
+m <- length(p.vals)
+
+# Calculate the Benjamini-Hochberg adjusted p-values
+adjusted.p.vals <- (m / rank) * p.vals
+adjusted.p.vals <- pmin(adjusted.p.vals, 1) # Set adjusted p-values to 1 if they exceed 1
+
+# Sort the adjusted p-values by their corresponding original p-values
+sorted.indices <- order(p.vals)
+adjusted.p.vals <- adjusted.p.vals[sorted.indices]
+
+# Identify the significant tests using the adjusted p-value threshold
+alpha <- 0.05
+adjusted.alpha <- alpha / m
+significant.tests <- which(adjusted.p.vals <= adjusted.alpha)
+
+cat("Adjusted p-values:", adjusted.p.vals, "\n")
+cat("Significant tests:", significant.tests, "\n")
+
+# Difference in fitness between minimal and wt after evolution?
+# Answer = Yes: t = 6, df = 6, p-value = 0.0007061
+
+#test.minvswtanc <- t.test(x=rel.fit.evo$W_1.0[5:8], mu = 1, alternative = 't')
+#test.minvswtanc
+#Difference in fitness between evolved minimal cel popns and non-min anc fitness?
+#With altered gating: Yes. p = .006302
+
+#With original gating: #No. p = .92
+
+#wt.w  <- filter(rel.fit.evo, strain == "JCVI-syn1.0") %>%
+#  dplyr::select(W_1.0)
+#wt.delt.w <- wt.w - rel.fit.wt[1,2]
+
+#min.w  <- filter(rel.fit.evo, strain == "JCVI-syn3B") %>%
+#  dplyr::select(W_1.0)
+#min.delt.w <- min.w - rel.fit.min[1,2]
+
+#delta.w <- data.frame(wt.delt.w, min.delt.w)
+#colnames(delta.w) <-c("Non-minimal", "Minimal")
+
+# Test for equal variance: P = 0.28 --> homogeneous variance
+#equal.var.delta <- var.test(delta.w$"Non-minimal", delta.w$Minimal)
+
+#test.delta <- t.test(delta.w$"Non-minimal", delta.w$Minimal, var.equal = T)
+
+#Does the magnitude of fitness-increase differ between the minimal and the non-minimal populations?
+# With altered gating: Yes, t = -3.7, df = 6, p = 0.009723
+
+#Previously: "No, but it's close, t= 2.16, df=6, p=0.07441"
+```
+
+# Create figure for regated relative finess (Fig. 2)
+
+```{r}
+png(filename="~/GitHub/MinimalCell/figures/4.figshare/1.rel_fitness.regate.png",
+    width = 1200, height = 1200, res = 96*2) 
+
+par(mar = c(7, 7, 5, 7))
+
+# initiate plot with points for syn3B ancestor (minimal)
+plot(jitter(rep(1, length(rel.fit.anc$W_1.0[1:3])), amount = 0.5), 
+     rel.fit.anc$W_1.0[1:3], ylim = c(0.25, 1.65), xlim = c(0, 4.55), 
+     pch = 21, bg = "pink", col = "pink", lwd = 2, cex = 1.3, yaxt = "n", 
+      xaxt = "n", cex.lab = 1.5, las = 1,  ylab = "", xlab = "")
+
+box(lwd=2)
+
+# add points for for syn 1.0 ancestor (non-minimal)
+points(jitter(rep(1, length(rel.fit.anc$W_1.0[4:7])), amount = 0.5), 
+       rel.fit.anc$W_1.0[4:7], pch = 21, bg = "lightblue", col = "lightblue", 
+       lwd = 2, cex = 1.3)
+
+# add points for syn 3B evolved (minimal)
+points(jitter(rep(3, length(rel.fit.evo$W_1.0[5:8])), amount = 0.4), 
+       rel.fit.evo$W_1.0[5:8], pch = 21, bg = "pink", col = "pink", 
+       lwd = 2, cex = 1.3)
+
+# add points for syn1.0 evolved (non-minimal)
+points(jitter(rep(3, length(rel.fit.evo$W_1.0[1:4])), amount = 0.4), 
+       rel.fit.evo$W_1.0[1:4], pch = 21, bg = "lightblue", col = "lightblue", 
+       lwd = 2, cex = 1.3)
+
+# Add error bars
+arrows(x0 = rel.fit.nm$time.x, y0 = rel.fit.nm$mean, 
+       y1 = rel.fit.nm$mean + rel.fit.nm$sem, 
+       angle = 90, length = 0.1, lwd = 2, col = "blue")
+arrows(x0 = rel.fit.nm$time.x, y0 = rel.fit.nm$mean, 
+       y1 = rel.fit.nm$mean - rel.fit.nm$sem, 
+       angle = 90, length=0.1, lwd = 2, col = "blue")
+arrows(x0 = rel.fit.m$time.x, y0 = rel.fit.m$mean, 
+       y1 = rel.fit.m$mean + rel.fit.m$sem, 
+       angle = 90, length = 0.1, lwd = 2, col = "red")
+arrows(x0 = rel.fit.m$time.x, y0 = rel.fit.m$mean, 
+       y1 = rel.fit.m$mean - rel.fit.m$sem, 
+       angle = 90, length=0.1, lwd = 2, col = "red")
+
+# Add axes and labels
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("0.5", "1.0", "1.5"), at = c(0.5, 1, 1.5))
+axis(side = 4, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at=c(0.5, 1, 1.5), labels = F)
+axis(side = 3, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at = c(1, 3), labels = F)
+axis(side = 1, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("Ancestor", "Evolved"), 
+     col.axis = "darkgray", at = c(1, 3))
+mtext(expression('Time'), side = 1,
+      outer = TRUE, cex = 1.5, line = -3.5, adj = 0.45)
+mtext(expression("Relative fitness ("~italic("W")~")"), side = 2, 
+      outer = TRUE, cex = 1.5, line = -4, adj = 0.55)
+
+# Add line segments
+segments(rel.fit.nm$time.x[1], rel.fit.nm$mean[1], rel.fit.nm$time.x[2], 
+         rel.fit.nm$mean[2], col = "blue", lwd = 2)
+segments(rel.fit.m$time.x[1], rel.fit.m$mean[1], rel.fit.m$time.x[2], 
+         rel.fit.m$mean[2], col = "red", lwd = 2)
+
+# Add non-minimal points
+points(rel.fit.nm$time.x, rel.fit.nm$mean, pch = 22, 
+      bg = "blue", col = "blue", lwd = 2, cex = 2)
+
+# Add minimal points
+points(rel.fit.m$time.x, rel.fit.m$mean, pch = 22, 
+      bg = "red", col = "red", lwd = 2, cex = 2)
+
+# Add strain identifier
+text(3.9, rel.fit.nm$mean[2], labels = "Non-minimal", cex = 1.0)
+text(3.9, rel.fit.m$mean[2], labels = "Minimal", cex = 1.0)
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/4.figshare/1.rel_fitness.regate.png")
+
+grid.raster(img)
+```
+
+# Create figure for regated delta relative finess (Fig. S2)
+
+```{r}
+png(filename="~/GitHub/MinimalCell/figures/4.figshare/1.delta_rel_fitness.regate.png",
+    width = 1200, height = 1200, res = 96*2) 
+
+par(mar = c(8, 7, 5, 7))
+
+delta.fig <- plot(jitter(rep(1, length(delta.m.nm)), amount = 0.1), 
+      delta.m.nm, ylim = c(-0.4, 0.9), xlim = c(0.5, 3.5), pch = 21, 
+      col = "lightgrey", bg = "lightgrey", lwd = 3.5, cex = 1.7, yaxt = "n", 
+      xaxt = "n", cex.lab = 2, cex.axis = 2, las = 1, ylab = "", xlab = "")
+      box(lwd = 2)
+      
+points(jitter(rep(2, length(delta.m.m)), amount = 0.1), delta.m.m, 
+       pch = 21, bg = "lightgrey", col = "lightgrey", lwd = 2, cex = 1.7)
+
+points(jitter(rep(3, length(delta.nm.nm)), amount = 0.1), delta.nm.nm, 
+       pch = 21, bg = "lightgrey", col = "lightgrey", lwd = 2, cex = 1.7)
+
+#points(jitter(rep(4, length(delta.nm.m)), amount = 0.1), delta.nm.m, 
+#       pch = 21, bg = "lightgrey", col = "lightgrey", lwd = 2, cex = 1.7)
+
+abline(h= 0, lty = 2, lwd = 1, col="grey")
+
+# Add mean  
+points(1, delta.m.nm.mean, pch = 21, col = "red", 
+       bg = "blue", lwd = 3, cex = 2)  
+points(2, delta.m.m.mean, pch = 21, col = "red", 
+       bg = "red", lwd = 2, cex = 2)
+points(3, delta.nm.nm.mean, pch = 21, col = "blue", 
+       bg = "blue", lwd = 2, cex = 2)
+#points(4, delta.nm.m.mean, pch = 21, col = "blue", 
+#       bg = "red", lwd = 3, cex = 2)  
+
+# Y-axis label # 
+
+mtext(expression(Delta~italic("W")~""), side = 2, 
+      outer = TRUE, cex = 1.5, line = -3, adj = 0.55)
+
+mtext(expression('Ancestor-evolved comparison'), side = 1,
+      outer = TRUE, cex = 1.5, line = -1, adj = 0.5)
+
+# Major Axes
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("0.0", "0.4", "0.8"), at = c(0, 0.4, 0.8))
+axis(side = 4, lwd.ticks = 2, cex.axis = 1.5, las = 1,
+     at=c(0, 0.4, 0.8), labels = F, tck = -0.02)
+axis(side = 1, lwd.ticks = 2, cex.axis = 0.4, las = 1,
+     at = c(1, 2, 3, 4), labels = F, tck = -0.02)
+axis(side = 3, lwd.ticks = 2, cex.axis = 0.4, las = 1,
+     at = c(1, 2, 3, 4), labels = F, tck = -0.02)
+
+# Add x-axis labels
+text(x = 1, y = -0.5, label = "min-nonmin", col = "grey", srt = 90, 
+     xpd = NA, cex = 0.85, adj = 1)
+text(x = 2, y = -0.5, label = "min-min", col = "grey", srt = 90, 
+     xpd = NA, cex = 0.85, adj = 1)
+text(x = 3, y = -0.5, label = "nonmin-nonmin", col = "grey", srt = 90, 
+     xpd = NA, cex = 0.85, adj = 1)
+#text(x = 4, y = -0.58, label = "nonmin-min", col = "grey", srt = 90, 
+#    xpd = NA, cex = 0.85)
+
+# Add confidence intervals 
+arrows(x0 = 1, y0 = delta.m.nm.mean, y1 = delta.m.nm.95.UL, angle = 90,
+       length = 0.15, lwd = 2)
+arrows(x0 = 1, y0 = delta.m.nm.mean, y1 = delta.m.nm.95.LL, angle = 90,
+       length = 0.15, lwd = 2)
+
+arrows(x0 = 2, y0 = delta.m.m.mean, y1 = delta.m.m.95.UL, angle = 90,
+       length = 0.15, lwd = 2)
+arrows(x0 = 2, y0 = delta.m.m.mean, y1 = delta.m.m.95.LL, angle = 90,
+       length = 0.15, lwd = 2)
+
+arrows(x0 = 3, y0 = delta.nm.nm.mean, y1 = delta.nm.nm.95.UL, angle = 90,
+       length = 0.15, lwd = 2)
+arrows(x0 = 3, y0 = delta.nm.nm.mean, y1 = delta.nm.nm.95.LL, angle = 90,
+       length = 0.15, lwd = 2)
+
+#arrows(x0 = 4, y0 = delta.nm.m.mean, y1 = delta.nm.m.95.UL, angle = 90,
+#       length = 0.15, lwd = 2)
+#arrows(x0 = 4, y0 = delta.nm.m.mean, y1 = delta.nm.m.95.LL, angle = 90,
+#       length = 0.15, lwd = 2)
+
+# Add P-values
+text(x = 1, y = -0.35, expression(~ italic("P")~ "<0.0001"), cex = 0.95, col = "grey")
+text(x = 2, y = -0.35, expression(~ italic("P")~ "< 0.0001"), cex = 0.95, col = "grey")
+text(x = 3, y = -0.35, expression(~ italic("P")~ "< 0.0001"), cex = 0.95, col = "grey")
+
+# Add comparison of interaction terms
+segments(2, 0.65, 3, 0.65, col = "grey", lwd = 1.25, xpd = NA)
+segments(2, 0.6, 2, 0.65, col = "grey", lwd = 1.25, xpd = NA)
+segments(3, 0.48, 3, 0.65, col = "grey", lwd = 1.25, xpd = NA)
+text(x = 2.5, y = 0.75, expression(~ italic("P")~ "= 0.0024"), cex = 0.95, col = "grey")
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/4.figshare/1.delta_rel_fitness.regate.png")
+
+grid.raster(img)
+```
+
+
+
+
+# Demonstrate the equations to calculate relative fitness
+```{r}
+# Load data
+calcsheet <-read.csv("~/GitHub/MinimalCell/datafiles/Competition_2019.csv")
+calcsheet <- as_tibble(calcsheet)
+
+# Calculate the T0 abundance of the strain-of-interest by subtracting background noise
+calcsheet2 <- mutate(calcsheet, T0_SOI_calculated = T0_SOI_raw - (T0_Cax_neg / 
+          T0_Cax_time * T0_Sampling_time))
+# Calc the T24 abundance of the SOI by subtracting background noise. Multiply by 100 to account for dilution difference.
+calcsheet3 <- mutate(calcsheet2, T24_SOI_calculated = T24_SOI_raw - (T24_Cax_neg / 
+          T24_Cax_time * T24_Sampling_time * 100))
+# Calculate fitness over 24 hr relative to the labeled competitor strain
+calcsheet4 <- mutate(calcsheet3, W_vs_mCherry_calculated = log(T24_SOI_calculated / 
+          T0_SOI_calculated) / log(T24_mCherry / T0_mCherry))
+# Divide by the avg fitness of the syn1.0 ancestor
+calcsheet5 <- mutate(calcsheet4, W_vs_syn1.0anc_calculated = 
+          W_vs_mCherry_calculated / 1.479025287)
+# Divide by the avg fitness of the syn3B ancestor
+calcsheet6 <- mutate(calcsheet5, W_vs_syn3Banc_calculated = 
+          W_vs_mCherry_calculated / 0.69419982)
+```
+

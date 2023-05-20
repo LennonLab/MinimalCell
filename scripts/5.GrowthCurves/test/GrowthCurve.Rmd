@@ -1,0 +1,1779 @@
+---
+title: "Evolution of the minimal cell - Growth Curves"
+author: "Jay T. Lennon and Brent Lehmkuhl"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+header-includes:
+  - \usepackage{array}
+output: pdf_document
+geometry: margin=2.54cm
+---
+
+## Clear workspace and set directory
+```{r setup}
+rm(list=ls())
+setwd("~/Github/MinimalCell/scripts/5.GrowthCurves/test")
+```
+
+## Load packages and functions
+```{r}
+require("png")
+require("dplyr")
+require("grid")
+require("gtools")
+require("nlme")
+require("MuMIn")
+require("bbmle")
+source("../bin/modified_Gomp_diagnostic3.R")
+sem <- function(x) sqrt(var(x)/length(x))
+cv <- function(x) 100*( sd(x)/mean(x))
+```
+
+# Load data and run Gompertz
+```{r}
+
+###### NM: bioreplicate 1 plate ######
+
+nm.b1 <- read.csv("../data/batch_NM_1.csv")
+
+# Change times to numeric
+nm.b1$Time <- as.numeric(sub("^(\\d+):(\\d+).*", "\\1.\\2", nm.b1 $Time))
+head(nm.b1, header = T)
+
+# Pull out wells over time
+nm.0 <-  nm.b1[,c(1,2,12,22)]
+nm.10 <-  nm.b1[,c(1,32,41,50)]
+nm.20 <-  nm.b1[,c(1,3,13,23)]
+nm.30 <-  nm.b1[,c(1,33,42,51)]
+nm.40 <-  nm.b1[,c(1,4,14,24)]
+nm.50 <-  nm.b1[,c(1,34,43,52)]
+nm.60 <-  nm.b1[,c(1,5,15,25)]
+nm.80 <-  nm.b1[,c(1,35,44,53)]
+nm.100 <-  nm.b1[,c(1,6,16,26)]
+nm.120 <-  nm.b1[, c(1,36,45,54)]
+nm.140 <-  nm.b1[,c(1,7,17,27)]
+nm.160 <-  nm.b1[,c(1,37,46,55)]
+nm.200 <-  nm.b1[,c(1,8,18,28)]
+nm.220 <-  nm.b1[,c(1,38,47,56)]
+nm.240 <-  nm.b1[1:which(nm.b1[,1] == 15.00), c(1,9,19,29)]
+nm.260 <-  nm.b1[1:which(nm.b1[,1] == 15.00), c(1,39,48,57)]
+nm.280 <-  nm.b1[,c(1,10,20,30)]
+nm.300 <-  nm.b1[1:which(nm.b1[,1] == 15.00), c(1,40,49,58)]
+jcvi <-  nm.b1[,c(1,11,21,31)]
+
+# Run Gompertz (only need to run once then comment out)
+
+ # nm.t0.1 <- growth.modGomp(input = nm.0, output.name = "nm.t0.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+ # nm.t10.1 <- growth.modGomp(input = nm.10, output.name = "nm.t10.1.parms",
+ #                 synergy = F, temp = F, smooth = T, trim = T)
+ # nm.t20.1  <- growth.modGomp(input = nm.20, output.name = "nm.t20.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+ # nm.t30.1  <- growth.modGomp(input = nm.30, output.name = "nm.t30.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+ # nm.t40.1  <- growth.modGomp(input = nm.40, output.name = "nm.t40.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+ # nm.t50.1  <- growth.modGomp(input = nm.50, output.name = "nm.t50.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+ # nm.t60.1  <- growth.modGomp(input = nm.60, output.name = "nm.t60.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+ # nm.t80.1  <- growth.modGomp(input = nm.80, output.name = "nm.t80.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+ # nm.t100.1  <- growth.modGomp(input = nm.100, output.name = "nm.t100.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+ # nm.t120.1  <- growth.modGomp(input = nm.120, output.name = "nm.t120.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+ # nm.t140.1  <- growth.modGomp(input = nm.140, output.name = "nm.t140.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+ # nm.t160.1  <- growth.modGomp(input = nm.160, output.name = "nm.t160.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+ # nm.t200.1  <- growth.modGomp(input = nm.200, output.name = "nm.t200.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+ # nm.t220.1  <- growth.modGomp(input = nm.220, output.name = "nm.t220.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+ # nm.t240.1  <- growth.modGomp(input = nm.240, output.name = "nm.t240.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+ # nm.t260.1  <- growth.modGomp(input = nm.260, output.name = "nm.t260.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+ # nm.t280.1  <- growth.modGomp(input = nm.280, output.name = "nm.t280.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+ # nm.t300.1  <- growth.modGomp(input = nm.300, output.name = "nm.t300.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+ # nm.jcvi.t1000.1  <- growth.modGomp(input = jcvi, output.name = "nm.jcvi.t1000.1.parms",
+ #                synergy = F, temp = F, smooth = T, trim = T)
+
+t0.out.nm.1 <- read.table("../output/nm.t0.1.parms.txt", sep = ",", header=TRUE)
+t10.out.nm.1 <- read.table("../output/nm.t10.1.parms.txt", sep = ",", header=TRUE)
+t20.out.nm.1 <- read.table("../output/nm.t20.1.parms.txt", sep = ",", header=TRUE)
+t30.out.nm.1 <- read.table("../output/nm.t30.1.parms.txt", sep = ",", header=TRUE)
+t40.out.nm.1 <- read.table("../output/nm.t40.1.parms.txt", sep = ",", header=TRUE)
+t50.out.nm.1 <- read.table("../output/nm.t50.1.parms.txt", sep = ",", header=TRUE)
+t60.out.nm.1 <- read.table("../output/nm.t60.1.parms.txt", sep = ",", header=TRUE)
+t80.out.nm.1 <- read.table("../output/nm.t80.1.parms.txt", sep = ",", header=TRUE)
+t100.out.nm.1 <- read.table("../output/nm.t100.1.parms.txt", sep = ",", header=TRUE)
+t120.out.nm.1 <- read.table("../output/nm.t120.1.parms.txt", sep = ",", header=TRUE)
+t140.out.nm.1 <- read.table("../output/nm.t140.1.parms.txt", sep = ",", header=TRUE)
+t160.out.nm.1 <- read.table("../output/nm.t160.1.parms.txt", sep = ",", header=TRUE)
+t200.out.nm.1 <- read.table("../output/nm.t200.1.parms.txt", sep = ",", header=TRUE)
+t220.out.nm.1 <- read.table("../output/nm.t220.1.parms.txt", sep = ",", header=TRUE)
+t240.out.nm.1 <- read.table("../output/nm.t240.1.parms.txt", sep = ",", header=TRUE)
+t260.out.nm.1 <- read.table("../output/nm.t260.1.parms.txt", sep = ",", header=TRUE)
+t280.out.nm.1 <- read.table("../output/nm.t280.1.parms.txt", sep = ",", header=TRUE)
+t300.out.nm.1 <- read.table("../output/nm.t300.1.parms.txt", sep = ",", header=TRUE)
+t1000.out.nm.1 <- read.table("../output/nm.jcvi.t1000.1.parms.txt", sep = ",", header=TRUE)
+
+treats.nm.1 <- read.csv("../data/treatments_batch1_NM.csv")
+treats.nm.1[rep(seq_len(nrow(treats.nm.1)), each = 19), ]
+
+
+###### NM: bioreplicate 2 plate ######
+
+nm.b2 <- read.csv("../data/batch_NM_2.csv")
+
+# Change times to numeric
+nm.b2 $Time <- as.numeric(sub("^(\\d+):(\\d+).*", "\\1.\\2", nm.b2 $Time))
+head(nm.b2, header = T)
+
+# Pull out wells over time
+nm.0 <-  nm.b2[,c(1,2,12,22)]
+nm.10 <-  nm.b2[,c(1,32,41,50)]
+nm.20 <-  nm.b2[,c(1,3,13,23)]
+nm.30 <-  nm.b2[,c(1,33,42,51)]
+nm.40 <-  nm.b2[,c(1,4,14,24)]
+nm.50 <-  nm.b2[,c(1,34,43,52)]
+nm.60 <-  nm.b2[,c(1,5,15,25)]
+nm.80 <-  nm.b2[,c(1,35,44,53)]
+nm.100 <-  nm.b2[,c(1,6,16,26)]
+nm.120 <-  nm.b2[,c(1,36,45,54)]
+nm.140 <-  nm.b2[,c(1,7,17,27)]
+nm.160 <-  nm.b2[,c(1,37,46,55)]
+nm.200 <-  nm.b2[,c(1,8,18,28)]
+nm.220 <-  nm.b2[,c(1,38,47,56)]
+nm.240 <-  nm.b2[,c(1,9,19,29)]
+nm.260 <-  nm.b2[,c(1,39,48,57)]
+nm.280 <-  nm.b2[,c(1,10,20,30)]
+nm.300 <-  nm.b2[,c(1,40,49,58)]
+jcvi <-  nm.b2[,c(1,11,21,31)]
+
+# Run Gompertz (only need to run once then comment out)
+
+# nm.t0.2 <- growth.modGomp(input = nm.0, output.name = "nm.t0.2.parms",
+#               synergy = F, temp = F, smooth = T, trim = T)
+# nm.t10.2 <- growth.modGomp(input = nm.10, output.name = "nm.t10.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t20.2  <- growth.modGomp(input = nm.20, output.name = "nm.t20.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t30.2  <- growth.modGomp(input = nm.30, output.name = "nm.t30.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t40.2  <- growth.modGomp(input = nm.40, output.name = "nm.t40.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t50.2  <- growth.modGomp(input = nm.50, output.name = "nm.t50.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t60.2  <- growth.modGomp(input = nm.60, output.name = "nm.t60.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t80.2  <- growth.modGomp(input = nm.80, output.name = "nm.t80.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t100.2  <- growth.modGomp(input = nm.100, output.name = "nm.t100.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t120.2  <- growth.modGomp(input = nm.120, output.name = "nm.t120.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t140.2  <- growth.modGomp(input = nm.140, output.name = "nm.t140.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t160.2  <- growth.modGomp(input = nm.160, output.name = "nm.t160.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t200.2  <- growth.modGomp(input = nm.200, output.name = "nm.t200.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t220.2  <- growth.modGomp(input = nm.220, output.name = "nm.t220.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t240.2  <- growth.modGomp(input = nm.240, output.name = "nm.t240.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t260.2  <- growth.modGomp(input = nm.260, output.name = "nm.t260.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t280.2  <- growth.modGomp(input = nm.280, output.name = "nm.t280.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t300.2  <- growth.modGomp(input = nm.300, output.name = "nm.t300.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.jcvi.t1000.2  <- growth.modGomp(input = jcvi, output.name = "nm.jcvi.t1000.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+
+t0.out.nm.2 <- read.table("../output/nm.t0.2.parms.txt", sep = ",", header=TRUE)
+t10.out.nm.2 <- read.table("../output/nm.t10.2.parms.txt", sep = ",", header=TRUE)
+t20.out.nm.2 <- read.table("../output/nm.t20.2.parms.txt", sep = ",", header=TRUE)
+t30.out.nm.2 <- read.table("../output/nm.t30.2.parms.txt", sep = ",", header=TRUE)
+t40.out.nm.2 <- read.table("../output/nm.t40.2.parms.txt", sep = ",", header=TRUE)
+t50.out.nm.2 <- read.table("../output/nm.t50.2.parms.txt", sep = ",", header=TRUE)
+t60.out.nm.2 <- read.table("../output/nm.t60.2.parms.txt", sep = ",", header=TRUE)
+t80.out.nm.2 <- read.table("../output/nm.t80.2.parms.txt", sep = ",", header=TRUE)
+t100.out.nm.2 <- read.table("../output/nm.t100.2.parms.txt", sep = ",", header=TRUE)
+t120.out.nm.2 <- read.table("../output/nm.t120.2.parms.txt", sep = ",", header=TRUE)
+t140.out.nm.2 <- read.table("../output/nm.t140.2.parms.txt", sep = ",", header=TRUE)
+t160.out.nm.2 <- read.table("../output/nm.t160.2.parms.txt", sep = ",", header=TRUE)
+t200.out.nm.2 <- read.table("../output/nm.t200.2.parms.txt", sep = ",", header=TRUE)
+t220.out.nm.2 <- read.table("../output/nm.t220.2.parms.txt", sep = ",", header=TRUE)
+t240.out.nm.2 <- read.table("../output/nm.t240.2.parms.txt", sep = ",", header=TRUE)
+t260.out.nm.2 <- read.table("../output/nm.t260.2.parms.txt", sep = ",", header=TRUE)
+t280.out.nm.2 <- read.table("../output/nm.t280.2.parms.txt", sep = ",", header=TRUE)
+t300.out.nm.2 <- read.table("../output/nm.t300.2.parms.txt", sep = ",", header=TRUE)
+t1000.out.nm.2 <- read.table("../output/nm.jcvi.t1000.2.parms.txt", sep = ",", header=TRUE)
+
+treats.nm.2 <- read.csv("../data/treatments_batch2_NM.csv")
+treats.nm.2[rep(seq_len(nrow(treats.nm.2)), each = 19), ]
+
+
+###### NM: bioreplicate 3 plate ######
+
+nm.b3 <- read.csv("../data/batch_NM_3.csv")
+
+# Change times to numeric
+nm.b3 $Time <- as.numeric(sub("^(\\d+):(\\d+).*", "\\1.\\2", nm.b3 $Time))
+head(nm.b3, header = T)
+
+# Pull out wells over time
+nm.0 <-  nm.b3[,c(1,2,12,22)]
+nm.10 <-  nm.b3[,c(1,32,41,50)]
+nm.20 <-  nm.b3[,c(1,3,13,23)]
+nm.30 <-  nm.b3[,c(1,33,42,51)]
+nm.40 <-  nm.b3[,c(1,4,14,24)]
+nm.50 <-  nm.b3[,c(1,34,43,52)]
+nm.60 <-  nm.b3[1:which(nm.b3[,1] == 15.00),c(1,5,15,25)]
+nm.80 <-  nm.b3[,c(1,35,44,53)]
+nm.100 <-  nm.b3[,c(1,6,16,26)]
+nm.120 <-  nm.b3[1:which(nm.b3[,1] == 15.00),c(1,36,45,54)]
+nm.140 <-  nm.b3[,c(1,7,17,27)]
+nm.160 <-  nm.b3[,c(1,37,46,55)]
+nm.200 <-  nm.b3[,c(1,8,18,28)]
+nm.220 <-  nm.b3[,c(1,38,47,56)]
+nm.240 <-  nm.b3[,c(1,9,19,29)]
+nm.260 <-  nm.b3[,c(1,39,48,57)]
+nm.280 <-  nm.b3[,c(1,10,20,30)]
+nm.300 <-  nm.b3[,c(1,40,49,58)]
+jcvi <-  nm.b3[,c(1,11,21,31)]
+
+# Run Gompertz (only need to run once then comment out)
+
+# nm.t0.3 <- growth.modGomp(input = nm.0, output.name = "nm.t0.3.parms",
+#               synergy = F, temp = F, smooth = T, trim = T)
+# nm.t10.3 <- growth.modGomp(input = nm.10, output.name = "nm.t10.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t20.3  <- growth.modGomp(input = nm.20, output.name = "nm.t20.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t30.3  <- growth.modGomp(input = nm.30, output.name = "nm.t30.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t40.3  <- growth.modGomp(input = nm.40, output.name = "nm.t40.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t50.3  <- growth.modGomp(input = nm.50, output.name = "nm.t50.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t60.3  <- growth.modGomp(input = nm.60, output.name = "nm.t60.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t80.3  <- growth.modGomp(input = nm.80, output.name = "nm.t80.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t100.3  <- growth.modGomp(input = nm.100, output.name = "nm.t100.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t120.3  <- growth.modGomp(input = nm.120, output.name = "nm.t120.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t140.3  <- growth.modGomp(input = nm.140, output.name = "nm.t140.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t160.3  <- growth.modGomp(input = nm.160, output.name = "nm.t160.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t200.3  <- growth.modGomp(input = nm.200, output.name = "nm.t200.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t220.3  <- growth.modGomp(input = nm.220, output.name = "nm.t220.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t240.3  <- growth.modGomp(input = nm.240, output.name = "nm.t240.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t260.3  <- growth.modGomp(input = nm.260, output.name = "nm.t260.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t280.3  <- growth.modGomp(input = nm.280, output.name = "nm.t280.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t300.3  <- growth.modGomp(input = nm.300, output.name = "nm.t300.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.jcvi.t1000.3  <- growth.modGomp(input = jcvi, output.name = "nm.jcvi.t1000.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+
+t0.out.nm.3 <- read.table("../output/nm.t0.3.parms.txt", sep = ",", header=TRUE)
+t10.out.nm.3 <- read.table("../output/nm.t10.3.parms.txt", sep = ",", header=TRUE)
+t20.out.nm.3 <- read.table("../output/nm.t20.3.parms.txt", sep = ",", header=TRUE)
+t30.out.nm.3 <- read.table("../output/nm.t30.3.parms.txt", sep = ",", header=TRUE)
+t40.out.nm.3 <- read.table("../output/nm.t40.3.parms.txt", sep = ",", header=TRUE)
+t50.out.nm.3 <- read.table("../output/nm.t50.3.parms.txt", sep = ",", header=TRUE)
+t60.out.nm.3 <- read.table("../output/nm.t60.3.parms.txt", sep = ",", header=TRUE)
+t80.out.nm.3 <- read.table("../output/nm.t80.3.parms.txt", sep = ",", header=TRUE)
+t100.out.nm.3 <- read.table("../output/nm.t100.3.parms.txt", sep = ",", header=TRUE)
+t120.out.nm.3 <- read.table("../output/nm.t120.3.parms.txt", sep = ",", header=TRUE)
+t140.out.nm.3 <- read.table("../output/nm.t140.3.parms.txt", sep = ",", header=TRUE)
+t160.out.nm.3 <- read.table("../output/nm.t160.3.parms.txt", sep = ",", header=TRUE)
+t200.out.nm.3 <- read.table("../output/nm.t200.3.parms.txt", sep = ",", header=TRUE)
+t220.out.nm.3 <- read.table("../output/nm.t220.3.parms.txt", sep = ",", header=TRUE)
+t240.out.nm.3 <- read.table("../output/nm.t240.3.parms.txt", sep = ",", header=TRUE)
+t260.out.nm.3 <- read.table("../output/nm.t260.3.parms.txt", sep = ",", header=TRUE)
+t280.out.nm.3 <- read.table("../output/nm.t280.3.parms.txt", sep = ",", header=TRUE)
+t300.out.nm.3 <- read.table("../output/nm.t300.3.parms.txt", sep = ",", header=TRUE)
+t1000.out.nm.3 <- read.table("../output/nm.jcvi.t1000.3.parms.txt", sep = ",", header=TRUE)
+
+treats.nm.3 <- read.csv("../data/treatments_batch3_NM.csv")
+treats.nm.3[rep(seq_len(nrow(treats.nm.3)), each = 19), ]
+
+###### NM: bioreplicate 4 plate ######
+
+nm.b4 <- read.csv("../data/batch_NM_4.csv")
+
+# Change times to numeric
+nm.b4 $Time <- as.numeric(sub("^(\\d+):(\\d+).*", "\\1.\\2", nm.b4 $Time))
+head(nm.b4, header = T)
+
+# Pull out wells over time
+nm.0 <-  nm.b4[,c(1,2,12,22)]
+nm.10 <-  nm.b4[,c(1,32,41,50)]
+nm.20 <-  nm.b4[,c(1,3,13,23)]
+nm.30 <-  nm.b4[,c(1,33,42,51)]
+nm.40 <-  nm.b4[,c(1,4,14,24)]
+nm.50 <-  nm.b4[,c(1,34,43,52)]
+nm.60 <-  nm.b4[,c(1,5,15,25)]
+nm.80 <-  nm.b4[,c(1,35,44,53)]
+nm.100 <-  nm.b4[,c(1,6,16,26)]
+nm.120 <-  nm.b4[,c(1,36,45,54)]
+nm.140 <-  nm.b4[,c(1,7,17,27)]
+nm.160 <-  nm.b4[,c(1,37,46,55)]
+nm.200 <-  nm.b4[,c(1,8,18,28)]
+nm.220 <-  nm.b4[,c(1,38,47,56)]
+nm.240 <-  nm.b4[,c(1,9,19,29)]
+nm.260 <-  nm.b4[,c(1,39,48,57)]
+nm.280 <-  nm.b4[,c(1,10,20,30)]
+nm.300 <-  nm.b4[,c(1,40,49,58)]
+jcvi <-  nm.b4[,c(1,11,21,31)]
+
+# Run Gompertz (only need to run once then comment out)
+
+# nm.t0.4 <- growth.modGomp(input = nm.0, output.name = "nm.t0.4.parms",
+#               synergy = F, temp = F, smooth = T, trim = T)
+# nm.t10.4 <- growth.modGomp(input = nm.10, output.name = "nm.t10.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t20.4  <- growth.modGomp(input = nm.20, output.name = "nm.t20.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t30.4  <- growth.modGomp(input = nm.30, output.name = "nm.t30.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t40.4  <- growth.modGomp(input = nm.40, output.name = "nm.t40.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t50.4  <- growth.modGomp(input = nm.50, output.name = "nm.t50.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t60.4  <- growth.modGomp(input = nm.60, output.name = "nm.t60.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t80.4  <- growth.modGomp(input = nm.80, output.name = "nm.t80.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t100.4  <- growth.modGomp(input = nm.100, output.name = "nm.t100.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t120.4  <- growth.modGomp(input = nm.120, output.name = "nm.t120.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t140.4  <- growth.modGomp(input = nm.140, output.name = "nm.t140.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t160.4  <- growth.modGomp(input = nm.160, output.name = "nm.t160.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t200.4  <- growth.modGomp(input = nm.200, output.name = "nm.t200.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t220.4  <- growth.modGomp(input = nm.220, output.name = "nm.t220.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t240.4  <- growth.modGomp(input = nm.240, output.name = "nm.t240.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t260.4  <- growth.modGomp(input = nm.260, output.name = "nm.t260.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t280.4  <- growth.modGomp(input = nm.280, output.name = "nm.t280.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.t300.4  <- growth.modGomp(input = nm.300, output.name = "nm.t300.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# nm.jcvi.t1000.4  <- growth.modGomp(input = jcvi, output.name = "nm.jcvi.t1000.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+
+t0.out.nm.4 <- read.table("../output/nm.t0.4.parms.txt", sep = ",", header=TRUE)
+t10.out.nm.4 <- read.table("../output/nm.t10.4.parms.txt", sep = ",", header=TRUE)
+t20.out.nm.4 <- read.table("../output/nm.t20.4.parms.txt", sep = ",", header=TRUE)
+t30.out.nm.4 <- read.table("../output/nm.t30.4.parms.txt", sep = ",", header=TRUE)
+t40.out.nm.4 <- read.table("../output/nm.t40.4.parms.txt", sep = ",", header=TRUE)
+t50.out.nm.4 <- read.table("../output/nm.t50.4.parms.txt", sep = ",", header=TRUE)
+t60.out.nm.4 <- read.table("../output/nm.t60.4.parms.txt", sep = ",", header=TRUE)
+t80.out.nm.4 <- read.table("../output/nm.t80.4.parms.txt", sep = ",", header=TRUE)
+t100.out.nm.4 <- read.table("../output/nm.t100.4.parms.txt", sep = ",", header=TRUE)
+t120.out.nm.4 <- read.table("../output/nm.t120.4.parms.txt", sep = ",", header=TRUE)
+t140.out.nm.4 <- read.table("../output/nm.t140.4.parms.txt", sep = ",", header=TRUE)
+t160.out.nm.4 <- read.table("../output/nm.t160.4.parms.txt", sep = ",", header=TRUE)
+t200.out.nm.4 <- read.table("../output/nm.t200.4.parms.txt", sep = ",", header=TRUE)
+t220.out.nm.4 <- read.table("../output/nm.t220.4.parms.txt", sep = ",", header=TRUE)
+t240.out.nm.4 <- read.table("../output/nm.t240.4.parms.txt", sep = ",", header=TRUE)
+t260.out.nm.4 <- read.table("../output/nm.t260.4.parms.txt", sep = ",", header=TRUE)
+t280.out.nm.4 <- read.table("../output/nm.t280.4.parms.txt", sep = ",", header=TRUE)
+t300.out.nm.4 <- read.table("../output/nm.t300.4.parms.txt", sep = ",", header=TRUE)
+t1000.out.nm.4 <- read.table("../output/nm.jcvi.t1000.4.parms.txt", sep = ",", header=TRUE)
+
+treats.nm.4 <- read.csv("../data/treatments_batch4_NM.csv")
+treats.nm.4[rep(seq_len(nrow(treats.nm.4)), each = 19), ]
+
+
+###### M: bioreplicate 1 plate ######
+
+m.b1 <- read.csv("../data/batch_M_1.csv")
+
+# Change times to numeric
+m.b1 $Time <- as.numeric(sub("^(\\d+):(\\d+).*", "\\1.\\2", m.b1 $Time))
+head(m.b1, header = T)
+
+# Pull out wells over time
+m.0 <-  m.b1[,c(1,2,12,22)]
+m.10 <-  m.b1[,c(1,32,41,50)]
+m.20 <-  m.b1[,c(1,3,13,23)]
+m.30 <-  m.b1[,c(1,33,42,51)]
+m.40 <-  m.b1[,c(1,4,14,24)]
+m.50 <-  m.b1[,c(1,34,43,52)]
+m.60 <-  m.b1[,c(1,5,15,25)]
+m.80 <-  m.b1[,c(1,35,44,53)]
+m.100 <-  m.b1[,c(1,6,16,26)]
+m.120 <-  m.b1[,c(1,36,45,54)]
+m.140 <-  m.b1[,c(1,7,17,27)]
+m.160 <-  m.b1[,c(1,37,46,55)]
+m.200 <-  m.b1[,c(1,8,18,28)]
+m.220 <-  m.b1[,c(1,38,47,56)]
+m.240 <-  m.b1[,c(1,9,19,29)]
+m.260 <-  m.b1[,c(1,39,48,57)]
+m.280 <-  m.b1[,c(1,10,20,30)]
+m.300 <-  m.b1[1:which(m.b1[,1] == 18.00), c(1,40,49,58)]
+jcvi <-  m.b1[,c(1,11,21,31)]
+
+# Run Gompertz (only need to run once then comment out)
+
+# m.t0.1 <- growth.modGomp(input = m.0, output.name = "m.t0.1.parms",
+#               synergy = F, temp = F, smooth = T, trim = T)
+# m.t10.1 <- growth.modGomp(input = m.10, output.name = "m.t10.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t20.1  <- growth.modGomp(input = m.20, output.name = "m.t20.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t30.1  <- growth.modGomp(input = m.30, output.name = "m.t30.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t40.1  <- growth.modGomp(input = m.40, output.name = "m.t40.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t50.1  <- growth.modGomp(input = m.50, output.name = "m.t50.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t60.1  <- growth.modGomp(input = m.60, output.name = "m.t60.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t80.1  <- growth.modGomp(input = m.80, output.name = "m.t80.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t100.1  <- growth.modGomp(input = m.100, output.name = "m.t100.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t120.1  <- growth.modGomp(input = m.120, output.name = "m.t120.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t140.1  <- growth.modGomp(input = m.140, output.name = "m.t140.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t160.1  <- growth.modGomp(input = m.160, output.name = "m.t160.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t200.1  <- growth.modGomp(input = m.200, output.name = "m.t200.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t220.1  <- growth.modGomp(input = m.220, output.name = "m.t220.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t240.1  <- growth.modGomp(input = m.240, output.name = "m.t240.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t260.1  <- growth.modGomp(input = m.260, output.name = "m.t260.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t280.1  <- growth.modGomp(input = m.280, output.name = "m.t280.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t300.1  <- growth.modGomp(input = m.300, output.name = "m.t300.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.jcvi.t1000.1  <- growth.modGomp(input = jcvi, output.name = "m.jcvi.t1000.1.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+
+t0.out.m.1 <- read.table("../output/m.t0.1.parms.txt", sep = ",", header=TRUE)
+t10.out.m.1 <- read.table("../output/m.t10.1.parms.txt", sep = ",", header=TRUE)
+t20.out.m.1 <- read.table("../output/m.t20.1.parms.txt", sep = ",", header=TRUE)
+t30.out.m.1 <- read.table("../output/m.t30.1.parms.txt", sep = ",", header=TRUE)
+t40.out.m.1 <- read.table("../output/m.t40.1.parms.txt", sep = ",", header=TRUE)
+t50.out.m.1 <- read.table("../output/m.t50.1.parms.txt", sep = ",", header=TRUE)
+t60.out.m.1 <- read.table("../output/m.t60.1.parms.txt", sep = ",", header=TRUE)
+t80.out.m.1 <- read.table("../output/m.t80.1.parms.txt", sep = ",", header=TRUE)
+t100.out.m.1 <- read.table("../output/m.t100.1.parms.txt", sep = ",", header=TRUE)
+t120.out.m.1 <- read.table("../output/m.t120.1.parms.txt", sep = ",", header=TRUE)
+t140.out.m.1 <- read.table("../output/m.t140.1.parms.txt", sep = ",", header=TRUE)
+t160.out.m.1 <- read.table("../output/m.t160.1.parms.txt", sep = ",", header=TRUE)
+t200.out.m.1 <- read.table("../output/m.t200.1.parms.txt", sep = ",", header=TRUE)
+t220.out.m.1 <- read.table("../output/m.t220.1.parms.txt", sep = ",", header=TRUE)
+t240.out.m.1 <- read.table("../output/m.t240.1.parms.txt", sep = ",", header=TRUE)
+t260.out.m.1 <- read.table("../output/m.t260.1.parms.txt", sep = ",", header=TRUE)
+t280.out.m.1 <- read.table("../output/m.t280.1.parms.txt", sep = ",", header=TRUE)
+t300.out.m.1 <- read.table("../output/m.t300.1.parms.txt", sep = ",", header=TRUE)
+t1000.out.m.1 <- read.table("../output/m.jcvi.t1000.1.parms.txt", sep = ",", header=TRUE)
+
+treats.m.1 <- read.csv("../data/treatments_batch1_m.csv")
+treats.m.1[rep(seq_len(nrow(treats.m.1)), each = 19), ]
+
+
+###### M: bioreplicate 2 plate ######
+
+m.b2 <- read.csv("../data/batch_M_2.csv")
+
+# Change times to numeric
+m.b2$Time <- as.numeric(sub("^(\\d+):(\\d+).*", "\\1.\\2", m.b2$Time))
+head(m.b2, header = T)
+
+# Pull out wells over time
+m.0 <-  m.b2[,c(1,2,12,22)]
+m.10 <-  m.b2[,c(1,32,41,50)]
+m.20 <-  m.b2[,c(1,3,13,23)]
+m.30 <-  m.b2[,c(1,33,42,51)]
+m.40 <-  m.b2[,c(1,4,14,24)] 
+m.50 <-  m.b2[1:which(m.b2[,1] == 18.00), c(1,34,43,52)]
+m.60 <-  m.b2[1:which(m.b2[,1] == 18.00), c(1,5,15,25)]
+m.80 <-  m.b2[1:which(m.b2[,1] == 18.00), c(1,35,44,53)]
+m.100 <-  m.b2[,c(1,6,16,26)]
+m.120 <-  m.b2[,c(1,36,45,54)]
+m.140 <-  m.b2[,c(1,7,17,27)]
+m.160 <-  m.b2[,c(1,37,46,55)]
+m.200 <-  m.b2[,c(1,8,18,28)]
+m.220 <-  m.b2[,c(1,38,47,56)]
+m.240 <-  m.b2[,c(1,9,19,29)]
+m.260 <-  m.b2[,c(1,39,48,57)]
+m.280 <-  m.b2[,c(1,10,20,30)]
+m.300 <-  m.b2[1:which(m.b2[,1] == 18.00), c(1,40,49,58)]
+jcvi <-  m.b2[,c(1,11,21,31)]
+
+# Run Gompertz (only need to run once then comment out)
+
+# m.t0.2 <- growth.modGomp(input = m.0, output.name = "m.t0.2.parms",
+#               synergy = F, temp = F, smooth = T, trim = T)
+# m.t10.2 <- growth.modGomp(input = m.10, output.name = "m.t10.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t20.2  <- growth.modGomp(input = m.20, output.name = "m.t20.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t30.2  <- growth.modGomp(input = m.30, output.name = "m.t30.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t40.2  <- growth.modGomp(input = m.40, output.name = "m.t40.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t50.2  <- growth.modGomp(input = m.50, output.name = "m.t50.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t60.2  <- growth.modGomp(input = m.60, output.name = "m.t60.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t80.2  <- growth.modGomp(input = m.80, output.name = "m.t80.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t100.2  <- growth.modGomp(input = m.100, output.name = "m.t100.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t120.2  <- growth.modGomp(input = m.120, output.name = "m.t120.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t140.2  <- growth.modGomp(input = m.140, output.name = "m.t140.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t160.2  <- growth.modGomp(input = m.160, output.name = "m.t160.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t200.2  <- growth.modGomp(input = m.200, output.name = "m.t200.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t220.2  <- growth.modGomp(input = m.220, output.name = "m.t220.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t240.2  <- growth.modGomp(input = m.240, output.name = "m.t240.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t260.2  <- growth.modGomp(input = m.260, output.name = "m.t260.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t280.2  <- growth.modGomp(input = m.280, output.name = "m.t280.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t300.2  <- growth.modGomp(input = m.300, output.name = "m.t300.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.jcvi.t1000.2  <- growth.modGomp(input = jcvi, output.name = "m.jcvi.t1000.2.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+
+t0.out.m.2 <- read.table("../output/m.t0.2.parms.txt", sep = ",", header=TRUE)
+t10.out.m.2 <- read.table("../output/m.t10.2.parms.txt", sep = ",", header=TRUE)
+t20.out.m.2 <- read.table("../output/m.t20.2.parms.txt", sep = ",", header=TRUE)
+t30.out.m.2 <- read.table("../output/m.t30.2.parms.txt", sep = ",", header=TRUE)
+t40.out.m.2 <- read.table("../output/m.t40.2.parms.txt", sep = ",", header=TRUE)
+t50.out.m.2 <- read.table("../output/m.t50.2.parms.txt", sep = ",", header=TRUE)
+t60.out.m.2 <- read.table("../output/m.t60.2.parms.txt", sep = ",", header=TRUE)
+t80.out.m.2 <- read.table("../output/m.t80.2.parms.txt", sep = ",", header=TRUE)
+t100.out.m.2 <- read.table("../output/m.t100.2.parms.txt", sep = ",", header=TRUE)
+t120.out.m.2 <- read.table("../output/m.t120.2.parms.txt", sep = ",", header=TRUE)
+t140.out.m.2 <- read.table("../output/m.t140.2.parms.txt", sep = ",", header=TRUE)
+t160.out.m.2 <- read.table("../output/m.t160.2.parms.txt", sep = ",", header=TRUE)
+t200.out.m.2 <- read.table("../output/m.t200.2.parms.txt", sep = ",", header=TRUE)
+t220.out.m.2 <- read.table("../output/m.t220.2.parms.txt", sep = ",", header=TRUE)
+t240.out.m.2 <- read.table("../output/m.t240.2.parms.txt", sep = ",", header=TRUE)
+t260.out.m.2 <- read.table("../output/m.t260.2.parms.txt", sep = ",", header=TRUE)
+t280.out.m.2 <- read.table("../output/m.t280.2.parms.txt", sep = ",", header=TRUE)
+t300.out.m.2 <- read.table("../output/m.t300.2.parms.txt", sep = ",", header=TRUE)
+t1000.out.m.2 <- read.table("../output/m.jcvi.t1000.2.parms.txt", sep = ",", header=TRUE)
+
+treats.m.2 <- read.csv("../data/treatments_batch2_rerun_M.csv")
+treats.m.2[rep(seq_len(nrow(treats.m.2)), each = 18), ]
+
+
+###### M: bioreplicate 3 plate ######
+
+m.b3 <- read.csv("../data/batch_m_3.csv")
+
+# Change times to numeric
+m.b3 $Time <- as.numeric(sub("^(\\d+):(\\d+).*", "\\1.\\2", m.b3 $Time))
+head(m.b3, header = T)
+
+# Pull out wells over time
+m.0 <-  m.b3[,c(1,2,12,22)]
+m.10 <-  m.b3[,c(1,32,41,50)]
+m.20 <-  m.b3[,c(1,3,13,23)]
+m.30 <-  m.b3[,c(1,33,42,51)]
+m.40 <-  m.b3[,c(1,4,14,24)]
+m.50 <-  m.b3[,c(1,34,43,52)]
+m.60 <-  m.b3[,c(1,5,15,25)]
+m.80 <-  m.b3[,c(1,35,44,53)]
+m.100 <-  m.b3[,c(1,6,16,26)]
+m.120 <-  m.b3[,c(1,36,45,54)]
+m.140 <-  m.b3[,c(1,7,17,27)]
+m.160 <-  m.b3[,c(1,37,46,55)]
+m.200 <-  m.b3[,c(1,8,18,28)]
+m.220 <-  m.b3[,c(1,38,47,56)]
+m.240 <-  m.b3[,c(1,9,19,29)]
+m.260 <-  m.b3[,c(1,39,48,57)]
+m.280 <-  m.b3[,c(1,10,20,30)]
+m.300 <-  m.b3[,c(1,40,49,58)]
+jcvi <-  m.b3[,c(1,11,21,31)]
+
+# Run Gompertz (only need to run once then comment out)
+
+# m.t0.3 <- growth.modGomp(input = m.0, output.name = "m.t0.3.parms",
+#               synergy = F, temp = F, smooth = T, trim = T)
+# m.t10.3 <- growth.modGomp(input = m.10, output.name = "m.t10.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t20.3  <- growth.modGomp(input = m.20, output.name = "m.t20.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t30.3  <- growth.modGomp(input = m.30, output.name = "m.t30.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t40.3  <- growth.modGomp(input = m.40, output.name = "m.t40.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t50.3  <- growth.modGomp(input = m.50, output.name = "m.t50.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t60.3  <- growth.modGomp(input = m.60, output.name = "m.t60.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t80.3  <- growth.modGomp(input = m.80, output.name = "m.t80.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t100.3  <- growth.modGomp(input = m.100, output.name = "m.t100.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t120.3  <- growth.modGomp(input = m.120, output.name = "m.t120.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t140.3  <- growth.modGomp(input = m.140, output.name = "m.t140.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t160.3  <- growth.modGomp(input = m.160, output.name = "m.t160.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t200.3  <- growth.modGomp(input = m.200, output.name = "m.t200.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t220.3  <- growth.modGomp(input = m.220, output.name = "m.t220.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t240.3  <- growth.modGomp(input = m.240, output.name = "m.t240.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t260.3  <- growth.modGomp(input = m.260, output.name = "m.t260.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t280.3  <- growth.modGomp(input = m.280, output.name = "m.t280.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t300.3  <- growth.modGomp(input = m.300, output.name = "m.t300.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.jcvi.t1000.3  <- growth.modGomp(input = jcvi, output.name = "m.jcvi.t1000.3.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+
+t0.out.m.3 <- read.table("../output/m.t0.3.parms.txt", sep = ",", header=TRUE)
+t10.out.m.3 <- read.table("../output/m.t10.3.parms.txt", sep = ",", header=TRUE)
+t20.out.m.3 <- read.table("../output/m.t20.3.parms.txt", sep = ",", header=TRUE)
+t30.out.m.3 <- read.table("../output/m.t30.3.parms.txt", sep = ",", header=TRUE)
+t40.out.m.3 <- read.table("../output/m.t40.3.parms.txt", sep = ",", header=TRUE)
+t50.out.m.3 <- read.table("../output/m.t50.3.parms.txt", sep = ",", header=TRUE)
+t60.out.m.3 <- read.table("../output/m.t60.3.parms.txt", sep = ",", header=TRUE)
+t80.out.m.3 <- read.table("../output/m.t80.3.parms.txt", sep = ",", header=TRUE)
+t100.out.m.3 <- read.table("../output/m.t100.3.parms.txt", sep = ",", header=TRUE)
+t120.out.m.3 <- read.table("../output/m.t120.3.parms.txt", sep = ",", header=TRUE)
+t140.out.m.3 <- read.table("../output/m.t140.3.parms.txt", sep = ",", header=TRUE)
+t160.out.m.3 <- read.table("../output/m.t160.3.parms.txt", sep = ",", header=TRUE)
+t200.out.m.3 <- read.table("../output/m.t200.3.parms.txt", sep = ",", header=TRUE)
+t220.out.m.3 <- read.table("../output/m.t220.3.parms.txt", sep = ",", header=TRUE)
+t240.out.m.3 <- read.table("../output/m.t240.3.parms.txt", sep = ",", header=TRUE)
+t260.out.m.3 <- read.table("../output/m.t260.3.parms.txt", sep = ",", header=TRUE)
+t280.out.m.3 <- read.table("../output/m.t280.3.parms.txt", sep = ",", header=TRUE)
+t300.out.m.3 <- read.table("../output/m.t300.3.parms.txt", sep = ",", header=TRUE)
+t1000.out.m.3 <- read.table("../output/m.jcvi.t1000.3.parms.txt", sep = ",", header=TRUE)
+
+treats.m.3 <- read.csv("../data/treatments_batch3_M.csv")
+treats.m.3[rep(seq_len(nrow(treats.m.3)), each = 19), ]
+
+
+###### M: bioreplicate 4 plate ######
+
+m.b4 <- read.csv("../data/batch_M_4.csv")
+
+# Change times to numeric
+m.b4 $Time <- as.numeric(sub("^(\\d+):(\\d+).*", "\\1.\\2", m.b4 $Time))
+head(m.b4, header = T)
+
+# Pull out wells over time
+m.0 <-  m.b4[,c(1,2,12,22)]
+m.10 <-  m.b4[,c(1,32,41,50)]
+m.20 <-  m.b4[,c(1,3,13,23)]
+m.30 <-  m.b4[,c(1,33,42,51)]
+m.40 <-  m.b4[,c(1,4,14,24)]
+m.50 <-  m.b4[,c(1,34,43,52)]
+m.60 <-  m.b4[,c(1,5,15,25)]
+m.80 <-  m.b4[,c(1,35,44,53)]
+m.100 <-  m.b4[,c(1,6,16,26)]
+m.120 <-  m.b4[,c(1,36,45,54)]
+m.140 <-  m.b4[,c(1,7,17,27)]
+m.160 <-  m.b4[,c(1,37,46,55)]
+m.200 <-  m.b4[,c(1,8,18,28)]
+m.220 <-  m.b4[,c(1,38,47,56)]
+m.240 <-  m.b4[,c(1,9,19,29)]
+m.260 <-  m.b4[,c(1,39,48,57)]
+m.280 <-  m.b4[,c(1,10,20,30)]
+m.300 <-  m.b4[,c(1,40,49,58)]
+jcvi <-  m.b4[,c(1,11,21,31)]
+
+# Run Gompertz (only need to run once then comment out)
+
+# m.t0.4 <- growth.modGomp(input = m.0, output.name = "m.t0.4.parms",
+#               synergy = F, temp = F, smooth = T, trim = T)
+# m.t10.4 <- growth.modGomp(input = m.10, output.name = "m.t10.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t20.4  <- growth.modGomp(input = m.20, output.name = "m.t20.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t30.4  <- growth.modGomp(input = m.30, output.name = "m.t30.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t40.4  <- growth.modGomp(input = m.40, output.name = "m.t40.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t50.4  <- growth.modGomp(input = m.50, output.name = "m.t50.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t60.4  <- growth.modGomp(input = m.60, output.name = "m.t60.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t80.4  <- growth.modGomp(input = m.80, output.name = "m.t80.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t100.4  <- growth.modGomp(input = m.100, output.name = "m.t100.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t120.4  <- growth.modGomp(input = m.120, output.name = "m.t120.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t140.4  <- growth.modGomp(input = m.140, output.name = "m.t140.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t160.4  <- growth.modGomp(input = m.160, output.name = "m.t160.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t200.4  <- growth.modGomp(input = m.200, output.name = "m.t200.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t220.4  <- growth.modGomp(input = m.220, output.name = "m.t220.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t240.4  <- growth.modGomp(input = m.240, output.name = "m.t240.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t260.4  <- growth.modGomp(input = m.260, output.name = "m.t260.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t280.4  <- growth.modGomp(input = m.280, output.name = "m.t280.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.t300.4  <- growth.modGomp(input = m.300, output.name = "m.t300.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+# m.jcvi.t1000.4  <- growth.modGomp(input = jcvi, output.name = "m.jcvi.t1000.4.parms",
+#                synergy = F, temp = F, smooth = T, trim = T)
+
+t0.out.m.4 <- read.table("../output/m.t0.4.parms.txt", sep = ",", header=TRUE)
+t10.out.m.4 <- read.table("../output/m.t10.4.parms.txt", sep = ",", header=TRUE)
+t20.out.m.4 <- read.table("../output/m.t20.4.parms.txt", sep = ",", header=TRUE)
+t30.out.m.4 <- read.table("../output/m.t30.4.parms.txt", sep = ",", header=TRUE)
+t40.out.m.4 <- read.table("../output/m.t40.4.parms.txt", sep = ",", header=TRUE)
+t50.out.m.4 <- read.table("../output/m.t50.4.parms.txt", sep = ",", header=TRUE)
+t60.out.m.4 <- read.table("../output/m.t60.4.parms.txt", sep = ",", header=TRUE)
+t80.out.m.4 <- read.table("../output/m.t80.4.parms.txt", sep = ",", header=TRUE)
+t100.out.m.4 <- read.table("../output/m.t100.4.parms.txt", sep = ",", header=TRUE)
+t120.out.m.4 <- read.table("../output/m.t120.4.parms.txt", sep = ",", header=TRUE)
+t140.out.m.4 <- read.table("../output/m.t140.4.parms.txt", sep = ",", header=TRUE)
+t160.out.m.4 <- read.table("../output/m.t160.4.parms.txt", sep = ",", header=TRUE)
+t200.out.m.4 <- read.table("../output/m.t200.4.parms.txt", sep = ",", header=TRUE)
+t220.out.m.4 <- read.table("../output/m.t220.4.parms.txt", sep = ",", header=TRUE)
+t240.out.m.4 <- read.table("../output/m.t240.4.parms.txt", sep = ",", header=TRUE)
+t260.out.m.4 <- read.table("../output/m.t260.4.parms.txt", sep = ",", header=TRUE)
+t280.out.m.4 <- read.table("../output/m.t280.4.parms.txt", sep = ",", header=TRUE)
+t300.out.m.4 <- read.table("../output/m.t300.3.parms.txt", sep = ",", header=TRUE)
+t1000.out.m.4 <- read.table("../output/m.jcvi.t1000.3.parms.txt", sep = ",", header=TRUE)
+
+treats.m.4 <- read.csv("../data/treatments_batch4_M.csv")
+treats.m.4[rep(seq_len(nrow(treats.m.4)), each = 19), ]
+```
+
+# Pull togteher data from replicate plates
+```{r}
+
+####
+nm.parms.raw.1 <- rbind(t0.out.nm.1, t10.out.nm.1, t20.out.nm.1, t30.out.nm.1, 
+                  t40.out.nm.1, t50.out.nm.1, t60.out.nm.1, t80.out.nm.1, t100.out.nm.1, 
+                  t120.out.nm.1, t140.out.nm.1, t160.out.nm.1, t200.out.nm.1, t220.out.nm.1, 
+                  t240.out.nm.1, t260.out.nm.1, t280.out.nm.1, t300.out.nm.1, t1000.out.nm.1)
+nm.parms.ord.1 <- nm.parms.raw.1[mixedorder(nm.parms.raw.1$Curve),]
+nm.parms.1 <- cbind(treats.nm.1, nm.parms.ord.1)
+treats.nm.1$well == nm.parms.1$Curve
+gen <- round((1997/300)*nm.parms.1$day,0)
+nm.parms.1 <-cbind(nm.parms.1, gen)
+#nm.parms.1 <- nm.parms.1[, c(1:4,10:12,20)]
+
+####
+nm.parms.raw.2 <- rbind(t0.out.nm.2, t10.out.nm.2, t20.out.nm.2, t30.out.nm.2, 
+                  t40.out.nm.2, t50.out.nm.2, t60.out.nm.2, t80.out.nm.2, t100.out.nm.2, 
+                  t120.out.nm.2, t140.out.nm.2, t160.out.nm.2, t200.out.nm.2, t220.out.nm.2, 
+                  t240.out.nm.2, t260.out.nm.2, t280.out.nm.2, t300.out.nm.2, t1000.out.nm.2)
+nm.parms.ord.2 <- nm.parms.raw.2[mixedorder(nm.parms.raw.2$Curve),]
+nm.parms.2 <- cbind(treats.nm.2, nm.parms.ord.2)
+treats.nm.2$well == nm.parms.2$Curve
+gen <- round((1997/300)*nm.parms.2$day,0)
+nm.parms.2 <-cbind(nm.parms.2, gen)
+#nm.parms.2 <- nm.parms.2[, c(1:4,10:12,20)]
+
+####
+nm.parms.raw.3 <- rbind(t0.out.nm.3, t10.out.nm.3, t20.out.nm.3, t30.out.nm.3, 
+                  t40.out.nm.3, t50.out.nm.3, t60.out.nm.3, t80.out.nm.3, t100.out.nm.3, 
+                  t120.out.nm.3, t140.out.nm.3, t160.out.nm.3, t200.out.nm.3, t220.out.nm.3, 
+                  t240.out.nm.3, t260.out.nm.3, t280.out.nm.3, t300.out.nm.3, t1000.out.nm.3)
+nm.parms.ord.3 <- nm.parms.raw.3[mixedorder(nm.parms.raw.3$Curve),]
+nm.parms.3 <- cbind(treats.nm.3, nm.parms.ord.3)
+treats.nm.3$well == nm.parms.3$Curve
+gen <- round((1997/300)*nm.parms.3$day,0)
+nm.parms.3 <-cbind(nm.parms.3, gen)
+#nm.parms.3 <- nm.parms.3[, c(1:4,10:12,20)]
+
+####
+nm.parms.raw.4 <- rbind(t0.out.nm.4, t10.out.nm.4, t20.out.nm.4, t30.out.nm.4, 
+                  t40.out.nm.4, t50.out.nm.4, t60.out.nm.4, t80.out.nm.4, t100.out.nm.4,
+                  t120.out.nm.4, t140.out.nm.4, t160.out.nm.4, t200.out.nm.4,
+                  t220.out.nm.4, t240.out.nm.4, t260.out.nm.4, t280.out.nm.4,
+                  t300.out.nm.4, t1000.out.nm.4)
+nm.parms.ord.4 <- nm.parms.raw.4[mixedorder(nm.parms.raw.4$Curve),]
+nm.parms.4 <- cbind(treats.nm.4, nm.parms.ord.4)
+treats.nm.4$well == nm.parms.4$Curve
+gen <- round((1997/300)*nm.parms.4$day,0)
+nm.parms.4 <-cbind(nm.parms.4, gen)
+#nm.parms.4 <- nm.parms.4[, c(1:4,10:12,20)]
+
+####
+m.parms.raw.1 <- rbind(t0.out.m.1, t10.out.m.1, t20.out.m.1, t30.out.m.1, 
+                  t40.out.m.1, t50.out.m.1, t60.out.m.1, t80.out.m.1, t100.out.m.1, 
+                  t120.out.m.1, t140.out.m.1, t160.out.m.1, t200.out.m.1, t220.out.m.1, 
+                  t240.out.m.1, t260.out.m.1, t280.out.m.1, t300.out.m.1, t1000.out.m.1)
+m.parms.ord.1 <- m.parms.raw.1[mixedorder(m.parms.raw.1$Curve),]
+m.parms.1 <- cbind(treats.m.1, m.parms.ord.1)
+treats.m.1$well == m.parms.1$Curve
+gen <- round((1997/300)*m.parms.1$day,0)
+m.parms.1 <-cbind(m.parms.1, gen)
+#m.parms.1 <- m.parms.1[, c(1:4,10:12,20)]
+
+####
+m.parms.raw.2 <- rbind(t0.out.m.2, t10.out.m.2, t20.out.m.2, t30.out.m.2,
+                  t40.out.m.2, t50.out.m.2, t60.out.m.2, t80.out.m.2, t100.out.m.2, 
+                  t120.out.m.2, t140.out.m.2, t160.out.m.2, t200.out.m.2, 
+                  t220.out.m.2, t240.out.m.2, t260.out.m.2, t280.out.m.2,
+                  t300.out.m.2, t1000.out.m.2)
+m.parms.ord.2 <- m.parms.raw.2[mixedorder(m.parms.raw.2$Curve),]
+m.parms.2 <- cbind(treats.m.2, m.parms.ord.2)
+treats.m.2$well == m.parms.2$Curve
+gen <- round((1997/300)*m.parms.2$day,0)
+m.parms.2 <-cbind(m.parms.2, gen)
+m.parms.2 <- m.parms.2 %>%
+    filter(day != "0")
+#m.parms.2 <- m.parms.2[, c(1:4,10:12,20)]
+
+####
+m.parms.raw.3 <- rbind(t0.out.m.3, t10.out.m.3, t20.out.m.3, t30.out.m.3, 
+                  t40.out.m.3, t50.out.m.3, t60.out.m.3, t80.out.m.3, t100.out.m.3, 
+                  t120.out.m.3, t140.out.m.3, t160.out.m.3, t200.out.m.3, 
+                  t220.out.m.3, t240.out.m.3, t260.out.m.3, t280.out.m.3,
+                  t300.out.m.3, t1000.out.m.3)
+m.parms.ord.3 <- m.parms.raw.3[mixedorder(m.parms.raw.3$Curve),] 
+m.parms.3 <- cbind(treats.m.3, m.parms.ord.3)
+treats.m.3$well == m.parms.3$Curve
+gen <- round((1997/300)*m.parms.3$day,0)
+m.parms.3 <-cbind(m.parms.3, gen)
+m.parms.3 <- m.parms.3 %>% # 280 time point didn't grow
+    filter(day != "280")
+#m.parms.3 <- m.parms.3[, c(1:4,10:12,20)]
+
+####
+m.parms.raw.4 <- rbind(t0.out.m.4, t10.out.m.4, t20.out.m.4, t30.out.m.4, 
+                  t40.out.m.4, t50.out.m.4, t60.out.m.4, t80.out.m.4, t100.out.m.4, 
+                  t120.out.m.4, t140.out.m.4, t160.out.m.4, t200.out.m.4, 
+                  t220.out.m.4, t240.out.m.4, t260.out.m.4, t280.out.m.4,
+                  t300.out.m.4, t1000.out.m.4)
+m.parms.ord.4 <- m.parms.raw.4[mixedorder(m.parms.raw.4$Curve),] 
+m.parms.4 <- cbind(treats.m.4, m.parms.ord.4)
+treats.m.4$well == m.parms.4$Curve
+gen <- round((1997/300)*m.parms.4$day,0)
+m.parms.4 <-cbind(m.parms.4, gen)
+m.parms.4 <- m.parms.4 %>%
+    filter(day != "0")
+#m.parms.4 <- m.parms.4[, c(1:4,10:12,20)]
+
+#### combine parameters from plates
+
+parms <- rbind(nm.parms.1, nm.parms.2, nm.parms.3, nm.parms.4,
+               m.parms.1, m.parms.2, m.parms.3, m.parms.4)
+colnames(parms[17]) <- "RMSE"
+
+
+# Calculate average CV and RMSE for all 447 growth curves
+parm.goodness.fit <- parms %>%
+  #group_by(day, gen, cell, biorep) %>%
+  dplyr::summarise(mean.CV = mean(CV), sum.outlier = sum(outlier), mean.RMSE = mean(RSME))
+# mean CV = 1.9%
+# sum outlier = 128
+# mean RMSE = 0.025
+
+# Create table of parameters for Figshare upload
+write.table(parms, "~/Github/MinimalCell/scripts/5.GrowthCurves/output/GrowthCurveParms.txt", 
+    sep = "\t", row.names = FALSE)
+```
+
+# Summarize growth minimal and non-minimal cell across time
+```{r}
+
+# Filter by "nm" and "m" lines
+ts.raw <- filter(parms, cell == "m" | cell == "nm") %>%
+  dplyr::select(day, gen, cell, biorep, A, umax, L, RSME, CV, outlier)
+  
+# Calculate means of technical replicates
+ts <- ts.raw %>%
+  group_by(day, gen, cell, biorep) %>%
+  dplyr::summarise(A = mean(A), umax = mean(umax), lag = mean(L))
+ts <- as.data.frame(ts)
+
+# Calculate CVs of technical replicates
+ts.cv <- ts.raw %>%
+  group_by(day, gen, cell, biorep) %>%
+  dplyr::summarise(A.cv = cv(A), umax.cv = cv(umax), lag.cv = cv(L))
+ts.cv <- as.data.frame(ts)
+
+# Mean CVs among tech reps for each growth parameter:
+cv.tech.umax <- mean(ts.cv$umax) # 0.101
+cv.tech.A <- mean(ts.cv$A) # 0.558
+cv.tech.lag <- mean(ts.cv$lag) # 8.65
+
+# Non-minimal cells
+ts.nm <- filter(ts, cell == c("nm")) %>%
+  dplyr::select(day, gen, cell, biorep, A, umax, lag)
+
+# Non-minimal cells by bioreplicate and ancestor
+ts.nm.b1 <- filter(ts.nm, biorep == c("1") & day != "0") %>%
+  dplyr::select(day, gen, cell, biorep, A, umax, lag)
+ts.nm.b2 <- filter(ts.nm, biorep == c("2")) %>%
+  dplyr::select(day, gen, cell, biorep, A, umax, lag)
+ts.nm.b3 <- filter(ts.nm, biorep == c("3") & day != "0") %>%
+  dplyr::select(day, gen, cell, biorep, A, umax, lag)
+ts.nm.b4 <- filter(ts.nm, biorep == c("4")) %>%
+  dplyr::select(day, gen, cell, biorep, A, umax, lag)
+ts.nm.anc <- filter(ts.nm, day == "0") %>%
+  dplyr::select(day, gen, cell, biorep, A, umax, lag)
+
+# Minimal cells
+ts.m <- filter(ts, cell == c("m")) %>%
+  dplyr::select(day, gen, cell, biorep, A, umax, lag)
+
+# Minimal cells by bioreplicate and ancestor
+ts.m.b1 <- filter(ts.m, biorep == c("5")) %>%
+  dplyr::select(day, gen, cell, biorep, A, umax, lag)
+ts.m.b2 <- filter(ts.m, biorep == c("6")) %>%
+  dplyr::select(day, gen, cell, biorep, A, umax, lag)
+ts.m.b3 <- filter(ts.m, biorep == c("7") & day != "0") %>%
+  dplyr::select(day, gen, cell, biorep, A, umax, lag)
+ts.m.b4 <- filter(ts.m, biorep == c("8")) %>%
+  dplyr::select(day, gen, cell, biorep, A, umax, lag)
+ts.m.anc <- filter(ts.m, day == "0") %>%
+  dplyr::select(day, gen, cell, biorep, A, umax, lag)
+```
+
+# Diagnostics of growth curves
+```{r}
+# RMSE - lower values (in units of abs 415) indicates predictions are close to actual data
+# Maximum absorbance values are between 1.15 and 1.92
+rmse.mean <- mean(ts.raw$RSME) # 0.025
+rmse.max <- max(ts.raw$RSME) # 0.0769
+rmse.min <- min(ts.raw$RSME) # 0.0051
+
+# CV - what percent of variation is unexplained in model?
+cv.mean <- mean(ts.raw$CV) # 1.93
+cv.max <- max(ts.raw$CV) # 5.417
+cv.min <- min(ts.raw$CV) # 0.505
+
+# How many outliers growth curves including 
+obs.well <- mean(112,180,159,91,98,97,9,92) # 838 total; 112 average
+num.curves <- 423
+out.total <- ts.raw %>%
+  summarize(sum_out = sum(outlier)) # 127
+total.obs <- obs.well * num.curves # 47,376
+outlier.frac <- out.total/total.obs * 100 
+# 0.27 % of observations were outliers
+# Expectation of 0.3 outliers per growth curve ([127*112]/4376)
+# Given approximately normal distribution, this is what one would expect to see. 
+```
+
+# Make a three-panel histogram of growth parameters
+```{r}
+png(filename="~/GitHub/MinimalCell/figures/4.figshare/1.historgram.growth.png",
+    width = 1200, height = 1200, res = 96*2) 
+
+plot.new()
+#par(mar = c(7, 7, 5.3, 7), xpd = TRUE)
+par(mfrow=c(3,1), mar=c(5, 6, 1, 3))
+
+#par(mfrow=c(3,1)) 
+
+# Panel 1: umax
+hist(ts.m$umax, breaks = 30, xlim = c(-0.01, 0.25), ylim = c(0,10), col = "pink", xlab = "", 
+     yaxt = "n", ylab = "", main = NA)
+axis(side = 2, las = 2)
+
+hist(ts.nm$umax, breaks = 30, xlim=c(0, 0.22), col= "lightblue", add=T)
+
+mtext(expression('Maximum growth rate (d'^-1*')'), side = 1, outer = TRUE, 
+      cex = 1, line = -34, adj = 0.5)
+
+mtext(expression('Count'), side = 2, outer = TRUE, 
+      cex = 1.5, line = -1.75, adj = 0.55)
+
+legend("topright", legend=c("Minimal","Non-minimal"), col=c("pink", 
+     "lightblue"), pt.cex=2, pch=15, box.col = "white")
+
+
+# Panel 2: yield
+hist(ts.m$A, breaks = 40, xlim = c(0.15, 1.2), ylim = c(0,15), col = "pink", xlab = "", 
+     yaxt = "n", ylab = "", main = NA)
+axis(side = 2, las = 2)
+
+hist(ts.nm$A, breaks = 25, xlim = c(0, 1.2), col= "lightblue", add = T)
+
+mtext(expression('Yield (a'[415]*')'), side = 1, outer = TRUE, 
+      cex = 1, line = -18, adj = 0.5)
+
+legend("topright", legend=c("Minimal","Non-minimal"), col=c("pink", 
+     "lightblue"), pt.cex = 2, pch = 15, box.col = "white")
+
+
+# Panel 3: lag
+hist(ts.m$lag, breaks = 40, xlim = c(0, 25), ylim = c(0,20), col = "pink", xlab = "", 
+     yaxt = "n", ylab = "", main = NA)
+axis(side = 2, las = 2)
+
+hist(ts.nm$lag, breaks=10, xlim=c(0,25), col= "lightblue", add=T)
+
+mtext(expression('Lag time (h)'), side = 1, outer = TRUE, 
+      cex = 1, line = -2.5, adj = 0.5)
+
+legend("topright", legend=c("Minimal","Non-minimal"), col=c("pink", 
+     "lightblue"), pt.cex = 2, pch = 15, box.col = "white")
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/4.figshare/1.historgram.growth.png")
+grid.raster(img)
+```
+
+
+# Maximum growth rate (umax)
+```{r}
+# run following block for each growth parameter each time
+data <- as.data.frame(ts) # all observations
+gen <- data[,2]
+day <- data[,1]
+cell <- data[,3]
+biorep <- data[,4]
+umax <- data[,6]
+yield <- data[,5]
+lag <- data[,7]
+
+# random intercept
+mod.umax <- lme(umax ~ gen * cell, random = ~ 1 | biorep, data = data) 
+# m = marginal (fixed); R2mixed (fixed), R2c conditional (fixed and random)
+r.squaredGLMM(mod.umax) # 0.63, 0.68
+summary(mod.umax)
+vc <- VarCorr(mod.umax)
+total.var <- as.numeric(vc[1]) + as.numeric(vc[2])
+vp.coeff <- as.numeric(vc[1])/total.var # 0.1272079
+# approximately 13% of explained variation due to random effect
+
+pred.umax <- as.vector(mod.umax$fitted[,2]) 
+resid.umax <- data$umax - pred.umax
+rmse.umax <- sqrt(mean(resid.umax^2))  # 0.02311879
+
+pred.umax <- fitted(mod.umax, level=1) # same as mod.umax$fitted[,2], which includes random effects
+resid.umax <- data$umax - pred.umax
+rmse.umax <- sqrt(mean(resid.umax^2))  # 0.02311879
+
+# parameters
+nm.intercept  <- mod.umax$coefficients[1]$fixed[1] + mod.umax$coefficients[1]$fixed[3]
+nm.slope <- mod.umax$coefficients[1]$fixed[2] + mod.umax$coefficients[1]$fixed[4]
+
+m.intercept <- mod.umax$coefficients[1]$fixed[1]
+m.slope <- mod.umax$coefficients[1]$fixed[2]
+
+# new data for plotting
+newdat.lme <- data.frame(day = data$day, gen = data$gen, cell = data$cell, 
+              biorep = data$biorep)
+newdat.lme$predlme = predict(mod.umax, newdata = newdat.lme, level = 0)
+
+# get model matrix using prediction data set
+des = model.matrix(formula(mod.umax)[-2], newdat.lme)
+
+# use matrix multiplication on model matrix
+# variance-covariance matrix extracted from the model with vcov(). 
+# pull out values on diagonal, which are the variances of the predicted values
+predvar = diag(des %*% vcov(mod.umax) %*% t(des))
+
+# confidence intervals using standard errors (square root of predvar)... 
+# along with an appropriate multiplier (~1.96)
+# confidence interval limits to the dataset for plotting
+newdat.lme$lower = with(newdat.lme, predlme - 2*sqrt(predvar))
+newdat.lme$upper = with(newdat.lme, predlme + 2*sqrt(predvar))
+
+# parse out cell lines for plotting
+nm.lme <- filter(newdat.lme, cell == "nm") %>%
+  dplyr::select(day,gen, cell,biorep, predlme, lower, upper)
+m.lme <- filter(newdat.lme, cell == "m") %>%
+  dplyr::select(day, gen, cell, biorep, predlme, lower,upper)
+
+# percent change in umax over experiment
+per.delta.umax.nm <- (max(nm.lme$predlme) - 
+                    min(nm.lme$predlme))/min(nm.lme$predlme) * 100
+# For non-minimal cell, there was a 16 % increase in umax over 2000 generations
+
+per.delta.umax.m <- (max(m.lme$predlme) - 
+                    min(m.lme$predlme))/min(m.lme$predlme) * 100
+# For minimal cell, there was a 64 % increase in umax over 2000 generations
+
+fold.delta.umax.nm <- max(nm.lme$predlme) / min(nm.lme$predlme)
+fold.delta.umax.m <- max(m.lme$predlme) / min(m.lme$predlme)
+
+intercept.percent <- ((nm.intercept-m.intercept) /nm.intercept) * 100
+# 57% reduction on umax owing to genome reduction
+
+intercept.fold <- (nm.intercept / m.intercept) 
+# 2.3-fold
+
+
+#############################################################################
+
+
+# plot umax by time
+png(filename="~/GitHub/MinimalCell/figures/2.extended.data/FigExt1.png",
+    width = 1200, height = 1200, res = 96*2) 
+
+plot.new()
+par(mar = c(7, 7, 5.3, 7), xpd = TRUE)
+
+# Add points as white
+
+plot(jitter(ts.nm$gen,1), ts.nm$umax, xlim = c(-10, 2010), 
+      ylim = c(-0.01, 0.21), type = "p", pch = 21, bg = "white", 
+      col = "white", cex = 1.25, ylab = "", xlab = "", 
+      cex.lab = 1.25, las = 1, lwd = 2, yaxt = "n", xaxt = "n")
+ box(lwd=2)
+
+points(jitter(ts.m$gen,1), ts.m$umax, pch = 22, 
+       bg = "white", col = "white", lwd = 2, cex = 1.25)
+
+# plot confidence intervals for lme model
+polygon(c(nm.lme$gen, rev(nm.lme$gen)), c(nm.lme$upper, rev(nm.lme$lower)), col = "lightblue", border = NA)
+polygon(c(m.lme$gen, rev(m.lme$gen)), c(m.lme$upper, rev(m.lme$lower)), col = "pink", border = NA)
+
+# add bioreplicates and ancestors
+
+points(jitter(ts.nm.b1$gen,1), ts.nm.b1$umax, pch = 22, 
+       bg = "blue", col = "blue", lwd = 2, cex = 1)
+points(jitter(ts.nm.b2$gen,1), ts.nm.b2$umax, pch = 23, 
+       bg = "blue", col = "blue", lwd = 2, cex = 1)
+points(jitter(ts.nm.b3$gen,1), ts.nm.b3$umax, pch = 24, 
+       bg = "blue", col = "blue", lwd = 2, cex = 1)
+points(jitter(ts.nm.b4$gen,1), ts.nm.b4$umax, pch = 25, 
+       bg = "blue", col = "blue", lwd = 2, cex = 1)
+points(jitter(ts.nm.anc$gen,1), ts.nm.anc$umax, pch = 21, 
+       bg = "blue", col = "blue", lwd = 2, cex = 1)
+
+#ts.m.b2 <- ts.m.b2[-c(6,7),] # remove outliers from plotting
+
+points(jitter(ts.m.b1$gen,1), ts.m.b1$umax, pch = 22, 
+       bg = "red", col = "red", lwd = 2, cex = 1)
+points(jitter(ts.m.b2$gen,1), ts.m.b2$umax, pch = 23, 
+       bg = "red", col = "red", lwd = 2, cex = 1)
+points(jitter(ts.m.b3$gen,1), ts.m.b3$umax, pch = 24, 
+       bg = "red", col = "red", lwd = 2, cex = 1)
+points(jitter(ts.m.b4$gen,1), ts.m.b4$umax, pch = 25, 
+       bg = "red", col = "red", lwd = 2, cex = 1)
+points(jitter(ts.m.anc$gen,1), ts.m.anc$umax, pch = 21, 
+       bg = "red", col = "red", lwd = 2, cex = 1)
+
+# plot regression line from lme model
+lines(nm.lme$gen,nm.lme$predlme, col = "blue", lwd = 2, lty = 2)
+lines(m.lme$gen,m.lme$predlme, col = "red", lwd = 2, lty = 2)
+
+# Add axes and labels
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("0.000", "0.100", "0.200"), at = c(0.0,0.1, 0.20))
+axis(side = 4, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at=c(0, 0.1, 0.20), labels = F)
+axis(side = 3, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at = c(0, 500, 1000, 1500, 2000), labels = F)
+axis(side = 1, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("0", "500", "1000", "1500", "2000"), at = c(0, 500, 1000, 1500, 2000))
+
+mtext(expression('Time (generations)'), side = 1,
+     outer = TRUE, cex = 1.5, line = -3.5, adj = 0.5)
+mtext(expression('Maximum growth rate (d'^-1*')'), side = 2, outer = TRUE, 
+      cex = 1.5, line = -2.5, adj = 0.55)
+
+rect(-90, 0.235, 2090, 0.26, border = "black", lwd = 2)
+
+legend(200, 0.26, "Non-minimal", pch = 21, pt.bg = "blue",
+       pt.cex = 1, col = "blue", pt.lwd = 2, bty = 'n', y.intersp = 1, 
+       x.intersp = 0.1, lwd = 0)
+legend(1100, 0.26, "Minimal", pch = 21, pt.bg = "red",
+       pt.cex = 1, col = "red", pt.lwd = 2, bty = 'n', y.intersp = 1, 
+       x.intersp = 0.1, lwd = 0)
+
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/2.extended.data/FigExt1.png")
+
+grid.raster(img)
+
+#############################################################################
+
+# Residual and normal-quantile plot
+
+png(filename="~/GitHub/MinimalCell/figures/4.figshare/1.diagnostic.umax.png",
+    width = 1200, height = 1200, res = 96*2) 
+
+plot.new()
+#par(mar = c(7, 7, 5.3, 7), xpd = TRUE)
+par(mfrow=c(2,1), mar=c(5, 4, 1, 3))
+
+diag.umax <- data.frame(data, resid.umax, pred.umax)
+
+diag.umax.m <- filter(diag.umax, cell == c("m")) %>%
+  dplyr::select(resid.umax, pred.umax)
+
+diag.umax.nm <- filter(diag.umax, cell == c("nm")) %>%
+  dplyr::select(resid.umax, pred.umax)
+
+# For plotting residual vs. predicted lines
+mod <- lm(diag.umax.m$resid.umax ~ diag.umax.m$pred.umax)
+newx <- seq(min(diag.umax.m$pred.umax-0.01), max(diag.umax.m$pred.umax+0.01), 
+            by = ((max(diag.umax.m$pred.umax+0.01 - min(diag.umax.m$pred.umax-0.01))
+            / (length(diag.umax.m$pred.umax)-1))))
+newy <- predict(mod, data.frame(x = newx))
+
+plot(diag.umax.m$pred.umax, diag.umax.m$resid.umax, xlab = "Predicted values", 
+     ylab = "Residuals", las = 1, xlim = c(0.025, 0.18), 
+      ylim = c(-0.1, 0.15), type = "p", pch = 21, bg = "red", 
+      col = "red", cex = 1.25, cex.lab = 1.25, las = 1, lwd = 2)
+ box(lwd=2)
+
+ lines(newx, newy, col = "red", lty = 2, lwd = 1.5)
+
+mod <- lm(diag.umax.nm$resid.umax ~ diag.umax.nm$pred.umax)
+newx <- seq(min(diag.umax.nm$pred.umax-0.01), max(diag.umax.nm$pred.umax+0.01), 
+            by = ((max(diag.umax.nm$pred.umax+0.01 - min(diag.umax.nm$pred.umax-0.01))
+            / (length(diag.umax.nm$pred.umax)-1))))
+newy <- predict(mod, data.frame(x = newx))
+
+points(diag.umax.nm$pred.umax, diag.umax.nm$resid.umax, type = "p", pch = 21, bg = "blue",
+       col = "blue", cex = 1.25)
+lines(newx, newy, col = "blue", lty = 2, lwd = 1.5)
+
+text(0.065, 0.13, "Minimal", col = "black", cex = 1)
+text(0.135, 0.13, "Non-minimal", col = "black", cex = 1)
+
+# Normal quantile plot
+par(cex = 1.2, cex.lab = 1)
+qqnorm(resid.umax, main = "", xlab = "Theoretical quantiles", ylab = "Sample quantiles", yaxt = "n")
+axis(side = 2, las = 2, pch = 21)
+box(lwd=2)
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/4.figshare/1.diagnostic.umax.png")
+
+grid.raster(img)
+```
+
+# Yield
+```{r}
+# run following block for each growth parameter each time
+data <- as.data.frame(ts) # all observations
+gen <- data[,2]
+day <- data[,1]
+cell <- data[,3]
+biorep <- data[,4]
+umax <- data[,6]
+yield <- data[,5]
+lag <- data[,7]
+
+data.orig <- data # run this one time to first identify outliers, which are pretty obvious
+
+# random intercept
+mod.yield <- lme(yield ~ gen * cell, random = ~ 1 | biorep, data = data.orig) 
+# m = marginal (fixed); c = conditional (fixed and random)
+r.squaredGLMM(mod.yield) 
+summary(mod.yield)
+
+pred.yield <- as.vector(mod.yield$fitted[,1])
+resid.yield <- data.orig$A - pred.yield
+rmse.yield <- sqrt(mean(resid.yield^2)) #  0.1337883
+outlier.yield <- sum(abs(resid.yield-mean(resid.yield))/sd(resid.yield)>3)  # 5
+who.outliers <- which(abs(resid.yield-mean(resid.yield))/sd(resid.yield)>3) 
+# 48 (0.14263333), 56 (0.14396667)
+
+#      day  gen cell biorep         A       umax       lag
+# 40   50  333    m      6 0.7504667 0.11843333  7.732733
+# 48   60  399    m      6 0.8028667 0.14263333  9.227133
+# 56   80  533    m      6 0.8664000 0.14396667  7.765900
+# 80   140 932    m      6 0.9260000 0.12630000  7.787467
+# 82   140 932    m      8 1.0559000 0.14080000  6.802000
+
+
+# Remove outliers and rerun GLMM
+data <- data.orig[-c(40, 48, 56, 80, 82),]
+
+mod.yield <- lme(A ~ gen * cell, random = ~ 1 | biorep, data = data) # random intercept
+r.squaredGLMM(mod.yield) # m = marginal (fixed); c = conditional (fixed and random)
+vc <- VarCorr(mod.yield)
+total.var <- as.numeric(vc[1]) + as.numeric(vc[2])
+vp.coeff <- as.numeric(vc[1])/total.var # 6.234417e-11
+# approximately 0% of explained variation due to random effect
+
+pred.yield <- as.vector(mod.yield$fitted[,1])
+resid.yield <- data$A - pred.yield
+rmse.yield <- sqrt(mean(resid.yield^2)) # 0.07687272
+
+# new data for plotting
+newdat.lme.yield <- data.frame(day = data$day, gen = data$gen, 
+                    cell = data$cell, biorep = data$biorep)
+newdat.lme.yield$predlme = predict(mod.yield, newdata = newdat.lme.yield, level = 0)
+
+# Get model matrix using prediction data set
+des <- model.matrix(formula(mod.yield)[-2], newdat.lme)
+des <- des[-c(40, 48, 56, 80, 82),]
+
+# Use matrix multiplication on the model matrix and variance-covariance matrix extracted from the model with vcov(). 
+# Pull out the values on diagonal, which are the variances of the predicted values
+predvar = diag(des %*% vcov(mod.yield) %*% t(des))
+
+# Construct approximate confidence intervals using standard errors (square root of predvar)
+# ..along with an appropriate multiplier (~1.96)
+# Confidence interval limits to the dataset for plotting
+newdat.lme.yield$lower = with(newdat.lme.yield, predlme - 2*sqrt(predvar))
+newdat.lme.yield$upper = with(newdat.lme.yield, predlme + 2*sqrt(predvar))
+
+# parse out cell lines for plotting
+nm.lme.yield <- filter(newdat.lme.yield, cell == "nm") %>%
+  dplyr::select(day,gen,cell,biorep,predlme,lower,upper)
+m.lme.yield <- filter(newdat.lme.yield, cell == "m") %>%
+  dplyr::select(day,gen,cell,biorep,predlme,lower,upper)
+
+################################################################################
+
+# Residual plot
+
+png(filename="~/GitHub/MinimalCell/figures/4.figshare/1.diagnostic.yield.png",
+    width = 1200, height = 1200, res = 96*2) 
+
+plot.new()
+par(mfrow=c(2,1), mar=c(5, 4, 1, 3))
+
+diag.yield <- data.frame(data, resid.yield, pred.yield)
+
+diag.yield.m <- filter(diag.yield, cell == c("m")) %>%
+  dplyr::select(resid.yield, pred.yield)
+
+diag.yield.nm <- filter(diag.yield, cell == c("nm")) %>%
+  dplyr::select(resid.yield, pred.yield)
+
+mod <- lm(diag.yield.m$resid.yield ~ diag.yield.m$pred.yield)
+newx <- seq(min(diag.yield.m$pred.yield-0.1), max(diag.yield.m$pred.yield+0.1), 
+            by = ((max(diag.yield.m$pred.yield+0.1 - min(diag.yield.m$pred.yield-0.1))
+            / (length(diag.yield.m$pred.yield)-1))))
+newy <- predict(mod, data.frame(x = newx))
+
+plot(diag.yield.m$pred.yield, diag.yield.m$resid.yield, xlab = "Predicted values", 
+     ylab = "Residuals", las = 1, xlim = c(0.1, 0.95), 
+      ylim = c(-0.2, 0.5), type = "p", pch = 21, bg = "red", 
+      col = "red", cex = 1.25, cex.lab = 1.25, las = 1, lwd = 2)
+ box(lwd=2)
+
+ lines(newx, newy, col = "red", lty = 2, lwd = 1.5)
+
+mod <- lm(diag.yield.nm$resid.yield ~ diag.yield.nm$pred.yield)
+newx <- seq(min(diag.yield.nm$pred.yield-0.1), max(diag.yield.nm$pred.yield+0.1), 
+            by = ((max(diag.yield.nm$pred.yield+0.1 - min(diag.yield.nm$pred.yield-0.1))
+            / (length(diag.yield.nm$pred.yield)-1))))
+newy <- predict(mod, data.frame(x = newx))
+
+points(diag.yield.nm$pred.yield, diag.yield.nm$resid.yield, type = "p", pch = 21, bg = "blue",
+       col = "blue", cex = 1.25)
+lines(newx, newy, col = "blue", lty = 2, lwd = 1.5)
+
+text(0.3, 0.45, "Minimal", col = "black", cex = 1)
+text(0.78, 0.45, "Non-minimal", col = "black", cex = 1)
+
+par(cex = 1.2, cex.lab = 1)
+qqnorm(resid.yield, main = "", xlab = "Theoretical quantiles", ylab = "Sample quantiles", yaxt = "n")
+axis(side = 2, las = 2, pch = 21)
+box(lwd=2)
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/4.figshare/1.diagnostic.yield.png")
+
+grid.raster(img)
+```
+
+# Lag
+```{r}
+# run following block for each growth parameter each time
+data <- as.data.frame(ts) # all observations
+gen <- data[,2]
+day <- data[,1]
+cell <- data[,3]
+biorep <- data[,4]
+umax <- data[,6]
+yield <- data[,5]
+lag <- data[,7]
+
+mod.lag <- lme(lag ~ gen * cell, random = ~ 1 | biorep, data = data) # random intercept
+r.squaredGLMM(mod.lag) # m = marginal (fixed); c = conditional (fixed and random)
+vc <- VarCorr(mod.lag)
+total.var <- as.numeric(vc[1]) + as.numeric(vc[2])
+vp.coeff <- as.numeric(vc[1])/total.var # 6.234417e-11
+# approximately 26% of explained variation due to random effect
+
+pred.lag <- as.vector(mod.lag$fitted[,1])
+resid.lag <- data$lag - pred.lag
+rmse.lag <- sqrt(mean(resid.lag^2)) # 2.263965
+#outlier.lag <- sum(abs(resid.lag-mean(resid.lag))/sd(resid.lag)>3)  # 4 
+#who.outliers <- which(abs(resid.lag-mean(resid.lag))/sd(resid.lag)>3) # 40, 48, 56, 80, 82
+
+# new data for plotting
+newdat.lme.lag <- data.frame(day = data$day, gen = data$gen, cell = data$cell, biorep = data$biorep)
+newdat.lme.lag$predlme = predict(mod.lag, newdata = newdat.lme.lag, level = 0)
+
+# Get model matrix using prediction data set
+des = model.matrix(formula(mod.lag)[-2], newdat.lme)
+
+# Use matrix multiplication on the model matrix and variance-covariance matrix extracted from the model with vcov(). 
+# Pull out the values on diagonal, which are the variances of the predicted values
+predvar = diag(des %*% vcov(mod.lag) %*% t(des))
+
+# Construct approximate confidence intervals using standard errors (square root of predvar) along with an appropriate multiplier (~1.96)
+# Confidence interval limits to the dataset for plotting
+newdat.lme.lag$lower = with(newdat.lme.lag, predlme - 2*sqrt(predvar))
+newdat.lme.lag$upper = with(newdat.lme.lag, predlme + 2*sqrt(predvar))
+
+# parse out cell lines for plotting
+nm.lme.lag <- filter(newdat.lme.lag, cell == "nm") %>%
+  dplyr::select(day,gen,cell,biorep,predlme,lower,upper)
+m.lme.lag <- filter(newdat.lme.lag, cell == "m") %>%
+  dplyr::select(day,gen,cell,biorep,predlme,lower,upper)
+
+
+################################################################################
+
+# Residual plot
+
+png(filename="~/GitHub/MinimalCell/figures/4.figshare/1.diagnostic.lag.png",
+    width = 1200, height = 1200, res = 96*2) 
+
+plot.new()
+par(mfrow=c(2,1), mar=c(5, 4, 1, 3))
+
+diag.lag <- data.frame(data, resid.lag, pred.lag)
+
+diag.lag.m <- filter(diag.lag, cell == c("m")) %>%
+  dplyr::select(resid.lag, pred.lag)
+
+diag.lag.nm <- filter(diag.lag, cell == c("nm")) %>%
+  dplyr::select(resid.lag, pred.lag)
+
+mod <- lm(diag.lag.m$resid.lag ~ diag.lag.m$pred.lag)
+newx <- seq(min(diag.lag.m$pred.lag-0.5), max(diag.lag.m$pred.lag+0.5), 
+            by = ((max(diag.lag.m$pred.lag+0.5 - min(diag.lag.m$pred.lag-0.5))
+            / (length(diag.lag.m$pred.lag)-1))))
+newy <- predict(mod, data.frame(x = newx))
+
+plot(diag.lag.m$pred.lag, diag.lag.m$resid.lag, xlab = "Predicted values", 
+     ylab = "Residuals", las = 1, xlim = c(4, 14), 
+      ylim = c(-7, 11), type = "p", pch = 21, bg = "red", 
+      col = "red", cex = 1.25, cex.lab = 1.25, las = 1, lwd = 2)
+ box(lwd=2)
+
+ lines(newx, newy, col = "red", lty = 2, lwd = 1.5)
+
+mod <- lm(diag.lag.nm$resid.lag ~ diag.lag.nm$pred.lag)
+newx <- seq(min(diag.lag.nm$pred.lag-0.5), max(diag.lag.nm$pred.lag+0.5), 
+            by = ((max(diag.lag.nm$pred.lag+0.5 - min(diag.lag.nm$pred.lag-0.5))
+            / (length(diag.lag.nm$pred.lag)-1))))
+newy <- predict(mod, data.frame(x = newx))
+
+points(diag.lag.nm$pred.lag, diag.lag.nm$resid.lag, type = "p", pch = 21, bg = "blue",
+       col = "blue", cex = 1.25)
+lines(newx, newy, col = "blue", lty = 2, lwd = 1.5)
+
+text(5.8, 6, "Minimal", col = "black", cex = 1)
+text(12.2, 10.5, "Non-minimal", col = "black", cex = 1)
+
+par(cex = 1.2, cex.lab = 1)
+qqnorm(resid.yield, main = "", xlab = "Theoretical quantiles", ylab = "Sample quantiles", yaxt = "n")
+axis(side = 2, las = 2, pch = 21)
+box(lwd=2)
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/4.figshare/1.diagnostic.lag.png")
+
+grid.raster(img)
+```
+
+
+# Two panel figure
+```{r}
+png(filename="~/GitHub/MinimalCell/figures/3.supplementary/FigS2.png",
+    width = 800, height = 1600, res = 96*2)
+
+plot.new()
+par(mfrow=c(2,1))
+par(mar=c(0,1,4,1), xpd = TRUE)
+par(oma=c(7,4,6,0))
+
+#### Lag time ######
+plot(jitter(ts.nm$gen,1), ts.nm$lag, xlim = c(-10, 2010), 
+    ylim = c(-0.1, 22), type = "p", pch = 21, bg = "white", 
+      col = "white", cex = 1.25, ylab = "", xlab = "", 
+     cex.lab = 1.25, las = 1, lwd = 2, yaxt = "n", xaxt = "n")
+box(lwd=2)
+
+# plot confidence intervals for lme model
+polygon(c(nm.lme.lag$gen, rev(nm.lme.lag$gen)), c(nm.lme.lag$upper,
+              rev(nm.lme.lag$lower)), col = "lightblue", border = NA)
+polygon(c(m.lme.lag$gen, rev(m.lme.lag$gen)), c(m.lme.lag$upper,
+              rev(m.lme.lag$lower)), col = "pink", border = NA)
+
+# add bioreplicates and ancestors
+
+points(jitter(ts.nm.b1$gen,1), ts.nm.b1$lag, pch = 22, 
+       bg = "blue", col = "blue", lwd = 2, cex = 1)
+points(jitter(ts.nm.b2$gen,1), ts.nm.b2$lag, pch = 23, 
+       bg = "blue", col = "blue", lwd = 2, cex = 1)
+points(jitter(ts.nm.b3$gen,1), ts.nm.b3$lag, pch = 24, 
+       bg = "blue", col = "blue", lwd = 2, cex = 1)
+points(jitter(ts.nm.b4$gen,1), ts.nm.b4$lag, pch = 25, 
+       bg = "blue", col = "blue", lwd = 2, cex = 1)
+points(jitter(ts.nm.anc$gen,1), ts.nm.anc$lag, pch = 21, 
+       bg = "blue", col = "blue", lwd = 2, cex = 1)
+
+
+points(jitter(ts.m.b1$gen,1), ts.m.b1$lag, pch = 22, 
+       bg = "red", col = "red", lwd = 2, cex = 1)
+points(jitter(ts.m.b2$gen,1), ts.m.b2$lag, pch = 23, 
+       bg = "red", col = "red", lwd = 2, cex = 1)
+points(jitter(ts.m.b3$gen,1), ts.m.b3$lag, pch = 24, 
+       bg = "red", col = "red", lwd = 2, cex = 1)
+points(jitter(ts.m.b4$gen,1), ts.m.b4$lag, pch = 25, 
+       bg = "red", col = "red", lwd = 2, cex = 1)
+points(jitter(ts.m.anc$gen,1), ts.m.anc$lag, pch = 21, 
+       bg = "red", col = "red", lwd = 2, cex = 1)
+
+# plot regression line from lme model
+lines(nm.lme.lag$gen, nm.lme.lag$predlme, col = "blue", lwd = 2, lty = 2)
+lines(m.lme.lag$gen, m.lme.lag$predlme, col = "red", lwd = 2, lty = 2)
+
+# Add axes and labels
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("0.0", "10", "20"), at = c(0.0, 10, 20))
+axis(side = 4, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at=c(0, 10, 20), labels = F)
+axis(side = 3, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at = c(0, 500, 1000, 1500, 2000), labels = F)
+axis(side = 1, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+    at = c(0, 500, 1000, 1500, 2000), labels = F)
+
+rect(-90, 28, 2090, 32, border = "black", lwd = 2)
+
+legend(100, 32.5, "Non-minimal", pch = 21, pt.bg = "blue",
+       pt.cex = 1, col = "blue", pt.lwd = 2, bty = 'n', y.intersp = 1, 
+       x.intersp = 0.1, lwd = 0)
+
+legend(1100, 32.5, "Minimal", pch = 21, pt.bg = "red",
+       pt.cex = 1, col = "red", pt.lwd = 2, bty = 'n', y.intersp = 1, 
+       x.intersp = 0.1, lwd = 0)
+
+#### Yield ######
+
+# Add non-minimal points
+
+plot(jitter(ts.nm$gen,1), ts.nm$A, xlim = c(-10, 2010), 
+     ylim = c(-0.1, 1.25), type = "p", pch = 21, bg = "white", 
+     col = "white", cex = 1.25, ylab = "", xlab = "", 
+     cex.lab = 1.25, las = 1, lwd = 2, yaxt = "n", xaxt = "n")
+box(lwd=2)
+
+# plot confidence intervals for lme model
+polygon(c(nm.lme.yield$gen, rev(nm.lme.yield$gen)), c(nm.lme.yield$upper, 
+              rev(nm.lme.yield$lower)), col = "lightblue", border = NA)
+polygon(c(m.lme.yield$gen, rev(m.lme.yield$gen)), c(m.lme.yield$upper, 
+              rev(m.lme.yield$lower)), col = "pink", border = NA)
+
+# outliers for plotting
+#ts.m.b1.ok <- ts.m.b1 %>%
+#  filter(A <= "0.5")
+#ts.m.b1.out <- ts.m.b1 %>%
+#  filter(A >= "0.5")
+
+#ts.m.b2.ok <- ts.m.b2 %>%
+#  filter(A <= "0.5")
+#ts.m.b2.out <- ts.m.b2 %>%
+#  filter(A >= "0.5")
+
+#ts.m.b3.ok <- ts.m.b3 %>%
+#  filter(A <= "0.5")
+#ts.m.b3.out <- ts.m.b3 %>%
+#  filter(A >= "0.5")
+
+#ts.m.b4.ok <- ts.m.b4 %>%
+#  filter(A <= "0.5")
+#ts.m.b4.out <- ts.m.b4 %>%
+#  filter(A >= "0.5")
+
+# add bioreplicates and ancestors
+
+points(jitter(ts.nm.b1$gen,1), ts.nm.b1$A, pch = 22, 
+       bg = "blue", col = "blue", lwd = 2, cex = 1)
+points(jitter(ts.nm.b2$gen,1), ts.nm.b2$A, pch = 23, 
+       bg = "blue", col = "blue", lwd = 2, cex = 1)
+points(jitter(ts.nm.b3$gen,1), ts.nm.b3$A, pch = 24, 
+       bg = "blue", col = "blue", lwd = 2, cex = 1)
+points(jitter(ts.nm.b4$gen,1), ts.nm.b4$A, pch = 25, 
+       bg = "blue", col = "blue", lwd = 2, cex = 1)
+points(jitter(ts.nm.anc$gen,1), ts.nm.anc$A, pch = 21, 
+       bg = "blue", col = "blue", lwd = 2, cex = 1)
+
+
+# Remove minimal outliers
+
+#ts.nm <- ts.nm[-c(40, 48, 56, 80, 82),]
+
+# 24  60   399    m      6 0.8028667 0.14263333  9.227133
+# 28  80   533    m      6 0.8664000 0.14396667  7.765900
+# 40  140  932    m      6 0.9260000 0.12630000  7.787467
+# 42  140  932    m      8 1.0559000 0.14080000  6.802000
+# 66  300 1997    m      5 0.7259000 0.10703333  7.485467
+
+
+ts.m.b1 <- ts.m.b1[-c(18),]
+ts.m.b2 <- ts.m.b2[-c(5,6,7),]
+ts.m.b4 <- ts.m.b2[-c(10),]
+
+points(jitter(ts.m.b1$gen,1), ts.m.b1$A, pch = 22, 
+       bg = "red", col = "red", lwd = 2, cex = 1)
+
+#points(jitter(ts.m.b1.out$gen,1), ts.m.b1.out$A, pch = 4, 
+#       col = "red", lwd = 2, cex = 1)
+
+points(jitter(ts.m.b2$gen,1), ts.m.b2$A, pch = 23, 
+       bg = "red", col = "red", lwd = 2, cex = 1)
+
+#points(jitter(ts.m.b2.out$gen,1), ts.m.b2.out$A, pch = 4, 
+#       col = "red", lwd = 2, cex = 1)
+
+points(jitter(ts.m.b3$gen,1), ts.m.b3$A, pch = 24, 
+       bg = "red", col = "red", lwd = 2, cex = 1)
+
+#points(jitter(ts.m.b3.out$gen,1), ts.m.b3.out$A, pch = 4, 
+#       col = "red", lwd = 2, cex = 1)
+
+points(jitter(ts.m.b4$gen,1), ts.m.b4$A, pch = 25, 
+       bg = "red", col = "red", lwd = 2, cex = 1)
+
+#points(jitter(ts.m.b4.out$gen,1), ts.m.b4.out$A, pch = 4, 
+#       col = "red", lwd = 2, cex = 1)
+
+points(jitter(ts.m.anc$gen,1), ts.m.anc$A, pch = 21, 
+       bg = "red", col = "red", lwd = 2, cex = 1)
+
+# plot regression line from lme model
+lines(nm.lme.yield$gen, nm.lme.yield$predlme, col = "blue", lwd = 2, lty = 2)
+lines(m.lme.yield$gen, m.lme.yield$predlme, col = "red", lwd = 2, lty = 2)
+
+# Add axes and labels
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("0.0", "0.5", "1.0"), at = c(0.0, 0.5, 1))
+axis(side = 4, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at=c(0, 0.5, 1), labels = F)
+axis(side = 3, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at = c(0, 500, 1000, 1500, 2000), labels = F)
+axis(side = 1, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("0", "500", "1000", "1500", "2000"), at = c(0, 500, 1000, 1500, 2000))
+      
+mtext(expression('Lag time (hrs)'), side = 2, outer = TRUE, 
+      cex = 2, line = 2, adj = 0.8)
+
+mtext(expression('Yield (a'[415]*')'), side = 2, outer = TRUE, 
+      cex = 2, line = 2, adj = 0.1)
+
+mtext(expression('Time (generations)'), side = 1,
+     outer = TRUE, cex = 2, line = 4, adj = 0.5)
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/3.supplementary/FigS2.png")
+
+grid.raster(img)
+```
+
+
+# Are there correlations between umax, yield, and lag by cell type
+```{r}
+data <- as.data.frame(ts) # all observations
+gen <- data[,2]
+day <- data[,1]
+cell <- data[,3]
+biorep <- data[,4]
+umax <- data[,6]
+yield <- data[,5]
+lag <- data[,7]
+
+data <- data.orig[-c(40, 48, 56, 80, 82),]
+data.m <- filter(data, cell == c("m"))
+data.nm <- filter(data, cell == c("nm"))
+
+m.umax.yield.corr <-cor.test(data.m$umax, data.m$A) 
+# r = 0.77, t =  9.7475, df = 67, p-value = 1.788e-14
+
+m.umax.lag.corr <-cor.test(data.m$umax, data.m$lag) 
+# r = -0.683428, t = -7.663, df = 67, p-value = 9.75e-11
+
+m.yield.lag.corr <-cor.test(data.m$A, data.m$lag) 
+# r = -0.4679028, t = -4.3336, df = 67, p-value = 5.035e-05
+
+# Conclusions for the minimal cell:
+# As umax goes up, so does yield (r = 0.77, t_67 = -7.663, P <0.0001)
+# As umax goes up, yield goes down (r = -0.47, t_67 = -4.34, P <0.0001)
+
+
+nm.umax.yield.corr <-cor.test(data.nm$umax, data.nm$A) 
+# r = -0.06135581, t = -0.51431, df = 70, p-value = 0.6087
+
+nm.umax.lag.corr <-cor.test(data.nm$umax, data.nm$lag) 
+# r = 0.3930266, t = 3.5761, df = 70, p-value = 0.0006376
+
+nm.yield.lag.corr <-cor.test(data.nm$A, data.nm$lag) 
+# r = 0.1103163, t = 0.92864, df = 70, p-value = 0.3563
+
+# Conclusions for the non-minimal cell:
+# As umax goes up, yield is unaffected (r = -0.06, t_70 = -0.51, P = 0.6087)
+# As umax goes up, lag slightly increases (r = 011, t_70 = 0.93, P = 0.0006)
+
+
+```
