@@ -1,0 +1,248 @@
+---
+title: "Evolution of the minimal cell"
+author: "Roy Moger-Reischer and Jay T. Lennon"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+header-includes:
+   - \usepackage{array}
+output: pdf_document
+geometry: margin=2.54cm
+---
+
+## This file corresponds with Figshare analysis where a sensivity analysis was  
+## perfomred withFACS data to see whether regating affected estimates of relative
+## fitness of fitZ mutants depicted in FigExt3
+
+## Clear workspace and set directory
+```{r setup}
+rm(list=ls())
+getwd()
+setwd("~/GitHub/MinimalCell")
+```
+
+## Load packages and functions
+```{r}
+require("png")
+require("dplyr")
+require("grid")
+sem <- function(x) sqrt(var(x)/length(x))
+```
+
+# Load data
+```{r}
+# Load data
+rel.fit.raw <-read.csv("~/GitHub/MinimalCell/datafiles/ftsZ_W_cases_small.change.csv")
+rel.fit.raw <- as_tibble(rel.fit.raw)
+
+# Subset data
+rel.fit <- rel.fit.raw %>% group_by(strain, Mutation) %>% summarise(mean = mean(W_1.0), sem = sem(W_1.0))
+
+# Set data as factors and rename levels
+rel.fit$strain <- as.factor(rel.fit$strain)
+levels(rel.fit$strain)[levels(rel.fit$strain)=="JCVI-syn1.0"] <- "Non-minimal"
+levels(rel.fit$strain)[levels(rel.fit$strain)=="JCVI-syn3B"] <- "Minimal"
+rel.fit$strain <- factor(rel.fit$strain, levels=c("Non-minimal","Minimal"))
+
+# Add x-values for plotting
+time.x <- c(3,1,3,1)
+rel.fit <- data.frame(rel.fit, time.x)
+
+# Subset relative fitness by strain
+rel.fit.wt  <- filter(rel.fit, strain == "Non-minimal") %>%
+  dplyr::select(Mutation, mean, sem, time.x)
+
+rel.fit.min  <- filter(rel.fit, strain== "Minimal") %>%
+  dplyr::select(Mutation, mean, sem, time.x)
+```
+
+## Tests significance
+
+```{r}
+# Ancestral lines
+
+rel.fit.anc  <- filter(rel.fit.raw, timepoint == "Ancestor") %>%
+  dplyr::select(strain, W_1.0)
+var.test(c(filter(rel.fit.raw, strain == "JCVI-syn1.0", Mutation=="None")$W_1.0),
+         c(filter(rel.fit.raw, strain == "JCVI-syn3B",Mutation=="None")$W_1.0))
+# Test for equal variance: P = p-value = 0.2224 -> homogeneous variance
+
+t.test(c(filter(rel.fit.raw, strain == "JCVI-syn1.0", Mutation=="None")$W_1.0),
+       c(filter(rel.fit.raw, strain == "JCVI-syn3B",Mutation=="None")$W_1.0),
+       paired = F,alternative = "two.sided", mu = 0, var.equal = T)
+# Results: t = 21.918, df = 15, p-value =  8.337e-13
+# Minimization led to 78% or 4.5-fold reduction in fitness
+
+# Evolved lines
+
+# 1. Differences in fitness of ftsZ mutation on minimal vs. non-minimal background
+
+var.test(c(filter(rel.fit.raw, strain == "JCVI-syn1.0", Mutation=="ftsZ")$W_1.0),
+         c(filter(rel.fit.raw, strain == "JCVI-syn3B",Mutation=="ftsZ")$W_1.0))
+# Test for equal variance: P = 3.856e-11 -> heterogeneous variance
+
+t.test(c(filter(rel.fit.raw, strain == "JCVI-syn1.0", Mutation=="ftsZ")$W_1.0),
+       c(filter(rel.fit.raw, strain == "JCVI-syn3B",Mutation=="ftsZ")$W_1.0),
+       paired = F,alternative = "two.sided", mu = 0, var.equal = F)
+# Results: t = 3.3915, df = 8.0459, p-value = 0.0094
+# ftsZ mutant on non-min is 105% or 3.65-fold larger than ftsZ mutant on min
+
+
+# 2. Is ftsZ mutation adaptive in non-minimal background?
+var.test(c(filter(rel.fit.raw, strain == "JCVI-syn1.0", Mutation == "ftsZ")$W_1.0),
+         c(filter(rel.fit.raw, strain == "JCVI-syn1.0",Mutation == "None")$W_1.0))
+# Test for equal variance: P = 0.05582 -> homogenous variance
+t.test(c(filter(rel.fit.raw, strain == "JCVI-syn1.0", Mutation == "ftsZ")$W_1.0),
+       c(filter(rel.fit.raw, strain == "JCVI-syn1.0",Mutation == "None")$W_1.0),
+       paired = F,alternative = "greater", mu = 0, var.equal = T)
+# Results: t = 1.0643, df = 12, p-value = 0.1541
+# ftsZ mutation increased non-minimal fitness by 45% or 1.45-fold
+
+
+# 3. Is ftsZ mutation adaptive in minimal background?
+
+var.test(c(filter(rel.fit.raw, strain == "JCVI-syn3B", Mutation == "ftsZ")$W_1.0),
+         c(filter(rel.fit.raw, strain == "JCVI-syn3B",Mutation == "None")$W_1.0))
+# Test for equal variance: P = 0.3996 -> heterogeneous variance
+
+t.test(c(filter(rel.fit.raw, strain == "JCVI-syn3B", Mutation == "ftsZ")$W_1.0),
+       c(filter(rel.fit.raw, strain == "JCVI-syn3B", Mutation == "None")$W_1.0),
+       paired = F,alternative = "greater", mu = 0, var.equal = T)
+# Results:t = 7.5964, df = 22, p-value = 6.895e-08
+# ftsZ mutation increased minimal fitness by 18% or 1.8-fold
+```
+
+# Initiate figure
+```{r}
+# Make figure
+png(filename="~/GitHub/MinimalCell/figures/4.figshare/2.delta_cell_size.regate.png",
+    width = 1200, height = 1200, res = 96*2) 
+
+plot.new()
+par(mar = c(7, 7, 5, 7))
+
+# initiate plot with points for syn3B ancestor (minimal)
+plot(jitter(rep(1, length(filter(rel.fit.raw,strain=="JCVI-syn3B" & Mutation=="None")$W_1.0)), amount = 0.5), 
+     filter(rel.fit.raw,strain=="JCVI-syn3B" & Mutation=="None")$W_1.0, ylim = c(0.1, 3.75), xlim = c(0, 4.55), 
+     pch = 21, bg = "pink", col = "pink", lwd = 2, cex = 1.3, yaxt = "n", 
+      xaxt = "n", cex.lab = 1.5, las = 1,  ylab = "", xlab = "")
+
+box(lwd=2)
+
+# add points for for syn 1.0 ancestor (non-minimal)
+points(jitter(rep(1, length(filter(rel.fit.raw,strain=="JCVI-syn1.0" & Mutation=="None")$W_1.0)), amount = 0.5), 
+       filter(rel.fit.raw,strain=="JCVI-syn1.0" & Mutation=="None")$W_1.0, pch = 21, bg = "lightblue", col = "lightblue", 
+       lwd = 2, cex = 1.3)
+
+# add points for for syn 3B ftsZ (minimal)
+points(jitter(rep(3, length(filter(rel.fit.raw,strain=="JCVI-syn3B" & Mutation=="ftsZ")$W_1.0)), amount = 0.5), 
+       filter(rel.fit.raw,strain=="JCVI-syn3B" & Mutation=="ftsZ")$W_1.0, pch = 21, bg = "pink", col = "pink", 
+       lwd = 2, cex = 1.3)
+
+# add points for for syn 3B ftsZ (non-minimal)
+points(jitter(rep(3, length(filter(rel.fit.raw,strain=="JCVI-syn1.0" & Mutation=="ftsZ")$W_1.0)), amount = 0.5), 
+       filter(rel.fit.raw,strain=="JCVI-syn1.0" & Mutation=="ftsZ")$W_1.0, pch = 21, bg = "lightblue", col = "lightblue", 
+       lwd = 2, cex = 1.3)
+
+# Add non-minimal means
+points(rel.fit.min$time.x, rel.fit.wt$mean, pch = 21, 
+      bg = "blue", col = "blue", lwd = 2, cex = 2)
+
+# Add minimal means
+points(rel.fit.min$time.x, rel.fit.min$mean, pch = 21, 
+      bg = "red", col = "red", lwd = 2, cex = 2)
+
+# Add error bars
+arrows(x0 = rel.fit.wt$time.x, y0 = rel.fit.wt$mean, 
+       y1 = rel.fit.wt$mean + rel.fit.wt$sem, 
+       angle = 90, length = 0.1, lwd = 2, col = "blue")
+arrows(x0 = rel.fit.wt$time.x, y0 = rel.fit.wt$mean, 
+       y1 = rel.fit.wt$mean - rel.fit.wt$sem, 
+       angle = 90, length=0.1, lwd = 2, col = "blue")
+arrows(x0 = rel.fit.min$time.x, y0 = rel.fit.min$mean, 
+       y1 = rel.fit.min$mean + rel.fit.min$sem, 
+       angle = 90, length = 0.1, lwd = 2, col = "red")
+arrows(x0 = rel.fit.min$time.x, y0 = rel.fit.min$mean, 
+       y1 = rel.fit.min$mean - rel.fit.min$sem, 
+       angle = 90, length=0.1, lwd = 2, col = "red")
+
+# Add axes and labels
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("0.5", "1.5", "2.5", "3.5"), at = c(0.5, 1.5, 2.5, 3.5))
+axis(side = 4, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at=c(0.5, 1.5, 2.5, 3.5), labels = F)
+axis(side = 3, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     at = c(1, 3), labels = F)
+axis(side = 1, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("Ancestor", "ftsZ E315*"), 
+     col.axis = "darkgray", at = c(1, 3))
+mtext(expression('Strain'), side = 1,
+      outer = TRUE, cex = 1.5, line = -3.5, adj = 0.45)
+mtext(expression("Relative fitness ("~italic("W")~")"), side = 2, 
+      outer = TRUE, cex = 1.5, line = -4, adj = 0.55)
+
+# Add line segments
+segments(rel.fit.wt$time.x[1], rel.fit.wt$mean[1], rel.fit.wt$time.x[2], 
+         rel.fit.wt$mean[2], col = "blue", lwd = 2)
+segments(rel.fit.min$time.x[1], rel.fit.min$mean[1], rel.fit.min$time.x[2], 
+         rel.fit.min$mean[2], col = "red", lwd = 2)
+
+# Add P-values
+#mtext(expression("Timepoint:" ~italic("P")~"= 0.0003"), line = -2.5, cex = 0.80, at = 0.9)
+#mtext(expression("Strain:" ~italic("P")~"< 0.0001"), line = -4.0, cex = 0.80, at = 0.75)
+
+# Add strain identifier
+text(3.9, rel.fit.wt$mean[1], labels = "Non-minimal", cex = 1.0)
+text(3.8, rel.fit.min$mean[1], labels = "Minimal", cex = 1.0)
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("~/GitHub/MinimalCell/figures/4.figshare/2.delta_cell_size.regate.png")
+
+grid.raster(img)
+```
+
+# Demonstrate the equations to calculate relative fitness
+```{r}
+# Load data
+calcsheet17 <-read.csv("~/GitHub/MinimalCell/datafiles/Competition_2021_strain17.strain16.csv")
+calcsheet17 <- as_tibble(calcsheet17)
+
+# Account for the 15 uL volume of inoculum
+calcsheet17_2 <- mutate(calcsheet17, T0_mCherry_per_inoculated_V_calculated 
+        = T0_mCherry_raw_per_10_uL * 1.5)
+# Account for the 165 uL or 285 uL volume of inoculum
+calcsheet17_3 <- mutate(calcsheet17_2, T0_SOI_per_inoculated_V_calculated = 
+        T0_SOI_raw_per_10_uL * Inoculated_V)
+# Account for the difference in dilution factor at T24 sampling
+calcsheet17_4 <- mutate(calcsheet17_3, T24_mCherry_calculated = T24_mCherry_raw * 100)
+# Subtract background noise and multiply by 100 to account for difference in dilution
+calcsheet17_5 <- mutate(calcsheet17_4, T24_SOI_calculated = (T24_SOI_raw -                                          Amount_false_neg_to_subtract_as_proportion_of_true_pos_mCherry_cells * T24_mCherry_raw) * 100)
+
+# Calculate fitness relative to the labeled competitor strain
+calcsheet17_6 <- mutate(calcsheet17_5, W_W_calculated = log(T24_SOI_calculated / 
+        T0_SOI_per_inoculated_V_calculated) / log(T24_mCherry_calculated /
+        T0_mCherry_per_inoculated_V_calculated))
+
+calcsheet19 <-read.csv("~/GitHub/MinimalCell/datafiles/Competition_2021_strain19.strain8.csv")
+calcsheet19 <- as_tibble(calcsheet19)
+
+# Get the false negatives as a proportion of the true positives
+calcsheet19_2 <- mutate(calcsheet19, ratio_false_negs_per_true_pos_calculated=mCherry_false_negs_avg /
+        mCherry_true_posvs_avg)
+# Account for the 40 uL volume of inoculum
+calcsheet19_3 <- mutate(calcsheet19_2, T0_mCherry_calculated=T0_mCherry_raw * 4)
+# Account for the 20 uL volume of inoculum
+calcsheet19_4 <- mutate(calcsheet19_3, T0_SOI_calculated = T0_SOI_raw * 2)
+# Multiply by 100 to account for difference in dilution
+calcsheet19_5 <- mutate(calcsheet19_4, T24_mCherry_calculated = T24_mCherry_raw * 100)
+# Subtract background noise and multiply by 100 to account for difference in dilution
+calcsheet19_6 <- mutate(calcsheet19_5, T24_SOI_calculated =
+        (T24_SOI_raw-(ratio_false_negs_per_true_pos_calculated*T24_mCherry_raw)) * 100)
+# Calculate fitness relative to the labeled competitor strain
+calcsheet19_7 <- mutate(calcsheet19_6, W_W_calculated =
+        log(T24_SOI_calculated/T0_SOI_calculated) / log(T24_mCherry_calculated/T0_mCherry_calculated))
+```
+
+
