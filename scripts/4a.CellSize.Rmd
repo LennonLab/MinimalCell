@@ -8,9 +8,10 @@ output: pdf_document
 geometry: margin=2.54cm
 ---
 
-# Cell size in response to experimental evolution
+# Cell size in response to experimental evolution (Fig. 4)
 
 ## Clear workspace and set directory
+
 ```{r setup, include=FALSE, echo=FALSE}
 rm(list=ls())
 require("knitr")
@@ -20,6 +21,7 @@ getwd()
 ```
 
 ## Load packages and functions
+
 ```{r}
 require("png")
 require("dplyr")
@@ -30,6 +32,7 @@ cv <- function(x) (sd(x)/mean(x))*100
 ```
 
 # Load and process data
+
 ```{r}
 # Load data
 size.raw <-read.csv("~/GitHub/MinimalCell/datafiles/SEM_Stein_cases.csv")
@@ -53,6 +56,7 @@ size <- data.frame(size, time.x)
 ```
 
 ## Statistical tests
+
 ```{r}
 # Subset data
 size.reps <- size.raw %>% 
@@ -133,71 +137,25 @@ delta <- data.frame(delta.w = c(delta.nm.nm, delta.m.m),
 delta$comp <- factor(delta$comp)
 colnames(delta) <- c("delta.d", "comp")
 
-# # Code for all four comparisons
-# delta <- data.frame(delta.d = c(delta.nm.nm, delta.m.m, delta.nm.m, delta.m.nm),
-#   comp = c(rep("nm.nm", 4), rep("m.m", 4), rep("nm.m",4), rep("m.nm", 4)))
-# delta$comp<-factor(delta$comp)
-# 
-# delta <- data.frame(delta.d = c(delta.nm.nm, delta.m.m, delta.nm.m, delta.m.nm),
-#   comp = c(rep("nm.nm", 4), rep("m.m", 4), rep("nm.m",4), rep("m.nm", 4)))
-# delta$comp<-factor(delta$comp)
-# 
-# 
-# delta.scale <- delta$delta.d - min(delta$delta.d) / max(delta$delta.d) - min(delta$delta.d)
-# delta <- data.frame(delta.scale, comp = c(rep("nm.nm", 4), 
-#             rep("m.m", 4), rep("nm.m",4), rep("m.nm", 4)))  
-# delta$comp<-factor(delta$comp)
-# colnames(delta) <- c("delta.d", "comp")
               
-
-# GLM with intercept: test whether groups of delta size different from zero
+# GLM without intercept: test whether groups of delta size different from zero
 # (picks first [m.m] alphabetically and compares the others relative to that)
+delta.fit1 <- lm(delta.d ~ comp - 1, data = delta)
+
 # Minimal cell did not change; non-miminimal cell got bigger
 #          Estimate Std. Error t value Pr(>|t|)   
 # m.m    0.08476    0.05602   1.513  0.18101   
 # nm.nm  0.23960    0.05602   4.277  0.00522 **
 
-delta.fit1 <- lm(delta.d ~ comp - 1, data = delta)
 
-
-# GLM without intercept: test whether groups of delta fitness equal to each other
+# GLM with intercept: test whether groups of delta size equal to each other
 # (picks first [m.m] alphabetically and compares the others relative to that)
+delta.fit2 <- lm(delta.d ~ comp, data = delta)
+
 #            Estimate Std. Error t value Pr(>|t|)  
 # Int      0.07034    0.09362   0.751   0.4809  
 # nm.nm    0.28260    0.13240   2.134   0.0767 .
 # Non-minimal increase is size is marginally greater than minimal cell
-
-delta.fit2 <- lm(delta.d ~ comp, data = delta)
-
-
-# Correct p-values for multiple comparisons
-
-p.val.anc <- anc.t.test$p.value 
-p.val.evo <- evo.t.test$p.value 
-p.values.fit1.all <- summary(delta.fit1)$coefficients[,c(4)]
-p.val.ind <- as.numeric(unlist(summary(delta.fit1)$coefficients[,c(4)]))
-p.val.fit2.all <- summary(delta.fit2)$coefficients[,c(4)]
-p.val.intx <- as.numeric(unlist(p.val.fit2.all[2]))   
-p.vals <- c(p.val.anc, p.val.evo, p.val.ind, p.val.intx)
-rank <- rank(p.vals)
-#m <- length(p.values.sorted)
-m <- length(p.vals)
-
-# Calculate the Benjamini-Hochberg adjusted p-values
-adjusted.p.vals <- (m / rank) * p.vals
-adjusted.p.vals <- pmin(adjusted.p.vals, 1) # Set adjusted p-values to 1 if they exceed 1
-
-# Sort the adjusted p-values by their corresponding original p-values
-sorted.indices <- order(p.vals)
-adjusted.p.vals <- adjusted.p.vals[sorted.indices]
-
-# Identify the significant tests using the adjusted p-value threshold
-alpha <- 0.05
-adjusted.alpha <- alpha / m
-significant.tests <- which(adjusted.p.vals <= adjusted.alpha)
-
-cat("Adjusted p-values:", adjusted.p.vals, "\n")
-cat("Significant tests:", significant.tests, "\n")
 ```
 
 
@@ -245,6 +203,7 @@ B_delta.t.test.v <- t.test(x = evo.reps$mean.vol[1:4],
 ```
 
 ## Resample raw data for visualization in figure
+
 ```{r}
 
 # randomly sample from ancestors
@@ -522,7 +481,7 @@ grid.raster(img)
 
 
 
-# Create figure for delta cell size (Fig. S6)
+# Create figure for delta cell size (Figshare)
 
 ```{r}
 png(filename="~/GitHub/MinimalCell/figures/4.figshare/2.delta_cell_size.png",
@@ -617,7 +576,8 @@ grid.raster(img)
 ```
 
 
-# Percent change in size (Supplementary figure)
+# Percent change in size (Fig. S6)
+
 ```{r}
 # Calculate percent change in cell diameter
 

@@ -8,7 +8,10 @@ output: pdf_document
 geometry: margin=2.54cm
 ---
 
+# Mutation accumulation experiment (Fig. 1)
+
 ## Clear workspace and set directory
+
 ```{r setup}
 rm(list=ls())
 getwd()
@@ -16,6 +19,7 @@ setwd("~/GitHub/MinimalCell")
 ```
 
 ## Load packages and functions
+
 ```{r}
 require("png")
 require("dplyr")
@@ -336,7 +340,7 @@ legend(1.4, 1.2, c("Non-minimal", "Minimal"), pch = 22,
        bty = 'n', y.intersp = 1)
 
 # Add P-value for t-test
-mtext(expression(~italic("P")~"< 0.0001"), line = -1.7, cex = 0.80, at = 17)
+mtext(expression(~italic("P")~" = 0.00001"), line = -1.7, cex = 0.80, at = 17)
 
 # Add vertical dashed lines
 abline(v = c(6.5, 12.5), col=c("grey"), lty = 3, lwd = 2)

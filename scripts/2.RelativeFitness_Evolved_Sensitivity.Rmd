@@ -8,11 +8,11 @@ output: pdf_document
 geometry: margin=2.54cm
 ---
 
-## This file corresponds with Figshare analysis where a sensivity analysis was  
-## perfomred withFACS data to see whether regating affected estimates of relative
-## fitness depicted in Fig. 2
+# Relative fitness in response to experimental evolution (Figshare)
+# (Sensivity analysis perfomred with FACS data to gating in Fig. 2) 
 
 ## Clear workspace and set directory
+
 ```{r setup}
 rm(list=ls())
 getwd()
@@ -20,6 +20,7 @@ setwd("~/GitHub/MinimalCell")
 ```
 
 ## Load packages and functions
+
 ```{r}
 require("png")
 require("dplyr")
@@ -29,6 +30,7 @@ cv <- function(x) (sd(x)/mean(x))*100
 ```
 
 # Load data
+
 ```{r}
 # Load data
 rel.fit.raw <-read.csv("~/GitHub/MinimalCell/datafiles/Interaction_data_fitness_altered.gating.a.little.more.stringent.csv")
@@ -56,7 +58,7 @@ rel.fit.m  <- filter(rel.fit, strain== "Minimal") %>%
   dplyr::select(timepoint, mean, sd, sem, time.x)
 ```
 
-## Tests significance
+## Tests of significance
 
 ```{r}
 # 1. Differences in relative fitness between ancestors (non-minimal vs. minimal)?
@@ -137,6 +139,8 @@ delta <- data.frame(delta.w = c(delta.nm.nm, delta.m.m, delta.m.nm),
 delta$comp<-factor(delta$comp)
 
 # GLM without intercept: test whether groups of delta fitness values different from zero
+delta.fit1 <- lm(delta.w ~ comp - 1, data = delta)
+
 # All delta fitness are highly significant
 
 #       Estimate Std. Error t value Pr(>|t|)    
@@ -144,78 +148,16 @@ delta$comp<-factor(delta$comp)
 #m.nm  -0.17950    0.03724  -4.820 0.000947 ***
 #nm.nm  0.19591    0.03724   5.261 0.000520 ***
 
-delta.fit1 <- lm(delta.w ~ comp - 1, data = delta)
 
 # GLM with intercept: test whether groups of delta fitness equal to each other
 # (picks first [m.m] alphabetically and compares the others relative to that)
 # Relevant test = `nm.nm`: fitness differences for minimal vs. non-minimal 
+delta.fit2 <- lm(delta.w ~ comp, data = delta)
 
 #       Estimate Std. Error t value Pr(>|t|)    
 #(Int)   0.41598    0.03724  11.170 1.41e-06 ***
 #m.nm   -0.59548    0.05267 -11.307 1.28e-06 ***
 #m.nm   -0.22007    0.05267  -4.179  0.00238 ** 
-
-delta.fit2 <- lm(delta.w ~ comp, data = delta)
-
-# Correct p-values for multiple comparisons
-
-p.val.anc <- test.anc$p.value
-p.val.evo <- test.evo$p.value
-p.values.fit1.all <- summary(delta.fit1)$coefficients[,c(4)]
-p.val.restore <- as.numeric(unlist(p.values.fit1.all[2]))
-p.val.fit2.all <- summary(delta.fit2)$coefficients[,c(4)]
-p.val.intx <- as.numeric(unlist(p.val.fit2.all[3]))   
-p.vals <- c(p.val.anc, p.val.evo, p.val.restore, p.val.intx)
-rank <- rank(p.vals)
-#m <- length(p.values.sorted)
-m <- length(p.vals)
-
-# Calculate the Benjamini-Hochberg adjusted p-values
-adjusted.p.vals <- (m / rank) * p.vals
-adjusted.p.vals <- pmin(adjusted.p.vals, 1) # Set adjusted p-values to 1 if they exceed 1
-
-# Sort the adjusted p-values by their corresponding original p-values
-sorted.indices <- order(p.vals)
-adjusted.p.vals <- adjusted.p.vals[sorted.indices]
-
-# Identify the significant tests using the adjusted p-value threshold
-alpha <- 0.05
-adjusted.alpha <- alpha / m
-significant.tests <- which(adjusted.p.vals <= adjusted.alpha)
-
-cat("Adjusted p-values:", adjusted.p.vals, "\n")
-cat("Significant tests:", significant.tests, "\n")
-
-# Difference in fitness between minimal and wt after evolution?
-# Answer = Yes: t = 6, df = 6, p-value = 0.0007061
-
-#test.minvswtanc <- t.test(x=rel.fit.evo$W_1.0[5:8], mu = 1, alternative = 't')
-#test.minvswtanc
-#Difference in fitness between evolved minimal cel popns and non-min anc fitness?
-#With altered gating: Yes. p = .006302
-
-#With original gating: #No. p = .92
-
-#wt.w  <- filter(rel.fit.evo, strain == "JCVI-syn1.0") %>%
-#  dplyr::select(W_1.0)
-#wt.delt.w <- wt.w - rel.fit.wt[1,2]
-
-#min.w  <- filter(rel.fit.evo, strain == "JCVI-syn3B") %>%
-#  dplyr::select(W_1.0)
-#min.delt.w <- min.w - rel.fit.min[1,2]
-
-#delta.w <- data.frame(wt.delt.w, min.delt.w)
-#colnames(delta.w) <-c("Non-minimal", "Minimal")
-
-# Test for equal variance: P = 0.28 --> homogeneous variance
-#equal.var.delta <- var.test(delta.w$"Non-minimal", delta.w$Minimal)
-
-#test.delta <- t.test(delta.w$"Non-minimal", delta.w$Minimal, var.equal = T)
-
-#Does the magnitude of fitness-increase differ between the minimal and the non-minimal populations?
-# With altered gating: Yes, t = -3.7, df = 6, p = 0.009723
-
-#Previously: "No, but it's close, t= 2.16, df=6, p=0.07441"
 ```
 
 # Create figure for regated relative finess (Fig. 2)
@@ -412,9 +354,8 @@ grid.raster(img)
 ```
 
 
-
-
 # Demonstrate the equations to calculate relative fitness
+
 ```{r}
 # Load data
 calcsheet <-read.csv("~/GitHub/MinimalCell/datafiles/Competition_2019.csv")

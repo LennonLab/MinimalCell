@@ -8,9 +8,10 @@ output: pdf_document
 geometry: margin=2.54cm
 ---
 
-## Relative fitness of ftsZ mutants
+# Relative fitness in response to ftsZ mutation (Extended Data Fig. 3)
 
 ## Clear workspace and set directory
+
 ```{r setup}
 rm(list=ls())
 getwd()
@@ -18,6 +19,7 @@ setwd("~/GitHub/MinimalCell")
 ```
 
 ## Load packages and functions
+
 ```{r}
 require("png")
 require("dplyr")
@@ -27,6 +29,7 @@ cv <- function(x) (sd(x)/mean(x))*100
 ```
 
 # Load data
+
 ```{r}
 # Load data
 rel.fit.raw <-read.csv("~/GitHub/MinimalCell/datafiles/ftsZ_W_cases.csv")
@@ -87,6 +90,7 @@ TukeyHSD(fit1)
 ```
 
 # Initiate figure
+
 ```{r}
 # Make figure
 png(filename="~/GitHub/MinimalCell/figures/2.extended.data/FigExt3.png",
@@ -180,6 +184,7 @@ grid.raster(img)
 ```
 
 # Demonstrate the equations to calculate relative fitness
+
 ```{r}
 # Load data
 calcsheet17 <-read.csv("~/GitHub/MinimalCell/datafiles/Competition_2021_strain17.strain16.csv")
