@@ -8,13 +8,17 @@ output: pdf_document
 geometry: margin=2.54cm
 ---
 
+# Growth curves to estimate fitness components (Extended Data Fig. 1, Fig. S2, Figshare)
+
 ## Clear workspace and set directory
+
 ```{r setup}
 rm(list=ls())
 setwd("~/Github/MinimalCell/scripts/5.GrowthCurves/test")
 ```
 
 ## Load packages and functions
+
 ```{r}
 require("png")
 require("dplyr")
@@ -29,6 +33,7 @@ cv <- function(x) 100*( sd(x)/mean(x))
 ```
 
 # Load data and run Gompertz
+
 ```{r}
 
 ###### NM: bioreplicate 1 plate ######
@@ -912,6 +917,7 @@ write.table(parms, "~/Github/MinimalCell/scripts/5.GrowthCurves/output/GrowthCur
 ```
 
 # Summarize growth minimal and non-minimal cell across time
+
 ```{r}
 
 # Filter by "nm" and "m" lines
@@ -968,7 +974,8 @@ ts.m.anc <- filter(ts.m, day == "0") %>%
   dplyr::select(day, gen, cell, biorep, A, umax, lag)
 ```
 
-# Diagnostics of growth curves
+# Diagnostics of growth curves (Figshare)
+
 ```{r}
 # RMSE - lower values (in units of abs 415) indicates predictions are close to actual data
 # Maximum absorbance values are between 1.15 and 1.92
@@ -982,7 +989,7 @@ cv.max <- max(ts.raw$CV) # 5.417
 cv.min <- min(ts.raw$CV) # 0.505
 
 # How many outliers growth curves including 
-obs.well <- mean(112,180,159,91,98,97,9,92) # 838 total; 112 average
+obs.well <- mean(112, 180, 159, 91, 98, 97, 9, 92) # 838 total; 112 average
 num.curves <- 423
 out.total <- ts.raw %>%
   summarize(sum_out = sum(outlier)) # 127
@@ -993,7 +1000,8 @@ outlier.frac <- out.total/total.obs * 100
 # Given approximately normal distribution, this is what one would expect to see. 
 ```
 
-# Make a three-panel histogram of growth parameters
+# Make a three-panel histogram of growth parameters (Figshare)
+
 ```{r}
 png(filename="~/GitHub/MinimalCell/figures/4.figshare/1.historgram.growth.png",
     width = 1200, height = 1200, res = 96*2) 
@@ -1058,7 +1066,7 @@ grid.raster(img)
 ```
 
 
-# Maximum growth rate (umax)
+# Maximum growth rate (umax): Extended Data Fig. 1
 ```{r}
 # run following block for each growth parameter each time
 data <- as.data.frame(ts) # all observations
@@ -1141,6 +1149,7 @@ intercept.fold <- (nm.intercept / m.intercept)
 
 #############################################################################
 
+# Extended Data Fig. 1
 
 # plot umax by time
 png(filename="~/GitHub/MinimalCell/figures/2.extended.data/FigExt1.png",
@@ -1230,7 +1239,7 @@ grid.raster(img)
 
 #############################################################################
 
-# Residual and normal-quantile plot
+# Figshare: Residual and normal-quantile plot
 
 png(filename="~/GitHub/MinimalCell/figures/4.figshare/1.diagnostic.umax.png",
     width = 1200, height = 1200, res = 96*2) 
@@ -1367,7 +1376,7 @@ m.lme.yield <- filter(newdat.lme.yield, cell == "m") %>%
 
 ################################################################################
 
-# Residual plot
+# Figshare: residual plot
 
 png(filename="~/GitHub/MinimalCell/figures/4.figshare/1.diagnostic.yield.png",
     width = 1200, height = 1200, res = 96*2) 
@@ -1475,7 +1484,7 @@ m.lme.lag <- filter(newdat.lme.lag, cell == "m") %>%
 
 ################################################################################
 
-# Residual plot
+# Figshare: Residual plot
 
 png(filename="~/GitHub/MinimalCell/figures/4.figshare/1.diagnostic.lag.png",
     width = 1200, height = 1200, res = 96*2) 
@@ -1534,7 +1543,8 @@ grid.raster(img)
 ```
 
 
-# Two panel figure
+# Two panel figure (Fig. S2)
+
 ```{r}
 png(filename="~/GitHub/MinimalCell/figures/3.supplementary/FigS2.png",
     width = 800, height = 1600, res = 96*2)
@@ -1733,7 +1743,8 @@ grid.raster(img)
 ```
 
 
-# Are there correlations between umax, yield, and lag by cell type
+# Are there correlations between umax, yield, and lag by cell type?
+
 ```{r}
 data <- as.data.frame(ts) # all observations
 gen <- data[,2]
@@ -1774,6 +1785,4 @@ nm.yield.lag.corr <-cor.test(data.nm$A, data.nm$lag)
 # Conclusions for the non-minimal cell:
 # As umax goes up, yield is unaffected (r = -0.06, t_70 = -0.51, P = 0.6087)
 # As umax goes up, lag slightly increases (r = 011, t_70 = 0.93, P = 0.0006)
-
-
 ```

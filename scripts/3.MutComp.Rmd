@@ -8,16 +8,18 @@ output: pdf_document
 geometry: margin=2.54cm
 ---
 
-# Making Figure 3: ordination of mutated genes
+# Composition of mutated genes during experimental evolution (Fig. 3)
 
-# Clear workspace and set directory
+## Clear workspace and set directory
+
 ```{r setup}
 rm(list=ls())
 getwd()
 setwd("~/GitHub/MinimalCell")
 ```
 
-# Load packages and functions
+## Load packages and functions
+
 ```{r}
 require("png")
 require("dplyr")
@@ -25,7 +27,8 @@ require("grid")
 require("vegan")
 ```
 
-# Load data
+## Load data
+
 ```{r}
 # Load data
 g.essent.raw <- read.csv("~/GitHub/MinimalCell/datafiles/GxP_Mm_essential.csv")
@@ -38,6 +41,7 @@ g.essent <- as.matrix(g.essent[,3:ncol(g.essent)])
 ```
 
 # Permutational mulivariate analyis of variance (PERMANOVA)
+
 ```{r}
 g.essent.adonis <- adonis2(g.essent ~ g.essent.raw$treatment, method = "bray", permutations = 9999)
 
@@ -49,6 +53,7 @@ g.essent.adonis <- adonis2(g.essent ~ g.essent.raw$treatment, method = "bray", p
 ```
 
 # Principal Coordinates Analysis (PCoA)
+
 ```{r}
 # Create a distance matrix
 g.essent.dist <- vegdist(g.essent, method = 'bray', upper = TRUE, diag = TRUE)
@@ -76,6 +81,7 @@ TukeyHSD(compare.variance)
 ```
 
 # PCoA Plot
+
 ```{r, results = "hide"}
 png(filename="~/GitHub/MinimalCell/figures/1.main.text/Fig3.png",
     width = 1200, height = 1200, res = 96*2) 

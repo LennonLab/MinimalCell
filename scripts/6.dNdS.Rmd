@@ -8,9 +8,10 @@ output: pdf_document
 geometry: margin=2.54cm
 ---
 
-## Ratio of nonsynoymous to synonmyous mutations (dN/dS)
+# dN/dS in response to experimental evolution (Extended Data Fig. 2 and Fig. S7)
 
 ## Clear workspace and set directory
+
 ```{r setup}
 rm(list=ls())
 getwd()
@@ -18,6 +19,7 @@ setwd("~/GitHub/MinimalCell")
 ```
 
 ## Load packages and functions
+
 ```{r}
 require("png")
 require("dplyr")
@@ -29,6 +31,7 @@ cv <- function(x) sd(x)/sqrt(mean(x))
 ```
 
 # Load and process data
+
 ```{r}
 # Load data
 dnds <- read.csv("~/GitHub/MinimalCell/datafiles/cases_Mm.300.csv")
@@ -66,7 +69,8 @@ sem.dnds.min<-sem(dnds.min$dnds)
 dndds.nonmin <- read.csv("~/GitHub/MinimalCell/datafiles/non-minimal.DNDS_freqs.csv")
 ```
 
-## Essential genes in the minimal vs. non-minal cell
+## Essential genes in the minimal vs. non-minal cell (Extended Data Fig. 2)
+
 ```{r}
 equal.var <- var.test(dnds.wt$dnds, dnds.min$dnds)
 # Test for equal variance : P = 0.392 --> homogeneous variance
@@ -167,7 +171,8 @@ grid.raster(img)
 ```
 
 
-# Essential vs. non-essential genes in non-minimal cell
+# Essential vs. non-essential genes in non-minimal cell (Fig. S7)
+
 ```{r}
 # Non-minimal: essential vs. non-essential
 equal.var.nmin <- var.test(dndds.nonmin$dNdS_gdtools[1:4], y = dndds.nonmin$dNdS_gdtools[5:8])

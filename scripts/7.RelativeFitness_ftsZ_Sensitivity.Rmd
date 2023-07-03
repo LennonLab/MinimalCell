@@ -8,11 +8,11 @@ output: pdf_document
 geometry: margin=2.54cm
 ---
 
-## This file corresponds with Figshare analysis where a sensivity analysis was  
-## perfomred withFACS data to see whether regating affected estimates of relative
-## fitness of fitZ mutants depicted in FigExt3
+# Relative fitness in response to ftsZ mutation (Figshare)
+# (Sensivity analysis perfomred with FACS data to gating in Extended Data Fig. 3) 
 
 ## Clear workspace and set directory
+
 ```{r setup}
 rm(list=ls())
 getwd()
@@ -20,6 +20,7 @@ setwd("~/GitHub/MinimalCell")
 ```
 
 ## Load packages and functions
+
 ```{r}
 require("png")
 require("dplyr")
@@ -28,6 +29,7 @@ sem <- function(x) sqrt(var(x)/length(x))
 ```
 
 # Load data
+
 ```{r}
 # Load data
 rel.fit.raw <-read.csv("~/GitHub/MinimalCell/datafiles/ftsZ_W_cases_small.change.csv")
@@ -54,7 +56,7 @@ rel.fit.min  <- filter(rel.fit, strain== "Minimal") %>%
   dplyr::select(Mutation, mean, sem, time.x)
 ```
 
-## Tests significance
+## Tests of significance
 
 ```{r}
 # Ancestral lines
@@ -111,6 +113,7 @@ t.test(c(filter(rel.fit.raw, strain == "JCVI-syn3B", Mutation == "ftsZ")$W_1.0),
 ```
 
 # Initiate figure
+
 ```{r}
 # Make figure
 png(filename="~/GitHub/MinimalCell/figures/4.figshare/2.delta_cell_size.regate.png",
@@ -204,6 +207,7 @@ grid.raster(img)
 ```
 
 # Demonstrate the equations to calculate relative fitness
+
 ```{r}
 # Load data
 calcsheet17 <-read.csv("~/GitHub/MinimalCell/datafiles/Competition_2021_strain17.strain16.csv")

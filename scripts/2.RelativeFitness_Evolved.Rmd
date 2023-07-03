@@ -8,9 +8,10 @@ output: pdf_document
 geometry: margin=2.54cm
 ---
 
-# Relative fitness in response to experimental evolution
+# Relative fitness in response to experimental evolution (Fig. 2)
 
 ## Clear workspace and set directory
+
 ```{r setup}
 rm(list=ls())
 getwd()
@@ -18,6 +19,7 @@ setwd("~/GitHub/MinimalCell")
 ```
 
 ## Load packages and functions
+
 ```{r}
 require("png")
 require("dplyr")
@@ -27,6 +29,7 @@ cv <- function(x) (sd(x)/mean(x))*100
 ```
 
 # Load data and summarize
+
 ```{r}
 # Load data
 rel.fit.raw <-read.csv("~/GitHub/MinimalCell/datafiles/Interaction_data_fitness.csv")
@@ -54,7 +57,7 @@ rel.fit.m  <- filter(rel.fit, strain== "Minimal") %>%
   dplyr::select(timepoint, mean, sd, sem, time.x)
 ```
 
-## Test significance
+## Tests of significance
 
 ```{r}
 # 1. Differences in relative fitness between ancestors (non-minimal vs. minimal)?
@@ -126,17 +129,14 @@ delta.m.nm.95.LL <- delta.m.nm.mean + qnorm(0.025) * delta.m.nm.sem
 
 # Create dataframe for test
 
-# Code for all four comparisons
-#delta <- data.frame(delta.w = c(delta.nm.nm, delta.m.m, delta.nm.m, delta.m.nm),
-#  comp = c(rep("nm.nm", 4), rep("m.m", 4), rep("nm.m",4), rep("m.nm", 4)))
-#delta$comp<-factor(delta$comp)
-
 # Code for three comparisons
 delta <- data.frame(delta.w = c(delta.nm.nm, delta.m.m, delta.m.nm),
   comp = c(rep("nm.nm", 4), rep("m.m", 4), rep("m.nm", 4)))
 delta$comp<-factor(delta$comp)
 
 # GLM without intercept: test whether groups of delta fitness values different from zero
+delta.fit1 <- lm(delta.w ~ comp - 1, data = delta)
+
 # All delta fitness are highly significant except for non-minimal ancestor vs. minimal evolved
 
 #       Estimate   Std Error t value Pr(>|t|)    
@@ -144,47 +144,18 @@ delta$comp<-factor(delta$comp)
 # m.nm  -0.00230    0.04178  -0.055    0.957    
 # nm.nm  0.37889    0.04178   9.069 8.02e-06 ***
 
-delta.fit1 <- lm(delta.w ~ comp - 1, data = delta)
 
 # GLM with intercept: test whether groups of delta fitness equal to each other
 # (picks first [m.m] alphabetically and compares the others relative to that)
 # Relevant test = `compnm.nm`: fitness differences for minimal vs. non-minimal 
+delta.fit2 <- lm(delta.w ~ comp, data = delta)
 
 #         Estimate   Std Error t value Pr(>|t|)    
 # (Int).   0.52834    0.04178  12.647 4.92e-07 ***
 # m.nm    -0.53064    0.05908  -8.982 8.68e-06 ***
 # nm.nm   -0.14945    0.05908  -2.530   0.0323 *  
 
-delta.fit2 <- lm(delta.w ~ comp, data = delta)
 
-# # Correct p-values for multiple comparisons
-# 
-# p.val.anc <- test.anc$p.value
-# p.val.evo <- test.evo$p.value
-# p.values.fit1.all <- summary(delta.fit1)$coefficients[,c(4)]
-# p.val.restore <- as.numeric(unlist(p.values.fit1.all[2]))
-# p.val.fit2.all <- summary(delta.fit2)$coefficients[,c(4)]
-# p.val.intx <- as.numeric(unlist(p.val.fit2.all[3]))   
-# p.vals <- c(p.val.anc, p.val.evo, p.val.restore, p.val.intx)
-# rank <- rank(p.vals)
-# #m <- length(p.values.sorted)
-# m <- length(p.vals)
-# 
-# # Calculate the Benjamini-Hochberg adjusted p-values
-# adjusted.p.vals <- (m / rank) * p.vals
-# adjusted.p.vals <- pmin(adjusted.p.vals, 1) # Set adjusted p-values to 1 if they exceed 1
-# 
-# # Sort the adjusted p-values by their corresponding original p-values
-# sorted.indices <- order(p.vals)
-# adjusted.p.vals <- adjusted.p.vals[sorted.indices]
-# 
-# # Identify the significant tests using the adjusted p-value threshold
-# alpha <- 0.05
-# adjusted.alpha <- alpha / m
-# significant.tests <- which(adjusted.p.vals <= adjusted.alpha)
-# 
-# cat("Adjusted p-values:", adjusted.p.vals, "\n")
-# cat("Significant tests:", significant.tests, "\n")
 ```
 
 # Create figure for relative finess (Fig. 2)
@@ -275,7 +246,7 @@ img <- readPNG("~/GitHub/MinimalCell/figures/1.main.text/Fig2.png")
 grid.raster(img)
 ```
 
-# Create figure for delta relative fitness (Fig. S2)
+# Create figure for delta relative fitness (Figshare)
 
 ```{r}
 png(filename="~/GitHub/MinimalCell/figures/4.figshare/1.delta_rel_fitness.png",
@@ -381,6 +352,7 @@ grid.raster(img)
 ```
 
 # Demonstrate the equations to calculate relative fitness
+
 ```{r}
 # Load data
 calcsheet <-read.csv("~/GitHub/MinimalCell/datafiles/Competition_2019.csv")

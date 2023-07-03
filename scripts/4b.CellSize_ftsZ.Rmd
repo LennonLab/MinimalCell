@@ -8,9 +8,10 @@ output: pdf_document
 geometry: margin=2.54cm
 ---
 
-## Making Figure 4: changes in cell size
+# Cell size in response to ftsZ mutation (Extended Data Fig. 4)
 
 ## Clear workspace and set directory
+
 ```{r setup, include=FALSE, echo=FALSE}
 rm(list=ls())
 getwd()
@@ -28,6 +29,7 @@ cv <- function(x) (sd(x)/mean(x))*100
 ```
 
 # Load and process data
+
 ```{r}
 # Load data
 size.raw <-read.csv("~/GitHub/MinimalCell/datafiles/SEM_Stein_cases.csv")
@@ -61,6 +63,7 @@ B_ftsZ.reps <- filter(size.raw, sub.strain == "B_ftsZ")
 ```
 
 ## Statistical tests
+
 ```{r}
 # Two-way ANOVA
 
@@ -120,6 +123,7 @@ TukeyHSD(fit2)
 ```
 
 ## Resample raw data for visualization in figure
+
 ```{r}
 
 # randomly sample from minimal ancestor
