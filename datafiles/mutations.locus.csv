@@ -1,0 +1,572 @@
+﻿Population_ID,Strain,Replicate_number,Mutation_ID,position,mutation,freq,annotation,gene,description
+1,non-minimal,1,1,836,C→T,0.583,T279I (ACA→ATA) ,dnaA_1 →,chromosomal replication initiator protein DnaA
+1,non-minimal,1,2,892,A→G,0.282,T298A (ACT→GCT) ‡,dnaA_1 →,chromosomal replication initiator protein DnaA
+1,non-minimal,1,3,893,C→T,0.285,T298I (ACT→ATT) ‡,dnaA_1 →,chromosomal replication initiator protein DnaA
+1,non-minimal,1,4,16240,G→A,0.105,S187L (TCA→TTA) ,MMSYN1_0011 ←,"ribose/galactose ABC transporter, substrate‑binding component"
+1,non-minimal,1,5,35180,"Δ1,483 bp",1,,tnpA_1–tnpB_1,"tnpA_1, tnpB_1"
+1,non-minimal,1,6,"48,946:1",+T,0.188,coding (1890/3162 nt),MMSYN1_0032 ←,GnsA/GnsB family
+1,non-minimal,1,7,48947,A→G,0.193,L630S (TTA→TCA) ,MMSYN1_0032 ←,GnsA/GnsB family
+1,non-minimal,1,8,48953,T→A,0.175,N628I (AAT→ATT) ,MMSYN1_0032 ←,GnsA/GnsB family
+1,non-minimal,1,9,48959,T→C,0.179,K626R (AAA→AGA) ‡,MMSYN1_0032 ←,GnsA/GnsB family
+1,non-minimal,1,10,48960,T→A,0.179,K626* (AAA→TAA) ‡,MMSYN1_0032 ←,GnsA/GnsB family
+1,non-minimal,1,11,54278,C→A,0.57,intergenic (‑162/‑3),MMSYN1_0033 ← / → MMSYN1_0034,"hypothetical protein/efflux ABC transporter, permease protein"
+1,non-minimal,1,12,109251,T→A,0.053,intergenic (‑52/+43),MMSYN1_0079 ← / ← MMSYN1_0080,probable O‑sialoglycoprotein endopeptidase (Glycoprotease)/conserved hypothetical protein
+1,non-minimal,1,13,111577,C→A,0.105,E188* (GAA→TAA) ,MMSYN1_0083 ←,conserved hypothetical protein
+1,non-minimal,1,14,111580,G→A,0.105,Q187* (CAA→TAA) ,MMSYN1_0083 ←,conserved hypothetical protein
+1,non-minimal,1,15,111583,C→A,0.108,E186* (GAA→TAA) ,MMSYN1_0083 ←,conserved hypothetical protein
+1,non-minimal,1,16,111585,G→C,0.105,S185W (TCA→TGA) ,MMSYN1_0083 ←,conserved hypothetical protein
+1,non-minimal,1,17,111587,A→T,0.106,I184I (ATT→ATA) ,MMSYN1_0083 ←,conserved hypothetical protein
+1,non-minimal,1,18,111592,T→A,0.107,K183* (AAA→TAA) ,MMSYN1_0083 ←,conserved hypothetical protein
+1,non-minimal,1,19,116484,G→A,0.056,C352C (TGC→TGT) ,MMSYN1_0086 ←,putative liporotein
+1,non-minimal,1,20,151321,C→A,0.072,intergenic (‑138/+47),MMSYN1_0115 ← / ← MMSYN1_0116,utp‑‑glucose‑1‑phosphate uridylyltransferase (udp‑glucosepyrophosphorylase) (udpgp) (alpha‑d‑glucosyl‑1‑phosphateuridylyltransferase) (uridine diphosphoglucose pyrophosphorylase)(general stress protein 33) (Gsp33)/conserved hypothetical protein
+1,non-minimal,1,21,160431,G→A,0.373,intergenic (+281/‑121),vlcD → / → MMSYN1_0124,"lipoprotein, putative (VlcD)/hexosephosphate transport protein"
+1,non-minimal,1,22,189893,C→G,1,P146A (CCA→GCA) ,rpsG →,ribosomal protein S7
+1,non-minimal,1,23,213000,G→A,0.176,intergenic (‑213/‑5),MMSYN1_0164 ← / → MMSYN1_0165,"conserved hypothetical protein/oligopeptide ABC transporter, permease component"
+1,non-minimal,1,24,220550,G→A,0.142,D559N (GAT→AAT) ,MMSYN1_0169 →,putative liporotein
+1,non-minimal,1,25,231057,Δ1 bp,0.197,coding (1497/1800 nt),MMSYN1_0177 ←,neopullulanase
+1,non-minimal,1,26,249327,C→T,0.05,Q13* (CAA→TAA) ,MMSYN1_0187 →,"transcriptional regulator, GntR family"
+1,non-minimal,1,27,264468,T→G,0.066,I65L (ATA→CTA) ,def ←,peptide deformylase
+1,non-minimal,1,28,264469,A→T,0.052,N64K (AAT→AAA) ,def ←,peptide deformylase
+1,non-minimal,1,29,288381,C→T,0.363,intergenic (+474/‑9),thrS → / → MMSYN1_0223,threonine‑‑tRNA ligase/NADH oxidase (noxase)
+1,non-minimal,1,30,295948,A→G,1,E557G (GAA→GGA) ,lpdA →,dihydrolipoyl dehydrogenase
+1,non-minimal,1,31,296061,G→A,0.595,G595R (GGA→AGA) ,lpdA →,dihydrolipoyl dehydrogenase
+1,non-minimal,1,32,311151,G→T,0.407,intergenic (+2681/‑300),thiI → / → MMSYN1_0242,thiamine biosynthesis/tRNA modification protein ThiI/conserved hypothetical protein
+1,non-minimal,1,33,327336,C→T,0.375,E141K (GAA→AAA) ,MMSYN1_0253 ←,transcription elongation factor GreA
+1,non-minimal,1,34,359602,G→A,0.073,intergenic (‑173/‑86),MMSYN1_0278 ← / → MMSYN1_0279,PTS system fructose‑specific enzyme iiabc component/conserved hypothetical protein
+1,non-minimal,1,35,359610,T→G,0.094,intergenic (‑181/‑78),MMSYN1_0278 ← / → MMSYN1_0279,PTS system fructose‑specific enzyme iiabc component/conserved hypothetical protein
+1,non-minimal,1,36,359624,A→T,0.067,intergenic (‑195/‑64),MMSYN1_0278 ← / → MMSYN1_0279,PTS system fructose‑specific enzyme iiabc component/conserved hypothetical protein
+1,non-minimal,1,37,359625,A→T,0.075,intergenic (‑196/‑63),MMSYN1_0278 ← / → MMSYN1_0279,PTS system fructose‑specific enzyme iiabc component/conserved hypothetical protein
+1,non-minimal,1,38,381925,C→T,0.526,intergenic (‑109/+4),MMSYN1_0301 ← / ← MMSYN1_0302,conserved hypothetical protein/nitroreductase family protein
+1,non-minimal,1,39,387410,C→G,0.297,W223S (TGA→TCA) ,cdsA ←,phosphatidate cytidylyltransferase
+1,non-minimal,1,40,416542,G→T,0.329,M1M (ATG→ATT) †,scpA →,ScpA protein
+1,non-minimal,1,41,494022,G→A,0.361,intergenic (‑2280/‑3179),MMSYN1_0398 ← / → MMSYN1_0400,putative liporotein/ThiJ/PfpI family protein
+1,non-minimal,1,42,516595,T→A,0.105,I245N (ATT→AAT) ,MMSYN1_0414 →,RelA/SpoT family protein
+1,non-minimal,1,43,559768,G→C,0.588,G339A (GGT→GCT) ,parC →,"DNA topoisomerase IV, A subunit"
+1,non-minimal,1,44,577409,Δ1 bp,0.264,coding (713/810 nt),MMSYN1_0469 →,lipase‑esterase
+1,non-minimal,1,45,597893,T→A,0.146,T4T (ACT→ACA) ,MMSYN1_0490 →,"papain family cysteine protease, putative"
+1,non-minimal,1,46,599987,C→A,0.373,D702E (GAC→GAA) ,MMSYN1_0490 →,"papain family cysteine protease, putative"
+1,non-minimal,1,47,624157,G→A,1,Q349* (CAA→TAA) ,ftsZ ←,cell division protein FtsZ
+1,non-minimal,1,48,649614,C→T,0.522,E449K (GAA→AAA) ,dnaK ←,chaperone protein DnaK
+1,non-minimal,1,49,649775,G→A,0.355,T395I (ACT→ATT) ,dnaK ←,chaperone protein DnaK
+1,non-minimal,1,50,759198,G→C,0.302,N2K (AAC→AAG) ,MMSYN1_0612 ←,"DNA polymerase III, alpha subunit subfamily, putative"
+1,non-minimal,1,51,768634,G→A,1,N103N (AAC→AAT) ,aguA ←,agmatine deiminase
+1,non-minimal,1,52,771601,G→T,0.05,intergenic (‑110/+185),argF ← / ← MMSYN1_0629,ornithine carbamoyltransferase/hypothetical protein
+1,non-minimal,1,53,788357,G→A,1,P183L (CCT→CTT) ,MMSYN1_0641 ←,"ABC transporter, permease component"
+1,non-minimal,1,54,"791,732:1",(CAACAGTTCTATCTAATTCTT)1→2,0.528,coding (752/954 nt),rpoA ←,"DNA‑directed RNA polymerase, alpha subunit"
+1,non-minimal,1,55,855283,G→T,0.178,intergenic (‑49/‑93),MMSYN1_0715 ← / → MMSYN1_0716,conserved hypothetical protein/conserved hypothetical protein
+1,non-minimal,1,56,860545,T→C,1,T151T (ACT→ACC) ,gpmI →,"2,3‑bisphosphoglycerate‑independent phosphoglycerate mutase"
+1,non-minimal,1,57,945632,C→T,0.373,A1232T (GCA→ACA) ,rpoB ←,"DNA‑directed RNA polymerase, beta subunit"
+1,non-minimal,1,58,977616,C→T,0.548,H185Y (CAT→TAT) ,prs →,ribose‑Phosphate pyrophosphokinase (rppk) (phosphoribosylpyrophosphate synthetase) (p‑rib‑pp synthetase) (prpp synthetase)
+1,non-minimal,1,59,986841,G→A,0.077,intergenic (+159/‑281),nusG → / → MMSYN1_0841,transcription antitermination protein nusG/hypothetical protein
+1,non-minimal,1,60,986846,T→G,0.073,intergenic (+164/‑276),nusG → / → MMSYN1_0841,transcription antitermination protein nusG/hypothetical protein
+1,non-minimal,1,61,986854,A→T,0.108,intergenic (+172/‑268),nusG → / → MMSYN1_0841,transcription antitermination protein nusG/hypothetical protein
+1,non-minimal,1,62,986860,A→T,0.08,intergenic (+178/‑262),nusG → / → MMSYN1_0841,transcription antitermination protein nusG/hypothetical protein
+1,non-minimal,1,63,986861,T→A,0.08,intergenic (+179/‑261),nusG → / → MMSYN1_0841,transcription antitermination protein nusG/hypothetical protein
+1,non-minimal,1,64,1005132,T→C,0.084,T65A (ACA→GCA) ,MMSYN1_0853 ←,conserved hypothetical protein
+1,non-minimal,1,65,1053966,C→T,1,A320V (GCG→GTG) ,MMSYN1_0892 →,putative membrane protein
+1,non-minimal,1,66,1065555,C→A,0.557,E641* (GAA→TAA) ,MMSYN1_0898 ←,conserved hypothetical protein
+1,non-minimal,1,67,1072726,A→G,0.857,intergenic (+423/‑78),vlcH → / → vlcI,"lipoprotein, putative (VlcH)/lipoprotein (VlcI)"
+1,non-minimal,1,68,1073826,G→A,1,E63K (GAA→AAA) ,vlcJ →,"prolipoprotein, putative (VlcJ)"
+3,non-minimal,3,150,623832,A→G,0.052,S67S (AGT→AGC) ,MMSYN1_0521 ←,conserved hypothetical protein
+3,non-minimal,3,151,624166,G→A,0.079,Q346* (CAA→TAA) ,ftsZ ←,cell division protein FtsZ
+3,non-minimal,3,152,"625,228:1",(ATA)4→6,0.203,intergenic (‑27/+88),ftsZ ← / ← MMSYN1_0523,cell division protein FtsZ/conserved hypothetical protein
+3,non-minimal,3,153,630853,G→A,0.063,P58S (CCA→TCA) ,pheT ←,"phenylalanyl‑tRNA synthetase, beta subunit"
+3,non-minimal,3,154,632784,G→A,0.264,S1466L (TCA→TTA) ,MMSYN1_0531 ←,"efflux ABC transporter, permease protein"
+3,non-minimal,3,155,643161,A→C,0.098,D281E (GAT→GAG) ,argS ←,arginine‑‑tRNA ligase
+3,non-minimal,3,156,651583,T→G,0.074,K13Q (AAA→CAA) ,grpE ←,co‑chaperone GrpE
+3,non-minimal,3,157,"651,588:1",+A,0.171,coding (32/603 nt),grpE ←,co‑chaperone GrpE
+3,non-minimal,3,158,651593,T→A,0.179,K9N (AAA→AAT) ,grpE ←,co‑chaperone GrpE
+3,non-minimal,3,159,"655,205:1",(T)7→8,1,intergenic (‑416/+612),MMSYN1_0545 ← / ← MMSYN1_0548,ATPase family associated with various cellular activities (AAA) protein/rRNA Methylase
+3,non-minimal,3,160,661126,C→T,0.273,S418L (TCA→TTA) ,MMSYN1_0551 →,putative liporotein
+3,non-minimal,3,161,691358,C→T,0.104,A106V (GCT→GTT) ,MMSYN1_0573 →,conserved hypothetical integrative conjugal element protein
+3,non-minimal,3,162,710623,T→C,0.624,S365G (AGT→GGT) ,MMSYN1_0584 ←,putative liporotein
+3,non-minimal,3,163,715172,G→A,0.053,L521F (CTT→TTT) ,MMSYN1_0586 ←,putative liporotein
+3,non-minimal,3,164,715741,T→C,0.054,Q331R (CAA→CGA) ,MMSYN1_0586 ←,putative liporotein
+3,non-minimal,3,165,748248,T→A,0.138,D299V (GAT→GTT) ,pgk ←,phosphoglycerate kinase
+3,non-minimal,3,166,767095,C→T,0.33,A213T (GCA→ACA) ,arcC_1 ←,carbamate kinase 1
+3,non-minimal,3,167,782680,T→C,0.061,L29L (TTA→TTG) ,rplM ←,ribosomal protein L13
+3,non-minimal,3,168,788357,G→A,1,P183L (CCT→CTT) ,MMSYN1_0641 ←,"ABC transporter, permease component"
+3,non-minimal,3,169,788426,C→T,0.332,S160N (AGT→AAT) ,MMSYN1_0641 ←,"ABC transporter, permease component"
+3,non-minimal,3,170,788796,G→A,0.13,P37S (CCT→TCT) ,MMSYN1_0641 ←,"ABC transporter, permease component"
+3,non-minimal,3,171,802402,G→A,0.276,A51V (GCT→GTT) ,rpsC ←,ribosomal protein S3
+3,non-minimal,3,172,811690,C→T,0.065,M1M (ATG→ATA) †,MMSYN1_0676 ←,"transcription regulator, LacI family"
+3,non-minimal,3,173,812150,A→T,0.062,intergenic (‑458/‑67),MMSYN1_0676 ← / → MMSYN1_0677,"transcription regulator, LacI family/putative membrane protein"
+3,non-minimal,3,174,819006,A→T,0.609,V210V (GTA→GTT) ,MMSYN1_0686 →,"K+, Na+ uptake protein integral membrane subunit"
+3,non-minimal,3,175,853303,G→A,0.401,N159N (AAC→AAT) ,MMSYN1_0714 ←,conserved hypothetical protein
+3,non-minimal,3,176,869282,C→T,0.051,intergenic (‑18/+171),MMSYN1_0738 ← / ← MMSYN1_0740,hypothetical protein/hypothetical protein
+3,non-minimal,3,177,878389,G→A,0.073,D8N (GAT→AAT) ,MMSYN1_0747 →,purine nucleoside phosphorylase
+3,non-minimal,3,178,"886,553:1",(T)8→9,1,coding (163/3042 nt),MMSYN1_0751 ←,"viral A‑type inclusion protein, putative"
+3,non-minimal,3,179,887795,C→T,1,intergenic (+138/‑70),MMSYN1_0752 → / → MMSYN1_0753,cell filamentation protein (fic)/DNA‑damage‑inducible protein J
+3,non-minimal,3,180,901581,(T)21→16,0.65,intergenic (‑95/+67),MMSYN1_0763 ← / ← hpt_2,putative liporotein/hypoxanthine phosphoribosyltransferase
+3,non-minimal,3,181,906219,C→T,0.68,S120S (TCG→TCA) ,mmyCIVM ←,GANTC‑‑recognizing Type II restriction modification system (MmyCIV) adenine DNA methylase subunit
+3,non-minimal,3,182,941148,G→A,1,T145M (ACG→ATG) ,MMSYN1_0802 ←,putative liporotein
+3,non-minimal,3,183,947232,A→C,0.673,I698M (ATT→ATG) ,rpoB ←,"DNA‑directed RNA polymerase, beta subunit"
+3,non-minimal,3,184,957567,A→G,0.157,S110S (TCA→TCG) ,glf →,UDP‑galactopyranose mutase
+3,non-minimal,3,185,958301,G→A,0.204,S355N (AGC→AAC) ,glf →,UDP‑galactopyranose mutase
+3,non-minimal,3,186,960078,C→T,0.072,intergenic (+30/+107),MMSYN1_0816 → / ← MMSYN1_0817,integrase core domain protein/conserved hypothetical protein
+3,non-minimal,3,187,977625,G→T,0.161,D188Y (GAT→TAT) ,prs →,ribose‑Phosphate pyrophosphokinase (rppk) (phosphoribosylpyrophosphate synthetase) (p‑rib‑pp synthetase) (prpp synthetase)
+3,non-minimal,3,188,989378,G→A,0.101,G753S (GGT→AGT) ,MMSYN1_0841 →,hypothetical protein
+3,non-minimal,3,189,999580,G→A,0.053,A14T (GCT→ACT) ,MMSYN1_0846 →,"oligopeptide ABC transporter, ATP‑binding component"
+3,non-minimal,3,190,1008002,A→T,1,F441I (TTT→ATT) ,MMSYN1_0856 ←,"PTS system, iibc component, putative"
+3,non-minimal,3,191,1012132,C→T,0.42,A42V (GCT→GTT) ,MMSYN1_0859 →,DNA topoisomerase domain protein
+3,non-minimal,3,192,1014180,C→T,0.159,G221E (GGA→GAA) ,MMSYN1_0860 ←,putative liporotein
+3,non-minimal,3,193,1014961,T→A,0.054,intergenic (‑120/+281),MMSYN1_0860 ← / ← MMSYN1_0861,putative liporotein/conserved hypothetical protein
+3,non-minimal,3,194,1022982,T→C,0.692,A297A (GCA→GCG) ,MMSYN1_0868 ←,lipoprotein. putative
+3,non-minimal,3,195,1029923,G→A,0.062,A172V (GCA→GTA) ,gidB ←,16S rRNA methyltransferase GidB
+3,non-minimal,3,196,1033657,C→T,0.061,A451T (GCT→ACT) ,MMSYN1_0878 ←,amino acid permease
+3,non-minimal,3,197,1044107,T→C,0.091,T486A (ACA→GCA) ,gidA ←,tRNA uridine 5‑carboxymethylaminomethyl modification enzyme GidA
+3,non-minimal,3,198,1061642,G→A,0.305,I372I (ATC→ATT) ,MMSYN1_0896 ←,conserved hypothetical protein
+3,non-minimal,3,199,1065569,A→T,0.627,I636N (ATT→AAT) ,MMSYN1_0898 ←,conserved hypothetical protein
+4,non-minimal,4,200,826,G→A,0.106,D276N (GAT→AAT) ,dnaA_1 →,chromosomal replication initiator protein DnaA
+4,non-minimal,4,201,991,C→T,0.052,P331S (CCA→TCA) ‡,dnaA_1 →,chromosomal replication initiator protein DnaA
+4,non-minimal,4,202,992,C→T,0.824,P331L (CCA→CTA) ‡,dnaA_1 →,chromosomal replication initiator protein DnaA
+4,non-minimal,4,203,28926,C→T,0.362,intergenic (‑625/‑344),his3 ← / → tetM,"imidazoleglycerol‑phosphate dehydratase/Tn916, tetracycline resistance protein"
+4,non-minimal,4,204,85677,T→C,1,intergenic (+267/‑27),ald → / → MMSYN1_0060,alanine dehydrogenase/putative membrane protein
+4,non-minimal,4,205,98737,A→T,0.05,S379C (AGT→TGT) ,MMSYN1_0072 →,putative membrane protein
+4,non-minimal,4,206,109251,T→A,0.101,intergenic (‑52/+43),MMSYN1_0079 ← / ← MMSYN1_0080,probable O‑sialoglycoprotein endopeptidase (Glycoprotease)/conserved hypothetical protein
+4,non-minimal,4,207,116484,G→A,0.061,C352C (TGC→TGT) ,MMSYN1_0086 ←,putative liporotein
+4,non-minimal,4,208,117140,Δ1 bp,0.786,coding (400/1128 nt),MMSYN1_0086 ←,putative liporotein
+4,non-minimal,4,209,118606,G→A,0.135,intergenic (‑98/+161),MMSYN1_0087 ← / ← MMSYN1_0088,cell wall anchoring protein/conserved hypothetical protein
+4,non-minimal,4,210,118624,G→A,0.097,intergenic (‑116/+143),MMSYN1_0087 ← / ← MMSYN1_0088,cell wall anchoring protein/conserved hypothetical protein
+4,non-minimal,4,211,130355,A→G,0.192,G95G (GGT→GGC) ,secA ←,"preprotein translocase, SecA subunit"
+4,non-minimal,4,212,151321,C→A,0.146,intergenic (‑138/+47),MMSYN1_0115 ← / ← MMSYN1_0116,utp‑‑glucose‑1‑phosphate uridylyltransferase (udp‑glucosepyrophosphorylase) (udpgp) (alpha‑d‑glucosyl‑1‑phosphateuridylyltransferase) (uridine diphosphoglucose pyrophosphorylase)(general stress protein 33) (Gsp33)/conserved hypothetical protein
+4,non-minimal,4,213,151324,C→T,0.088,intergenic (‑141/+44),MMSYN1_0115 ← / ← MMSYN1_0116,utp‑‑glucose‑1‑phosphate uridylyltransferase (udp‑glucosepyrophosphorylase) (udpgp) (alpha‑d‑glucosyl‑1‑phosphateuridylyltransferase) (uridine diphosphoglucose pyrophosphorylase)(general stress protein 33) (Gsp33)/conserved hypothetical protein
+4,non-minimal,4,214,151584,A→T,0.12,T75T (ACT→ACA) ,MMSYN1_0116 ←,conserved hypothetical protein
+4,non-minimal,4,215,160012,A→T,0.1,I191I (ATA→ATT) ,vlcD →,"lipoprotein, putative (VlcD)"
+4,non-minimal,4,216,160431,G→A,0.126,intergenic (+281/‑121),vlcD → / → MMSYN1_0124,"lipoprotein, putative (VlcD)/hexosephosphate transport protein"
+4,non-minimal,4,217,161928,G→T,0.084,intergenic (+45/‑303),MMSYN1_0124 → / → MMSYN1_0125,"hexosephosphate transport protein/PTS system, N‑acetylglucosamine‑specific iibc component"
+4,non-minimal,4,218,162089,G→A,1,intergenic (+206/‑142),MMSYN1_0124 → / → MMSYN1_0125,"hexosephosphate transport protein/PTS system, N‑acetylglucosamine‑specific iibc component"
+4,non-minimal,4,219,169592,G→A,0.821,D195N (GAT→AAT) ,MMSYN1_0130 →,conserved hypothetical protein
+4,non-minimal,4,220,174556,(T)16→14,0.804,intergenic (+44/+62),MMSYN1_0133 → / ← MMSYN1_0134,conserved hypothetical protein/putative membrane protein
+4,non-minimal,4,221,189893,C→G,1,P146A (CCA→GCA) ,rpsG →,ribosomal protein S7
+4,non-minimal,4,222,191331,A→G,0.113,D461G (GAT→GGT) ,fusA →,translation elongation factor G
+4,non-minimal,4,223,250477,Δ1 bp,1,coding (1356/1794 nt),pepF ←,oligoendopeptidase F
+4,non-minimal,4,224,254655,C→T,0.792,P66L (CCA→CTA) ,MMSYN1_0192 →,chromate ion transporter
+4,non-minimal,4,225,279746,C→T,0.761,A140T (GCA→ACA) ,MMSYN1_0217 ←,glycerol uptake facilitator protein
+4,non-minimal,4,226,288365,A→G,0.801,intergenic (+458/‑25),thrS → / → MMSYN1_0223,threonine‑‑tRNA ligase/NADH oxidase (noxase)
+4,non-minimal,4,227,"292,943:1",(TATGTTCAAA)1→2,0.697,coding (9/1326 nt),pdhC →,dihydrolipoamide acetyltransferase component of pyruvate dehydrogenase complex
+4,non-minimal,4,228,295948,A→G,1,E557G (GAA→GGA) ,lpdA →,dihydrolipoyl dehydrogenase
+4,non-minimal,4,229,298392,T→C,0.729,intergenic (+40/‑29),ackA → / → MMSYN1_0231,acetate kinase/putative liporotein
+4,non-minimal,4,230,327336,C→T,0.201,E141K (GAA→AAA) ,MMSYN1_0253 ←,transcription elongation factor GreA
+4,non-minimal,4,231,333135,G→A,0.752,T372I (ACT→ATT) ,MMSYN1_0257 ←,hydrolase
+4,non-minimal,4,232,334060,C→T,0.055,G64R (GGA→AGA) ,MMSYN1_0257 ←,hydrolase
+4,non-minimal,4,233,359627,G→A,0.089,intergenic (‑198/‑61),MMSYN1_0278 ← / → MMSYN1_0279,PTS system fructose‑specific enzyme iiabc component/conserved hypothetical protein
+4,non-minimal,4,234,359628,G→A,0.108,intergenic (‑199/‑60),MMSYN1_0278 ← / → MMSYN1_0279,PTS system fructose‑specific enzyme iiabc component/conserved hypothetical protein
+4,non-minimal,4,235,370208,G→A,0.061,D114N (GAC→AAC) ,rbfA →,ribosome‑binding factor A
+4,non-minimal,4,236,379716,T→A,0.06,K533I (AAA→ATA) ,nusA ←,transcription elongation factor NusA
+4,non-minimal,4,237,397881,C→A,0.08,T904N (ACT→AAT) ,MMSYN1_0312 →,conserved hypothetical protein
+4,non-minimal,4,238,412087,A→T,0.06,I39I (ATT→ATA) ,MMSYN1_0323 ←,putative liporotein
+4,non-minimal,4,239,412090,A→T,0.051,N38K (AAT→AAA) ,MMSYN1_0323 ←,putative liporotein
+4,non-minimal,4,240,489860,A→T,0.073,L628Q (CTA→CAA) ,MMSYN1_0398 ←,putative liporotein
+4,non-minimal,4,241,493765,C→T,1,intergenic (‑2023/‑3436),MMSYN1_0398 ← / → MMSYN1_0400,putative liporotein/ThiJ/PfpI family protein
+4,non-minimal,4,242,496749,G→A,0.724,intergenic (‑5007/‑452),MMSYN1_0398 ← / → MMSYN1_0400,putative liporotein/ThiJ/PfpI family protein
+4,non-minimal,4,243,516595,T→A,0.064,I245N (ATT→AAT) ,MMSYN1_0414 →,RelA/SpoT family protein
+4,non-minimal,4,244,530470,T→G,0.055,Y681D (TAT→GAT) ,MMSYN1_0426 →,"phosphate ABC transport system, permease component"
+4,non-minimal,4,245,559658,A→G,0.863,E302E (GAA→GAG) ,parC →,"DNA topoisomerase IV, A subunit"
+4,non-minimal,4,246,578825,(T)18→15,0.467,coding (94‑96/132 nt),MMSYN1_0471 ←,hypothetical protein
+4,non-minimal,4,247,613364,A→T,0.053,N295K (AAT→AAA) ,plsC ←,1‑acyl‑sn‑glycerol‑3‑phosphate acyltransferase
+4,non-minimal,4,248,614634,G→T,0.064,T38N (ACT→AAT) ,acpS ←,holo‑[acyl‑carrier‑protein] synthase
+4,non-minimal,4,249,624605,Δ1 bp,1,coding (597/1158 nt),ftsZ ←,cell division protein FtsZ
+4,non-minimal,4,250,668465,A→G,0.723,E136G (GAA→GGA) ,MMSYN1_0556 →,conserved hypothetical integrative conjugal element protein
+4,non-minimal,4,251,680550,T→G,0.121,L332W (TTA→TGA) ,MMSYN1_0567 →,putative membrane protein
+4,non-minimal,4,252,680553,A→T,0.192,K333I (AAA→ATA) ,MMSYN1_0567 →,putative membrane protein
+4,non-minimal,4,253,680572,A→G,0.092,K339K (AAA→AAG) ,MMSYN1_0567 →,putative membrane protein
+4,non-minimal,4,254,680574,C→A,0.098,T340N (ACT→AAT) ,MMSYN1_0567 →,putative membrane protein
+4,non-minimal,4,255,750412,T→C,0.829,E300G (GAG→GGG) ,MMSYN1_0608 ←,primosomal protein
+4,non-minimal,4,256,788357,G→A,0.144,P183L (CCT→CTT) ,MMSYN1_0641 ←,"ABC transporter, permease component"
+4,non-minimal,4,257,811690,C→T,0.148,M1M (ATG→ATA) †‡,MMSYN1_0676 ←,"transcription regulator, LacI family"
+4,non-minimal,4,258,811691,A→T,0.101,M1K (ATG→AAG) †‡,MMSYN1_0676 ←,"transcription regulator, LacI family"
+4,non-minimal,4,259,811692,T→G,0.055,M1M (ATG→CTG) †‡,MMSYN1_0676 ←,"transcription regulator, LacI family"
+4,non-minimal,4,260,812150,A→T,0.093,intergenic (‑458/‑67),MMSYN1_0676 ← / → MMSYN1_0677,"transcription regulator, LacI family/putative membrane protein"
+4,non-minimal,4,261,812151,C→A,1,intergenic (‑459/‑66),MMSYN1_0676 ← / → MMSYN1_0677,"transcription regulator, LacI family/putative membrane protein"
+4,non-minimal,4,262,822084,T→C,0.803,E81E (GAA→GAG) ,gatC ←,"glutamyl‑tRNA(Gln) amidotransferase, C subunit"
+4,non-minimal,4,263,824481,C→T,0.706,D627N (GAT→AAT) ,MMSYN1_0691 ←,putative membrane protein
+4,non-minimal,4,264,833515,A→T,0.087,T130T (ACT→ACA) ‡,MMSYN1_0698 ←,lipoprotein. putative
+4,non-minimal,4,265,833516,G→T,0.067,T130N (ACT→AAT) ‡,MMSYN1_0698 ←,lipoprotein. putative
+4,non-minimal,4,266,833518,A→T,0.065,D129E (GAT→GAA) ‡,MMSYN1_0698 ←,lipoprotein. putative
+4,non-minimal,4,267,833519,T→G,0.061,D129A (GAT→GCT) ‡,MMSYN1_0698 ←,lipoprotein. putative
+4,non-minimal,4,268,837891,G→T,0.169,S643Y (TCT→TAT) ,MMSYN1_0701 ←,putative liporotein
+4,non-minimal,4,269,852750,G→A,1,P344S (CCT→TCT) ,MMSYN1_0714 ←,conserved hypothetical protein
+4,non-minimal,4,270,886620,G→A,1,N32N (AAC→AAT) ,MMSYN1_0751 ←,"viral A‑type inclusion protein, putative"
+4,non-minimal,4,271,943124,G→A,0.782,A772V (GCA→GTA) ,rpoC ←,"DNA‑directed RNA polymerase, beta' subunit"
+4,non-minimal,4,272,982681,G→A,1,G67S (GGT→AGT) ,MMSYN1_0836 →,conserved hypothetical protein
+4,non-minimal,4,273,986855,T→A,0.193,intergenic (+173/‑267),nusG → / → MMSYN1_0841,transcription antitermination protein nusG/hypothetical protein
+4,non-minimal,4,274,1009762,G→A,1,D45N (GAC→AAC) ,MMSYN1_0858 →,putative transcriptional regulator
+4,non-minimal,4,275,1053767,G→T,0.123,E254* (GAA→TAA) ,MMSYN1_0892 →,putative membrane protein
+4,non-minimal,4,276,1060248,(T)16→13,0.747,intergenic (‑63/+252),MMSYN1_0895 ← / ← MMSYN1_0896,conserved hypothetical protein/conserved hypothetical protein
+4,non-minimal,4,277,1071767,(TA)13→7,1,intergenic (+233/‑46),vlcG → / → vlcH,"lipoprotein, putative (VlcG)/lipoprotein, putative (VlcH)"
+4,non-minimal,4,278,1073620,G→A,1,intergenic (+241/‑20),vlcI → / → vlcJ,"lipoprotein (VlcI)/prolipoprotein, putative (VlcJ)"
+6,non-minimal,6,279,27601,"Δ7,047 bp",1,,his3–lacZ,"his3, tetM, lacZ"
+6,non-minimal,6,280,45963,T→C,1,I236V (ATT→GTT) ,MMSYN1_0030 ←,"abc transporter, ATP‑binding protein"
+6,non-minimal,6,281,116484,G→A,0.12,C352C (TGC→TGT) ,MMSYN1_0086 ←,putative liporotein
+6,non-minimal,6,282,118606,G→A,0.096,intergenic (‑98/+161),MMSYN1_0087 ← / ← MMSYN1_0088,cell wall anchoring protein/conserved hypothetical protein
+6,non-minimal,6,283,118607,C→T,0.094,intergenic (‑99/+160),MMSYN1_0087 ← / ← MMSYN1_0088,cell wall anchoring protein/conserved hypothetical protein
+6,non-minimal,6,284,"126,187:1",+T,1,intergenic (‑138/+33),MMSYN1_0092 ← / ← MMSYN1_0093,putative liporotein/putative liporotein
+6,non-minimal,6,285,126197,Δ1 bp,1,intergenic (‑148/+23),MMSYN1_0092 ← / ← MMSYN1_0093,putative liporotein/putative liporotein
+6,non-minimal,6,286,151321,C→A,0.087,intergenic (‑138/+47),MMSYN1_0115 ← / ← MMSYN1_0116,utp‑‑glucose‑1‑phosphate uridylyltransferase (udp‑glucosepyrophosphorylase) (udpgp) (alpha‑d‑glucosyl‑1‑phosphateuridylyltransferase) (uridine diphosphoglucose pyrophosphorylase)(general stress protein 33) (Gsp33)/conserved hypothetical protein
+6,non-minimal,6,287,151340,(T)16→15,1,intergenic (‑157/+28),MMSYN1_0115 ← / ← MMSYN1_0116,utp‑‑glucose‑1‑phosphate uridylyltransferase (udp‑glucosepyrophosphorylase) (udpgp) (alpha‑d‑glucosyl‑1‑phosphateuridylyltransferase) (uridine diphosphoglucose pyrophosphorylase)(general stress protein 33) (Gsp33)/conserved hypothetical protein
+6,non-minimal,6,288,179276,C→T,0.56,H454Y (CAT→TAT) ,MMSYN1_0138 →,conserved hypothetical protein
+6,non-minimal,6,289,189893,C→T,0.172,P146S (CCA→TCA) ,rpsG →,ribosomal protein S7
+6,non-minimal,6,290,209454,T→A,0.08,intergenic (‑1456/+75),abiGIB ← / ← alaS,abortive infection protein AbiGI/alanine‑‑tRNA ligase
+6,non-minimal,6,291,249487,C→T,1,S66L (TCA→TTA) ,MMSYN1_0187 →,"transcriptional regulator, GntR family"
+6,non-minimal,6,292,274928,G→T,1,S245* (TCA→TAA) ,MMSYN1_0211 ←,transcription regulator GntR
+6,non-minimal,6,293,284801,C→A,1,P172H (CCT→CAT) ,pyk →,pyruvate kinase
+6,non-minimal,6,294,295915,T→A,1,I546N (ATT→AAT) ,lpdA →,dihydrolipoyl dehydrogenase
+6,non-minimal,6,295,334060,C→T,0.061,G64R (GGA→AGA) ,MMSYN1_0257 ←,hydrolase
+6,non-minimal,6,296,350876,A→T,0.105,intergenic (‑97/‑116),MMSYN1_0272 ← / → MMSYN1_0273,"efflux ABC transporter, permease protein/hypothetical protein"
+6,non-minimal,6,297,397881,C→A,0.05,T904N (ACT→AAT) ,MMSYN1_0312 →,conserved hypothetical protein
+6,non-minimal,6,298,412238,T→C,1,intergenic (‑35/+134),MMSYN1_0323 ← / ← MMSYN1_0324,putative liporotein/conserved hypothetical protein
+6,non-minimal,6,299,428813,T→C,0.063,V438A (GTT→GCT) ,MMSYN1_0339 →,"Na+ ABC transporter, ATP‑binding component"
+6,non-minimal,6,300,428824,A→G,0.059,N442D (AAT→GAT) ‡,MMSYN1_0339 →,"Na+ ABC transporter, ATP‑binding component"
+6,non-minimal,6,301,428826,T→G,0.056,N442K (AAT→AAG) ‡,MMSYN1_0339 →,"Na+ ABC transporter, ATP‑binding component"
+6,non-minimal,6,302,428828,A→T,0.062,Q443L (CAA→CTA) ,MMSYN1_0339 →,"Na+ ABC transporter, ATP‑binding component"
+6,non-minimal,6,303,428830,C→G,0.062,Q444E (CAA→GAA) ,MMSYN1_0339 →,"Na+ ABC transporter, ATP‑binding component"
+6,non-minimal,6,304,498670,A→T,0.07,intergenic (+918/‑969),MMSYN1_0400 → / → MMSYN1_0402,ThiJ/PfpI family protein/putative metalloprotease
+6,non-minimal,6,305,505472,T→C,0.239,D124D (GAT→GAC) ,rpoD →,RNA polymerase sigma‑A factor
+6,non-minimal,6,306,506179,A→G,0.708,K360R (AAA→AGA) ,rpoD →,RNA polymerase sigma‑A factor
+6,non-minimal,6,307,513454,C→T,1,A785V (GCA→GTA) ,MMSYN1_0412 →,putative membrane protein
+6,non-minimal,6,308,530463,T→A,0.054,T678T (ACT→ACA) ,MMSYN1_0426 →,"phosphate ABC transport system, permease component"
+6,non-minimal,6,309,567254,G→A,1,R205K (AGA→AAA) ,MMSYN1_0460 →,bacterial surface protein 26‑residue repeat protein (3 repeats)
+6,non-minimal,6,310,578827,(T)18→17,1,coding (94/132 nt),MMSYN1_0471 ←,hypothetical protein
+6,non-minimal,6,311,594929,T→A,0.075,N152K (AAT→AAA) ,MMSYN1_0487 →,conserved hypothetical protein
+6,non-minimal,6,312,597943,T→G,0.088,I21S (ATT→AGT) ,MMSYN1_0490 →,"papain family cysteine protease, putative"
+6,non-minimal,6,313,625153,C→A,1,G17C (GGT→TGT) ,ftsZ ←,cell division protein FtsZ
+6,non-minimal,6,314,680574,C→A,0.05,T340N (ACT→AAT) ,MMSYN1_0567 →,putative membrane protein
+6,non-minimal,6,315,719054,Δ1 bp,0.083,intergenic (‑55/+165),MMSYN1_0587 ← / ← MMSYN1_0588,mycoplasma virulence signal region (Myco_arth_vir_N) family/putative liporotein
+6,non-minimal,6,316,788342,G→C,1,T188S (ACT→AGT) ,MMSYN1_0641 ←,"ABC transporter, permease component"
+6,non-minimal,6,317,791918,G→T,1,A189E (GCA→GAA) ,rpoA ←,"DNA‑directed RNA polymerase, alpha subunit"
+6,non-minimal,6,318,811690,C→T,0.111,M1M (ATG→ATA) †,MMSYN1_0676 ←,"transcription regulator, LacI family"
+6,non-minimal,6,319,815040,T→A,0.066,intergenic (‑76/+37),MMSYN1_0682 ← / ← MMSYN1_0683,putative liporotein/conserved hypothetical protein
+6,non-minimal,6,320,825342,C→T,0.197,V340I (GTA→ATA) ,MMSYN1_0691 ←,putative membrane protein
+6,non-minimal,6,321,855283,G→C,0.103,intergenic (‑49/‑93),MMSYN1_0715 ← / → MMSYN1_0716,conserved hypothetical protein/conserved hypothetical protein
+6,non-minimal,6,322,878043,C→T,0.097,L287F (CTT→TTT) ,MMSYN1_0746 →,conserved hypothetical protein
+6,non-minimal,6,323,882928,T→A,0.104,K241I (AAA→ATA) ,MMSYN1_0750 ←,"viral A‑type inclusion protein, putative"
+6,non-minimal,6,324,886294,(T)8→7,1,coding (422/3042 nt),MMSYN1_0751 ←,"viral A‑type inclusion protein, putative"
+6,non-minimal,6,325,932130,G→T,1,S13Y (TCT→TAT) ,atpG ←,"ATP synthase F1, gamma subunit"
+6,non-minimal,6,326,977993,C→G,0.639,N310K (AAC→AAG) ,prs →,ribose‑Phosphate pyrophosphokinase (rppk) (phosphoribosylpyrophosphate synthetase) (p‑rib‑pp synthetase) (prpp synthetase)
+6,non-minimal,6,327,999825,T→C,1,G95G (GGT→GGC) ,MMSYN1_0846 →,"oligopeptide ABC transporter, ATP‑binding component"
+9,minimal,1,328,359,G→T,1,G120V (GGT→GTT) ,dnaA →,Chromosomal replication initiator protein
+9,minimal,1,329,19523,(A)11→10,1,intergenic (‑145/‑893),JCVISYN3A_0918 ← / → tetM,Imidazoleglycerol‑phosphate dehydratase/Tetracycline resistance ribosomal protection protein
+9,minimal,1,330,"20,938:1",+T,0.877,coding (523/1920 nt),tetM →,Tetracycline resistance ribosomal protection protein
+9,minimal,1,331,34939,A→T,0.051,intergenic (+43/+123),JCVISYN3A_0034 → / ← ftsH,Uncharacterized efflux ABC transporter permease/Membrane anchored AAA+ protease
+9,minimal,1,332,34940,C→A,0.237,intergenic (+44/+122),JCVISYN3A_0034 → / ← ftsH,Uncharacterized efflux ABC transporter permease/Membrane anchored AAA+ protease
+9,minimal,1,333,34942,A→T,0.081,intergenic (+46/+120),JCVISYN3A_0034 → / ← ftsH,Uncharacterized efflux ABC transporter permease/Membrane anchored AAA+ protease
+9,minimal,1,334,34945,G→T,0.393,intergenic (+49/+117),JCVISYN3A_0034 → / ← ftsH,Uncharacterized efflux ABC transporter permease/Membrane anchored AAA+ protease
+9,minimal,1,335,51488,C→T,0.133,V268I (GTT→ATT) ,JCVISYN3A_0066 ←,Low specificity hydrolase
+9,minimal,1,336,57376,C→T,1,intergenic (‑129/+149),rrsA ← / ← tRNA‑Leu,16S ribosomal RNA/tRNA‑Leu
+9,minimal,1,337,72959,G→T,1,intergenic (‑117/‑129),JCVISYN3A_0109 ← / → bcsA,Deoxyribonuclease IV/Glycolipid synthase A
+9,minimal,1,338,73487,A→T,0.333,I134F (ATT→TTT) ,bcsA →,Glycolipid synthase A
+9,minimal,1,339,76889,C→A,0.051,intergenic (‑138/+47),"galU, gtaB ← / ← JCVISYN3A_0116",UTP‑‑glucose‑1‑phosphate uridylyltransferase/Uncharacterized protein
+9,minimal,1,340,76892,C→A,0.05,intergenic (‑141/+44),"galU, gtaB ← / ← JCVISYN3A_0116",UTP‑‑glucose‑1‑phosphate uridylyltransferase/Uncharacterized protein
+9,minimal,1,341,82358,G→T,1,V248L (GTG→TTG) ,pyrG →,CTP synthase
+9,minimal,1,342,83244,T→A,0.481,intergenic (+29/‑260),pyrG → / → fbaA,"CTP synthase/Fructose‑1,6‑bisphosphate aldolase"
+9,minimal,1,343,97761,G→A,0.086,M1M (ATG→ATA) †,JCVISYN3A_0146 →,Uncharacterized protein
+9,minimal,1,344,99151,C→A,1,A229E (GCA→GAA) ,clsA →,Cardiolipin synthase
+9,minimal,1,345,105355,T→A,0.056,intergenic (+850/+76),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+9,minimal,1,346,105358,T→A,0.092,intergenic (+853/+73),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+9,minimal,1,347,105359,A→T,0.138,intergenic (+854/+72),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+9,minimal,1,348,105360,A→T,0.068,intergenic (+855/+71),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+9,minimal,1,349,105383,G→A,0.119,intergenic (+878/+48),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+9,minimal,1,350,108801,T→A,0.062,intergenic (‑112/‑106),JCVISYN3A_0164 ← / → amiC,Uncharacterized protein/Oligopeptide ABC transporter permease
+9,minimal,1,351,108803,A→T,0.059,intergenic (‑114/‑104),JCVISYN3A_0164 ← / → amiC,Uncharacterized protein/Oligopeptide ABC transporter permease
+9,minimal,1,352,108809,T→A,0.058,intergenic (‑120/‑98),JCVISYN3A_0164 ← / → amiC,Uncharacterized protein/Oligopeptide ABC transporter permease
+9,minimal,1,353,113247,G→A,1,V119I (GTT→ATT) ,amiF →,Oligopeptide ABC transporter ATP‑binding protein
+9,minimal,1,354,114245,T→A,0.076,P451P (CCT→CCA) ,amiF →,Oligopeptide ABC transporter ATP‑binding protein
+9,minimal,1,355,114250,A→T,0.074,E453V (GAG→GTG) ,amiF →,Oligopeptide ABC transporter ATP‑binding protein
+9,minimal,1,356,129570,T→A,0.052,L77I (TTA→ATA) ,pgpA →,Phosphatidylglycerophosphatase
+9,minimal,1,357,139694,A→T,0.133,I9I (ATA→ATT) ,lpdA →,Dihydrolipoyl dehydrogenase
+9,minimal,1,358,150257,C→T,0.073,T335I (ACT→ATT) ,thiI →,tRNA 4‑thiouridine(8) synthase
+9,minimal,1,359,150262,A→C,0.235,I337L (ATT→CTT) ,thiI →,tRNA 4‑thiouridine(8) synthase
+9,minimal,1,360,163896,C→A,0.063,G9W (GGA→TGA) ,JCVISYN3A_0264 ←,Uncharacterized serine/threonine protein kinase
+9,minimal,1,361,165248,G→T,0.162,intergenic (+212/‑330),"tsaB, yeaZ → / → tRNA‑Ser",tRNA N6‑adenosine(37)‑N6‑threonylcarbamoyltransferase complex dimerization subunit/tRNA‑Ser
+9,minimal,1,362,165249,C→T,0.148,intergenic (+213/‑329),"tsaB, yeaZ → / → tRNA‑Ser",tRNA N6‑adenosine(37)‑N6‑threonylcarbamoyltransferase complex dimerization subunit/tRNA‑Ser
+9,minimal,1,363,165266,(T)19→16,0.717,intergenic (+230/‑310),"tsaB, yeaZ → / → tRNA‑Ser",tRNA N6‑adenosine(37)‑N6‑threonylcarbamoyltransferase complex dimerization subunit/tRNA‑Ser
+9,minimal,1,364,165274,G→A,0.088,intergenic (+238/‑304),"tsaB, yeaZ → / → tRNA‑Ser",tRNA N6‑adenosine(37)‑N6‑threonylcarbamoyltransferase complex dimerization subunit/tRNA‑Ser
+9,minimal,1,365,165275,G→A,0.098,intergenic (+239/‑303),"tsaB, yeaZ → / → tRNA‑Ser",tRNA N6‑adenosine(37)‑N6‑threonylcarbamoyltransferase complex dimerization subunit/tRNA‑Ser
+9,minimal,1,366,166238,C→A,1,T151K (ACA→AAA) ,JCVISYN3A_0281 →,Uncharacterized protein
+9,minimal,1,367,174273,G→A,0.055,intergenic (‑118/‑67),hisRS ← / → rbfA,Histidine‑‑tRNA ligase/Ribosome‑binding factor A
+9,minimal,1,368,185700,C→T,0.383,A591T (GCT→ACT) ,polC ←,PolC‑type DNA polymerase III
+9,minimal,1,369,202488,T→A,0.091,intergenic (+266/‑409),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+9,minimal,1,370,202491,A→T,0.097,intergenic (+269/‑406),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+9,minimal,1,371,202492,A→T,0.093,intergenic (+270/‑405),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+9,minimal,1,372,202493,A→T,0.13,intergenic (+271/‑404),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+9,minimal,1,373,202494,A→T,0.237,intergenic (+272/‑403),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+9,minimal,1,374,202504,A→T,0.082,intergenic (+282/‑393),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+9,minimal,1,375,202506,A→T,0.072,intergenic (+284/‑391),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+9,minimal,1,376,202509,A→T,0.056,intergenic (+287/‑388),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+9,minimal,1,377,202510,A→T,0.052,intergenic (+288/‑387),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+9,minimal,1,378,202512,A→C,0.113,intergenic (+290/‑385),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+9,minimal,1,379,202513,A→T,0.065,intergenic (+291/‑384),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+9,minimal,1,380,202515,A→C,0.105,intergenic (+293/‑382),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+9,minimal,1,381,202517,C→A,0.479,intergenic (+295/‑380),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+9,minimal,1,382,202518,T→A,0.378,intergenic (+296/‑379),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+9,minimal,1,383,202519,A→C,0.081,intergenic (+297/‑378),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+9,minimal,1,384,203771,A→T,0.092,intergenic (+155/+303),JCVISYN3A_0338 → / ← ppa,Uncharacterized lipoprotein/Inorganic diphosphatase
+9,minimal,1,385,203772,A→T,0.096,intergenic (+156/+302),JCVISYN3A_0338 → / ← ppa,Uncharacterized lipoprotein/Inorganic diphosphatase
+9,minimal,1,386,203783,A→T,0.069,intergenic (+167/+291),JCVISYN3A_0338 → / ← ppa,Uncharacterized lipoprotein/Inorganic diphosphatase
+9,minimal,1,387,214114,C→T,1,intergenic (+25/‑66),rlmH → / → rpsP,23S rRNA (pseudouridine(1915)‑N3)‑methyltransferase/30S ribosomal protein S16
+9,minimal,1,388,221854,C→T,1,N186N (AAC→AAT) ,JCVISYN3A_0373 →,Uncharacterized protein
+9,minimal,1,389,222375,C→T,1,A360V (GCA→GTA) ,JCVISYN3A_0373 →,Uncharacterized protein
+9,minimal,1,390,240616,C→T,1,T82I (ACA→ATA) ,JCVISYN3A_0399 →,Uncharacterized efflux ABC transporter permease
+9,minimal,1,391,265075,T→A,0.105,I245N (ATT→AAT) ,relA →,"Guanosine‑3',5'‑bis(diphosphate) 3'‑pyrophosphohydrolase"
+9,minimal,1,392,273538,C→T,1,G94R (GGA→AGA) ,fakA ←,Fatty acid kinase subunit A
+9,minimal,1,393,319615,C→A,1,T84T (ACC→ACA) ,JCVISYN3A_0505 →,Uncharacterized lipoprotein
+9,minimal,1,394,335391,C→G,0.245,V28V (GTG→GTC) ,rpmF ←,50S ribosomal protein L32
+9,minimal,1,395,337433,G→A,0.165,T320I (ACA→ATA) ,pheRS ←,Phenylalanine‑‑tRNA ligase subunit beta
+9,minimal,1,396,354507,T→G,0.108,N11T (AAT→ACT) ,grpE ←,Nucleotide exchange factor
+9,minimal,1,397,366995,C→A,1,T106N (ACT→AAT) ,JCVISYN3A_0601 →,Uncharacterized protein
+9,minimal,1,398,385135,C→A,0.326,G61C (GGT→TGT) ,JCVISYN3A_0615 ←,Uncharacterized protein
+9,minimal,1,399,389634,G→A,1,noncoding (62/76 nt),tRNA‑His ←,tRNA‑His
+9,minimal,1,400,420252,A→C,0.384,intergenic (‑535/+308),rpsJ ← / ← tRNA‑Thr,30S ribosomal protein S10/tRNA‑Thr
+9,minimal,1,401,420261,T→A,0.182,intergenic (‑544/+299),rpsJ ← / ← tRNA‑Thr,30S ribosomal protein S10/tRNA‑Thr
+9,minimal,1,402,456598,C→T,0.117,intergenic (‑227/‑72),nrdF ← / → secG,Ribonucleoside‑diphosphate reductase subunit beta/Preprotein translocase subunit
+9,minimal,1,403,476330,G→T,1,Q1104K (CAA→AAA) ,rpoC ←,DNA‑directed RNA polymerase subunit beta'
+9,minimal,1,404,480983,C→A,1,M848I (ATG→ATT) ,rpoB ←,DNA‑directed RNA polymerase subunit beta
+9,minimal,1,405,489240,C→A,0.077,T196K (ACA→AAA) ,glf →,UDP‑galactopyranose mutase
+9,minimal,1,406,492571,A→G,1,Y91Y (TAT→TAC) ,lgt ←,Diacylglyceryl transferase
+9,minimal,1,407,494037,C→G,0.345,E438Q (GAA→CAA) ,lgt ←,Diacylglyceryl transferase
+9,minimal,1,408,494038,C→T,0.345,K437K (AAG→AAA) ,lgt ←,Diacylglyceryl transferase
+9,minimal,1,409,503187,T→A,0.241,intergenic (‑158/‑127),uvrB ← / → yqeN,Excinuclease ABC subunit B/DNA polymerase III subunit delta
+9,minimal,1,410,524058,G→A,0.448,Q63* (CAA→TAA) ,rsmG ←,16S rRNA (guanine(527)‑N(7))‑methyltransferase
+9,minimal,1,411,531174,G→A,0.233,T134I (ACT→ATT) ,corA ←,Magnesium transporter
+10,minimal,2,412,2237,G→T,1,G243W (GGA→TGA) ,dnaN →,DNA polymerase III subunit beta
+10,minimal,2,413,2241,G→A,1,R244K (AGA→AAA) ,dnaN →,DNA polymerase III subunit beta
+10,minimal,2,414,6889,G→T,0.051,A459S (GCT→TCT) ,gyrB →,DNA gyrase subunit B
+10,minimal,2,415,22024,G→T,1,E537* (GAG→TAG) ,tetM →,Tetracycline resistance ribosomal protection protein
+10,minimal,2,416,34940,C→A,0.212,intergenic (+44/+122),JCVISYN3A_0034 → / ← ftsH,Uncharacterized efflux ABC transporter permease/Membrane anchored AAA+ protease
+10,minimal,2,417,34941,T→A,0.086,intergenic (+45/+121),JCVISYN3A_0034 → / ← ftsH,Uncharacterized efflux ABC transporter permease/Membrane anchored AAA+ protease
+10,minimal,2,418,34942,A→T,0.098,intergenic (+46/+120),JCVISYN3A_0034 → / ← ftsH,Uncharacterized efflux ABC transporter permease/Membrane anchored AAA+ protease
+10,minimal,2,419,34945,G→T,0.31,intergenic (+49/+117),JCVISYN3A_0034 → / ← ftsH,Uncharacterized efflux ABC transporter permease/Membrane anchored AAA+ protease
+10,minimal,2,420,68698,C→T,0.126,intergenic (+293/+111),yycJ → / ← xseB,Uncharacterized 5'‑3' exonuclease/Exodeoxyribonuclease VII small subunit
+10,minimal,2,421,78085,G→T,1,G214W (GGA→TGA) ,plsY →,Acyl‑phosphate glycerol 3‑phosphate acyltransferase
+10,minimal,2,422,82506,G→A,1,G297D (GGT→GAT) ,pyrG →,CTP synthase
+10,minimal,2,423,102401,G→T,0.146,A429S (GCT→TCT) ,JCVISYN3A_0150 →,Translation elongation factor G
+10,minimal,2,424,105355,T→A,0.054,intergenic (+850/+76),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+10,minimal,2,425,105358,T→A,0.069,intergenic (+853/+73),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+10,minimal,2,426,105359,A→T,0.152,intergenic (+854/+72),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+10,minimal,2,427,105360,A→T,0.069,intergenic (+855/+71),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+10,minimal,2,428,105383,G→A,0.052,intergenic (+878/+48),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+10,minimal,2,429,114245,T→A,0.22,P451P (CCT→CCA) ,amiF →,Oligopeptide ABC transporter ATP‑binding protein
+10,minimal,2,430,114250,A→T,0.209,E453V (GAG→GTG) ,amiF →,Oligopeptide ABC transporter ATP‑binding protein
+10,minimal,2,431,133332,G→T,0.078,R64I (AGA→ATA) ,pfkA →,6‑Phosphofructokinase
+10,minimal,2,432,157117,G→A,0.199,P88L (CCA→CTA) ,rnjB ←,RNase J family beta‑CASP ribonuclease
+10,minimal,2,433,158294,G→A,0.085,T7I (ACA→ATA) ,nadK ←,NAD(+) kinase
+10,minimal,2,434,165248,G→T,0.1,intergenic (+212/‑330),"tsaB, yeaZ → / → tRNA‑Ser",tRNA N6‑adenosine(37)‑N6‑threonylcarbamoyltransferase complex dimerization subunit/tRNA‑Ser
+10,minimal,2,435,165249,C→T,0.076,intergenic (+213/‑329),"tsaB, yeaZ → / → tRNA‑Ser",tRNA N6‑adenosine(37)‑N6‑threonylcarbamoyltransferase complex dimerization subunit/tRNA‑Ser
+10,minimal,2,436,165266,(T)19→16,0.371,intergenic (+230/‑310),"tsaB, yeaZ → / → tRNA‑Ser",tRNA N6‑adenosine(37)‑N6‑threonylcarbamoyltransferase complex dimerization subunit/tRNA‑Ser
+10,minimal,2,437,165274,G→T,0.055,intergenic (+238/‑304),"tsaB, yeaZ → / → tRNA‑Ser",tRNA N6‑adenosine(37)‑N6‑threonylcarbamoyltransferase complex dimerization subunit/tRNA‑Ser
+10,minimal,2,438,165275,G→A,0.074,intergenic (+239/‑303),"tsaB, yeaZ → / → tRNA‑Ser",tRNA N6‑adenosine(37)‑N6‑threonylcarbamoyltransferase complex dimerization subunit/tRNA‑Ser
+10,minimal,2,439,186894,C→T,0.085,E193K (GAA→AAA) ,polC ←,PolC‑type DNA polymerase III
+10,minimal,2,440,202485,Δ2 bp,1,intergenic (+263/‑411),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+10,minimal,2,441,202488,T→A,0.197,intergenic (+266/‑409),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+10,minimal,2,442,202489,A→T,0.055,intergenic (+267/‑408),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+10,minimal,2,443,202490,A→T,0.069,intergenic (+268/‑407),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+10,minimal,2,444,202492,A→T,0.099,intergenic (+270/‑405),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+10,minimal,2,445,202493,A→T,0.054,intergenic (+271/‑404),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+10,minimal,2,446,202494,A→T,0.278,intergenic (+272/‑403),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+10,minimal,2,447,202503,A→T,0.061,intergenic (+281/‑394),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+10,minimal,2,448,202505,A→T,0.079,intergenic (+283/‑392),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+10,minimal,2,449,202507,A→C,0.073,intergenic (+285/‑390),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+10,minimal,2,450,202508,A→C,0.063,intergenic (+286/‑389),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+10,minimal,2,451,202509,A→C,0.061,intergenic (+287/‑388),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+10,minimal,2,452,202510,A→C,0.062,intergenic (+288/‑387),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+10,minimal,2,453,202516,A→C,0.13,intergenic (+294/‑381),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+10,minimal,2,454,202517,C→A,0.367,intergenic (+295/‑380),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+10,minimal,2,455,202518,T→A,0.302,intergenic (+296/‑379),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+10,minimal,2,456,203771,A→T,0.052,intergenic (+155/+303),JCVISYN3A_0338 → / ← ppa,Uncharacterized lipoprotein/Inorganic diphosphatase
+10,minimal,2,457,214100,G→A,1,intergenic (+11/‑80),rlmH → / → rpsP,23S rRNA (pseudouridine(1915)‑N3)‑methyltransferase/30S ribosomal protein S16
+10,minimal,2,458,222743,G→T,1,G483C (GGT→TGT) ,JCVISYN3A_0373 →,Uncharacterized protein
+10,minimal,2,459,235400,G→A,0.112,V47I (GTT→ATT) ,lon →,Endopeptidase La
+10,minimal,2,460,264950,A→C,1,E203D (GAA→GAC) ,relA →,"Guanosine‑3',5'‑bis(diphosphate) 3'‑pyrophosphohydrolase"
+10,minimal,2,461,265075,T→A,0.05,I245N (ATT→AAT) ,relA →,"Guanosine‑3',5'‑bis(diphosphate) 3'‑pyrophosphohydrolase"
+10,minimal,2,462,265079,A→T,0.054,K246N (AAA→AAT) ,relA →,"Guanosine‑3',5'‑bis(diphosphate) 3'‑pyrophosphohydrolase"
+10,minimal,2,463,331515,C→A,1,E352* (GAA→TAA) ,ftsZ ←,Cell division protein
+10,minimal,2,464,354507,T→G,0.065,N11T (AAT→ACT) ,grpE ←,Nucleotide exchange factor
+10,minimal,2,465,356010,C→A,0.143,V567L (GTA→TTA) ,clpB ←,ATP‑dependent Clp protease subunit B
+10,minimal,2,466,370361,G→T,0.105,intergenic (+173/‑10),JCVISYN3A_0604 → / → JCVISYN3A_0605,Uncharacterized protein/Uncharacterized protein
+10,minimal,2,467,385662,G→A,0.176,G91G (GGG→GGA) ,fakB →,Fatty acid binding protein
+10,minimal,2,468,402031,C→A,0.331,M164I (ATG→ATT) ,ecfT ←,ECF transporter T component
+10,minimal,2,469,415919,C→T,0.054,E85K (GAA→AAA) ,rpsC ←,30S ribosomal protein S3
+10,minimal,2,470,420261,T→A,0.128,intergenic (‑544/+299),rpsJ ← / ← tRNA‑Thr,30S ribosomal protein S10/tRNA‑Thr
+10,minimal,2,471,428658,T→A,0.258,G282G (GGA→GGT) ,ligA ←,DNA ligase (NAD(+))
+10,minimal,2,472,430219,C→T,0.906,R437K (AGA→AAA) ,JCVISYN3A_0691 ←,Uncharacterized protein
+10,minimal,2,473,462405,G→T,0.069,E647* (GAA→TAA) ,ptsG →,PTS sugar transporter
+10,minimal,2,474,462486,G→T,0.843,E674* (GAA→TAA) ,ptsG →,PTS sugar transporter
+10,minimal,2,475,462528,C→T,0.111,Q688* (CAA→TAA) ,ptsG →,PTS sugar transporter
+10,minimal,2,476,466835,C→T,1,E394K (GAA→AAA) ,atpD ←,F0F1 ATP synthase subunit beta
+10,minimal,2,477,475879,T→A,1,E1254V (GAA→GTA) ,rpoC ←,DNA‑directed RNA polymerase subunit beta'
+10,minimal,2,478,479028,T→C,0.056,S204S (TCA→TCG) ,rpoC ←,DNA‑directed RNA polymerase subunit beta'
+10,minimal,2,479,479147,C→T,1,E165K (GAA→AAA) ,rpoC ←,DNA‑directed RNA polymerase subunit beta'
+10,minimal,2,480,484465,G→A,0.075,A76V (GCA→GTA) ,JCVISYN3A_0805 ←,Uncharacterized protein
+10,minimal,2,481,494775,G→T,1,P192T (CCA→ACA) ,lgt ←,Diacylglyceryl transferase
+10,minimal,2,482,516340,A→T,0.098,intergenic (+171/+335),nusG → / ← JCVISYN3A_0851,Antitermination protein/Uncharacterized lipoprotein
+10,minimal,2,483,516343,T→A,0.069,intergenic (+174/+332),nusG → / ← JCVISYN3A_0851,Antitermination protein/Uncharacterized lipoprotein
+11,minimal,3,484,1602,C→A,1,A31D (GCT→GAT) ,dnaN →,DNA polymerase III subunit beta
+11,minimal,3,485,19523,(A)11→10,1,intergenic (‑145/‑893),JCVISYN3A_0918 ← / → tetM,Imidazoleglycerol‑phosphate dehydratase/Tetracycline resistance ribosomal protection protein
+11,minimal,3,486,22013,C→T,1,T533I (ACA→ATA) ,tetM →,Tetracycline resistance ribosomal protection protein
+11,minimal,3,487,34939,A→T,0.056,intergenic (+43/+123),JCVISYN3A_0034 → / ← ftsH,Uncharacterized efflux ABC transporter permease/Membrane anchored AAA+ protease
+11,minimal,3,488,34940,C→T,0.152,intergenic (+44/+122),JCVISYN3A_0034 → / ← ftsH,Uncharacterized efflux ABC transporter permease/Membrane anchored AAA+ protease
+11,minimal,3,489,34941,T→A,0.051,intergenic (+45/+121),JCVISYN3A_0034 → / ← ftsH,Uncharacterized efflux ABC transporter permease/Membrane anchored AAA+ protease
+11,minimal,3,490,34942,A→T,0.109,intergenic (+46/+120),JCVISYN3A_0034 → / ← ftsH,Uncharacterized efflux ABC transporter permease/Membrane anchored AAA+ protease
+11,minimal,3,491,34945,G→T,0.365,intergenic (+49/+117),JCVISYN3A_0034 → / ← ftsH,Uncharacterized efflux ABC transporter permease/Membrane anchored AAA+ protease
+11,minimal,3,492,61386,A→T,0.051,intergenic (‑26/+69),tsaD ← / ← JCVISYN3A_0080,tRNA (adenosine(37)‑N6)‑threonylcarbamoyltransferase complex transferase subunit D/Uncharacterized protein
+11,minimal,3,493,61396,A→T,0.053,intergenic (‑36/+59),tsaD ← / ← JCVISYN3A_0080,tRNA (adenosine(37)‑N6)‑threonylcarbamoyltransferase complex transferase subunit D/Uncharacterized protein
+11,minimal,3,494,73049,G→A,1,intergenic (‑207/‑39),JCVISYN3A_0109 ← / → bcsA,Deoxyribonuclease IV/Glycolipid synthase A
+11,minimal,3,495,73487,A→T,0.35,I134F (ATT→TTT) ,bcsA →,Glycolipid synthase A
+11,minimal,3,496,76889,C→A,0.06,intergenic (‑138/+47),"galU, gtaB ← / ← JCVISYN3A_0116",UTP‑‑glucose‑1‑phosphate uridylyltransferase/Uncharacterized protein
+11,minimal,3,497,77152,A→T,0.07,T75T (ACT→ACA) ,JCVISYN3A_0116 ←,Uncharacterized protein
+11,minimal,3,498,79151,C→A,0.939,T250N (ACT→AAT) ,gluRS →,Glutamate‑‑tRNA ligase
+11,minimal,3,499,79501,C→A,0.069,L367I (CTT→ATT) ,gluRS →,Glutamate‑‑tRNA ligase
+11,minimal,3,500,81755,G→T,1,D47Y (GAT→TAT) ,pyrG →,CTP synthase
+11,minimal,3,501,83244,T→A,0.571,intergenic (+29/‑260),pyrG → / → fbaA,"CTP synthase/Fructose‑1,6‑bisphosphate aldolase"
+11,minimal,3,502,88470,G→A,0.07,intergenic (+597/‑263),ietS → / → rpmE,Toxin‑antitoxin serine protease/50S ribosomal protein L31
+11,minimal,3,503,88488,T→A,0.122,intergenic (+615/‑245),ietS → / → rpmE,Toxin‑antitoxin serine protease/50S ribosomal protein L31
+11,minimal,3,504,88490,C→A,0.142,intergenic (+617/‑243),ietS → / → rpmE,Toxin‑antitoxin serine protease/50S ribosomal protein L31
+11,minimal,3,505,98578,G→A,1,G38E (GGG→GAG) ,clsA →,Cardiolipin synthase
+11,minimal,3,506,105355,T→A,0.089,intergenic (+850/+76),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+11,minimal,3,507,105358,T→A,0.073,intergenic (+853/+73),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+11,minimal,3,508,105359,A→T,0.175,intergenic (+854/+72),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+11,minimal,3,509,105360,A→T,0.097,intergenic (+855/+71),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+11,minimal,3,510,105383,G→A,0.066,intergenic (+878/+48),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+11,minimal,3,511,108801,T→A,0.094,intergenic (‑112/‑106),JCVISYN3A_0164 ← / → amiC,Uncharacterized protein/Oligopeptide ABC transporter permease
+11,minimal,3,512,108803,A→T,0.087,intergenic (‑114/‑104),JCVISYN3A_0164 ← / → amiC,Uncharacterized protein/Oligopeptide ABC transporter permease
+11,minimal,3,513,108809,T→A,0.081,intergenic (‑120/‑98),JCVISYN3A_0164 ← / → amiC,Uncharacterized protein/Oligopeptide ABC transporter permease
+11,minimal,3,514,108810,T→A,0.083,intergenic (‑121/‑97),JCVISYN3A_0164 ← / → amiC,Uncharacterized protein/Oligopeptide ABC transporter permease
+11,minimal,3,515,108812,T→C,0.084,intergenic (‑123/‑95),JCVISYN3A_0164 ← / → amiC,Uncharacterized protein/Oligopeptide ABC transporter permease
+11,minimal,3,516,114245,T→A,0.248,P451P (CCT→CCA) ,amiF →,Oligopeptide ABC transporter ATP‑binding protein
+11,minimal,3,517,114250,A→T,0.232,E453V (GAG→GTG) ,amiF →,Oligopeptide ABC transporter ATP‑binding protein
+11,minimal,3,518,125527,G→A,1,intergenic (‑133/+56),infC ← / ← def,Translation initiation factor IF‑3/Peptide deformylase
+11,minimal,3,519,129570,T→A,0.102,L77I (TTA→ATA) ‡,pgpA →,Phosphatidylglycerophosphatase
+11,minimal,3,520,129571,T→A,0.088,L77* (TTA→TAA) ‡,pgpA →,Phosphatidylglycerophosphatase
+11,minimal,3,521,129577,T→A,0.053,I79N (ATT→AAT) ,pgpA →,Phosphatidylglycerophosphatase
+11,minimal,3,522,139694,A→T,0.102,I9I (ATA→ATT) ,lpdA →,Dihydrolipoyl dehydrogenase
+11,minimal,3,523,143767,C→A,1,intergenic (+26/‑136),ackA → / → ptsI,Acetate kinase/Phosphoenolpyruvate‑‑protein phosphotransferase
+11,minimal,3,524,157600,C→A,0.051,K238N (AAG→AAT) ,nadK ←,NAD(+) kinase
+11,minimal,3,525,165248,G→T,0.229,intergenic (+212/‑330),"tsaB, yeaZ → / → tRNA‑Ser",tRNA N6‑adenosine(37)‑N6‑threonylcarbamoyltransferase complex dimerization subunit/tRNA‑Ser
+11,minimal,3,526,165249,C→T,0.206,intergenic (+213/‑329),"tsaB, yeaZ → / → tRNA‑Ser",tRNA N6‑adenosine(37)‑N6‑threonylcarbamoyltransferase complex dimerization subunit/tRNA‑Ser
+11,minimal,3,527,165274,G→A,0.137,intergenic (+238/‑304),"tsaB, yeaZ → / → tRNA‑Ser",tRNA N6‑adenosine(37)‑N6‑threonylcarbamoyltransferase complex dimerization subunit/tRNA‑Ser
+11,minimal,3,528,165275,G→A,0.17,intergenic (+239/‑303),"tsaB, yeaZ → / → tRNA‑Ser",tRNA N6‑adenosine(37)‑N6‑threonylcarbamoyltransferase complex dimerization subunit/tRNA‑Ser
+11,minimal,3,529,166726,A→T,0.328,A93A (GCA→GCT) ,proRS →,Proline‑‑tRNA ligase
+11,minimal,3,530,185700,C→T,0.471,A591T (GCT→ACT) ,polC ←,PolC‑type DNA polymerase III
+11,minimal,3,531,188472,G→T,0.06,I12I (ATC→ATA) ,cdsA ←,Phosphatidate cytidylyltransferase
+11,minimal,3,532,199940,G→T,1,G14G (GGG→GGT) ,rluB →,Uncharacterized pseudouridine synthase
+11,minimal,3,533,201650,A→T,0.055,N86Y (AAT→TAT) ,JCVISYN3A_0332 →,Uncharacterized protein
+11,minimal,3,534,202492,A→T,0.065,intergenic (+270/‑405),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+11,minimal,3,535,202493,A→T,0.068,intergenic (+271/‑404),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+11,minimal,3,536,202494,A→T,0.202,intergenic (+272/‑403),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+11,minimal,3,537,202504,A→T,0.058,intergenic (+282/‑393),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+11,minimal,3,538,202505,A→T,0.068,intergenic (+283/‑392),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+11,minimal,3,539,202506,A→T,0.066,intergenic (+284/‑391),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+11,minimal,3,540,202507,A→T,0.053,intergenic (+285/‑390),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+11,minimal,3,541,202508,A→C,0.103,intergenic (+286/‑389),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+11,minimal,3,542,202509,A→C,0.053,intergenic (+287/‑388),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+11,minimal,3,543,202511,A→C,0.054,intergenic (+289/‑386),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+11,minimal,3,544,202513,A→T,0.063,intergenic (+291/‑384),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+11,minimal,3,545,202515,A→T,0.083,intergenic (+293/‑382),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+11,minimal,3,546,202517,C→A,0.377,intergenic (+295/‑380),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+11,minimal,3,547,202518,T→A,0.342,intergenic (+296/‑379),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+11,minimal,3,548,202519,A→C,0.059,intergenic (+297/‑378),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+11,minimal,3,549,203771,A→T,0.078,intergenic (+155/+303),JCVISYN3A_0338 → / ← ppa,Uncharacterized lipoprotein/Inorganic diphosphatase
+11,minimal,3,550,203772,A→T,0.061,intergenic (+156/+302),JCVISYN3A_0338 → / ← ppa,Uncharacterized lipoprotein/Inorganic diphosphatase
+11,minimal,3,551,203783,A→T,0.055,intergenic (+167/+291),JCVISYN3A_0338 → / ← ppa,Uncharacterized lipoprotein/Inorganic diphosphatase
+11,minimal,3,552,203914,A→T,0.082,intergenic (+298/+160),JCVISYN3A_0338 → / ← ppa,Uncharacterized lipoprotein/Inorganic diphosphatase
+11,minimal,3,553,205756,C→T,0.052,Q10* (CAA→TAA) ,JCVISYN3A_0346 →,Uncharacterized protein
+11,minimal,3,554,253824,C→G,0.098,L82V (CTA→GTA) ‡,rpoD →,RNA polymerase subunit sigma
+11,minimal,3,555,253825,T→A,0.175,L82Q (CTA→CAA) ‡,rpoD →,RNA polymerase subunit sigma
+11,minimal,3,556,253827,G→C,0.183,E83Q (GAA→CAA) ,rpoD →,RNA polymerase subunit sigma
+11,minimal,3,557,265075,T→A,0.097,I245N (ATT→AAT) ,relA →,"Guanosine‑3',5'‑bis(diphosphate) 3'‑pyrophosphohydrolase"
+11,minimal,3,558,270162,C→T,1,G48D (GGT→GAT) ,JCVISYN3A_0416 ←,Uncharacterized protein
+11,minimal,3,559,273505,C→T,1,E105K (GAA→AAA) ,fakA ←,Fatty acid kinase subunit A
+11,minimal,3,560,281482,C→T,1,T55I (ACA→ATA) ,JCVISYN3A_0430 →,Uncharacterized DNA‑binding protein
+11,minimal,3,561,330667,G→A,0.065,R102C (CGT→TGT) ,JCVISYN3A_0520 ←,Uncharacterized hydrolase
+11,minimal,3,562,"331,507:1",+CT,1,coding (1062/1158 nt),ftsZ ←,Cell division protein
+11,minimal,3,563,332001,C→T,1,V190I (GTT→ATT) ,ftsZ ←,Cell division protein
+11,minimal,3,564,356100,C→T,1,D537N (GAT→AAT) ,clpB ←,ATP‑dependent Clp protease subunit B
+11,minimal,3,565,358528,C→T,1,pseudogene (209/866 nt),JCVISYN3A_0546 ←,
+11,minimal,3,566,364550,A→C,0.085,intergenic (‑592/‑222),JCVISYN3A_0599 ← / → rnjA,Uncharacterized protein/Ribonuclease J
+11,minimal,3,567,367707,T→A,0.122,intergenic (+84/‑48),JCVISYN3A_0601 → / → JCVISYN3A_0602,Uncharacterized protein/–
+11,minimal,3,568,374760,T→A,0.112,L254F (TTA→TTT) ,dnaB ←,Chromosome replication initiation protein
+11,minimal,3,569,387412,C→T,0.055,C148Y (TGT→TAT) ,JCVISYN3A_0620 ←,Uncharacterized transcriptional regulator
+11,minimal,3,570,387613,G→T,0.065,T81N (ACT→AAT) ,JCVISYN3A_0620 ←,Uncharacterized transcriptional regulator
+11,minimal,3,571,396248,G→T,1,P46H (CCT→CAT) ,rplM ←,50S ribosomal protein L13
+11,minimal,3,572,413320,C→T,0.053,V107I (GTT→ATT) ,rplE ←,50S ribosomal protein L5
+11,minimal,3,573,420164,A→T,1,intergenic (‑447/+396),rpsJ ← / ← tRNA‑Thr,30S ribosomal protein S10/tRNA‑Thr
+11,minimal,3,574,420252,A→C,0.332,intergenic (‑535/+308),rpsJ ← / ← tRNA‑Thr,30S ribosomal protein S10/tRNA‑Thr
+11,minimal,3,575,420254,A→T,0.056,intergenic (‑537/+306),rpsJ ← / ← tRNA‑Thr,30S ribosomal protein S10/tRNA‑Thr
+11,minimal,3,576,420260,A→T,0.116,intergenic (‑543/+300),rpsJ ← / ← tRNA‑Thr,30S ribosomal protein S10/tRNA‑Thr
+11,minimal,3,577,420261,T→A,0.222,intergenic (‑544/+299),rpsJ ← / ← tRNA‑Thr,30S ribosomal protein S10/tRNA‑Thr
+11,minimal,3,578,424806,G→T,0.06,T312N (ACT→AAT) ,gatB ←,Glutamyl‑tRNA amidotransferase subunit B
+11,minimal,3,579,430616,C→T,1,G305S (GGT→AGT) ,JCVISYN3A_0691 ←,Uncharacterized protein
+11,minimal,3,580,443379,T→A,0.07,intergenic (‑237/‑100),JCVISYN3A_0710 ← / → tRNA‑Arg,Uncharacterized hydrolase/tRNA‑Arg
+11,minimal,3,581,445115,C→A,1,V226V (GTC→GTA) ,nagB →,Glucosamine‑6‑phosphate deaminase
+11,minimal,3,582,452706,G→A,1,intergenic (+138/+15),punA → / ← nrdE,Purine‑nucleoside phosphorylase/Ribonucleotide‑diphosphate reductase subunit alpha
+11,minimal,3,583,458938,G→C,0.446,G650A (GGA→GCA) ,rnr →,Ribonuclease R
+11,minimal,3,584,458944,T→G,0.184,V652G (GTT→GGT) ,rnr →,Ribonuclease R
+11,minimal,3,585,466954,G→A,1,S354L (TCA→TTA) ,atpD ←,F0F1 ATP synthase subunit beta
+11,minimal,3,586,476293,C→A,1,R1116I (AGA→ATA) ,rpoC ←,DNA‑directed RNA polymerase subunit beta'
+11,minimal,3,587,494037,C→G,0.44,E438Q (GAA→CAA) ,lgt ←,Diacylglyceryl transferase
+11,minimal,3,588,494038,C→T,0.437,K437K (AAG→AAA) ,lgt ←,Diacylglyceryl transferase
+11,minimal,3,589,503184,T→A,0.123,intergenic (‑155/‑130),uvrB ← / → yqeN,Excinuclease ABC subunit B/DNA polymerase III subunit delta
+11,minimal,3,590,514008,A→T,0.169,Q368H (CAA→CAT) ,cysRS →,Cysteine‑‑tRNA ligase
+11,minimal,3,591,514010,T→A,0.163,I369N (ATT→AAT) ,cysRS →,Cysteine‑‑tRNA ligase
+11,minimal,3,592,514017,A→T,0.187,K371N (AAA→AAT) ,cysRS →,Cysteine‑‑tRNA ligase
+11,minimal,3,593,516340,A→T,0.199,intergenic (+171/+335),nusG → / ← JCVISYN3A_0851,Antitermination protein/Uncharacterized lipoprotein
+11,minimal,3,594,516341,A→T,0.17,intergenic (+172/+334),nusG → / ← JCVISYN3A_0851,Antitermination protein/Uncharacterized lipoprotein
+11,minimal,3,595,516348,T→A,0.138,intergenic (+179/+327),nusG → / ← JCVISYN3A_0851,Antitermination protein/Uncharacterized lipoprotein
+11,minimal,3,596,516349,T→A,0.083,intergenic (+180/+326),nusG → / ← JCVISYN3A_0851,Antitermination protein/Uncharacterized lipoprotein
+13,minimal,5,597,2462,G→A,1,G318R (GGA→AGA) ,dnaN →,DNA polymerase III subunit beta
+13,minimal,5,598,6303,A→C,0.274,Q263H (CAA→CAC) ,gyrB →,DNA gyrase subunit B
+13,minimal,5,599,34940,C→A,0.178,intergenic (+44/+122),JCVISYN3A_0034 → / ← ftsH,Uncharacterized efflux ABC transporter permease/Membrane anchored AAA+ protease
+13,minimal,5,600,34941,T→A,0.063,intergenic (+45/+121),JCVISYN3A_0034 → / ← ftsH,Uncharacterized efflux ABC transporter permease/Membrane anchored AAA+ protease
+13,minimal,5,601,34942,A→T,0.082,intergenic (+46/+120),JCVISYN3A_0034 → / ← ftsH,Uncharacterized efflux ABC transporter permease/Membrane anchored AAA+ protease
+13,minimal,5,602,34945,G→T,0.34,intergenic (+49/+117),JCVISYN3A_0034 → / ← ftsH,Uncharacterized efflux ABC transporter permease/Membrane anchored AAA+ protease
+13,minimal,5,603,51033,G→T,0.061,E500* (GAA→TAA) ,lysRS →,Lysine‑‑tRNA ligase
+13,minimal,5,604,72878,C→T,1,intergenic (‑36/‑210),JCVISYN3A_0109 ← / → bcsA,Deoxyribonuclease IV/Glycolipid synthase A
+13,minimal,5,605,73487,A→T,0.161,I134F (ATT→TTT) ,bcsA →,Glycolipid synthase A
+13,minimal,5,606,81759,C→T,1,P48L (CCA→CTA) ,pyrG →,CTP synthase
+13,minimal,5,607,83244,T→A,0.52,intergenic (+29/‑260),pyrG → / → fbaA,"CTP synthase/Fructose‑1,6‑bisphosphate aldolase"
+13,minimal,5,608,105358,T→A,0.09,intergenic (+853/+73),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+13,minimal,5,609,105359,A→T,0.169,intergenic (+854/+72),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+13,minimal,5,610,105383,G→A,0.125,intergenic (+878/+48),JCVISYN3A_0151 → / ← alaRS,Translation elongation factor Tu/Alanine‑‑tRNA ligase
+13,minimal,5,611,108801,T→A,0.108,intergenic (‑112/‑106),JCVISYN3A_0164 ← / → amiC,Uncharacterized protein/Oligopeptide ABC transporter permease
+13,minimal,5,612,108803,A→T,0.102,intergenic (‑114/‑104),JCVISYN3A_0164 ← / → amiC,Uncharacterized protein/Oligopeptide ABC transporter permease
+13,minimal,5,613,108809,T→A,0.088,intergenic (‑120/‑98),JCVISYN3A_0164 ← / → amiC,Uncharacterized protein/Oligopeptide ABC transporter permease
+13,minimal,5,614,108810,T→A,0.088,intergenic (‑121/‑97),JCVISYN3A_0164 ← / → amiC,Uncharacterized protein/Oligopeptide ABC transporter permease
+13,minimal,5,615,108812,T→C,0.09,intergenic (‑123/‑95),JCVISYN3A_0164 ← / → amiC,Uncharacterized protein/Oligopeptide ABC transporter permease
+13,minimal,5,616,113623,G→T,1,R244I (AGA→ATA) ,amiF →,Oligopeptide ABC transporter ATP‑binding protein
+13,minimal,5,617,114245,T→A,0.089,P451P (CCT→CCA) ,amiF →,Oligopeptide ABC transporter ATP‑binding protein
+13,minimal,5,618,114250,A→T,0.081,E453V (GAG→GTG) ,amiF →,Oligopeptide ABC transporter ATP‑binding protein
+13,minimal,5,619,139694,A→T,0.128,I9I (ATA→ATT) ,lpdA →,Dihydrolipoyl dehydrogenase
+13,minimal,5,620,165249,C→T,0.133,intergenic (+213/‑329),"tsaB, yeaZ → / → tRNA‑Ser",tRNA N6‑adenosine(37)‑N6‑threonylcarbamoyltransferase complex dimerization subunit/tRNA‑Ser
+13,minimal,5,621,185700,C→T,0.439,A591T (GCT→ACT) ,polC ←,PolC‑type DNA polymerase III
+13,minimal,5,622,202492,A→T,0.094,intergenic (+270/‑405),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+13,minimal,5,623,202494,A→T,0.266,intergenic (+272/‑403),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+13,minimal,5,624,202505,A→T,0.14,intergenic (+283/‑392),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+13,minimal,5,625,202507,A→T,0.12,intergenic (+285/‑390),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+13,minimal,5,626,202508,A→T,0.121,intergenic (+286/‑389),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+13,minimal,5,627,202512,A→C,0.1,intergenic (+290/‑385),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+13,minimal,5,628,202516,A→T,0.148,intergenic (+294/‑381),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+13,minimal,5,629,202517,C→A,0.346,intergenic (+295/‑380),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+13,minimal,5,630,202518,T→A,0.266,intergenic (+296/‑379),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+13,minimal,5,631,202519,A→C,0.061,intergenic (+297/‑378),JCVISYN3A_0332 → / → JCVISYN3A_0338,Uncharacterized protein/Uncharacterized lipoprotein
+13,minimal,5,632,223000,C→T,1,noncoding (41/77 nt),tRNA‑Arg →,tRNA‑Arg
+13,minimal,5,633,273505,C→T,1,E105K (GAA→AAA) ,fakA ←,Fatty acid kinase subunit A
+13,minimal,5,634,281453,A→C,1,E45D (GAA→GAC) ,JCVISYN3A_0430 →,Uncharacterized DNA‑binding protein
+13,minimal,5,635,306538,C→T,1,T783I (ACA→ATA) ,parC →,DNA topoisomerase IV subunit A
+13,minimal,5,636,307166,G→T,0.318,T305N (ACT→AAT) ,ldh ←,L‑lactate dehydrogenase
+13,minimal,5,637,321622,G→C,1,N28K (AAC→AAG) ,JCVISYN3A_0511 ←,Uncharacterized protein
+13,minimal,5,638,331626,C→A,1,E315* (GAA→TAA) ,ftsZ ←,Cell division protein
+13,minimal,5,639,350613,C→T,1,G34R (GGA→AGA) ,rpsB ←,30S ribosomal protein S2
+13,minimal,5,640,374779,T→A,0.102,N248I (AAT→ATT) ,dnaB ←,Chromosome replication initiation protein
+13,minimal,5,641,396437,C→A,1,intergenic (‑53/+77),rplM ← / ← JCVISYN3A_0639,50S ribosomal protein L13/Uncharacterized efflux ABC transporter permease
+13,minimal,5,642,415799,C→T,1,E125K (GAA→AAA) ,rpsC ←,30S ribosomal protein S3
+13,minimal,5,643,420252,A→C,0.234,intergenic (‑535/+308),rpsJ ← / ← tRNA‑Thr,30S ribosomal protein S10/tRNA‑Thr
+13,minimal,5,644,420261,T→A,0.11,intergenic (‑544/+299),rpsJ ← / ← tRNA‑Thr,30S ribosomal protein S10/tRNA‑Thr
+13,minimal,5,645,426683,C→T,0.403,G173S (GGT→AGT) ,gatA ←,Glutamyl‑tRNA amidotransferase subunit A
+13,minimal,5,646,426821,C→T,0.257,G127S (GGT→AGT) ,gatA ←,Glutamyl‑tRNA amidotransferase subunit A
+13,minimal,5,647,462456,G→T,0.543,E664* (GAA→TAA) ,ptsG →,PTS sugar transporter
+13,minimal,5,648,462516,G→T,0.403,E684* (GAA→TAA) ,ptsG →,PTS sugar transporter
+13,minimal,5,649,466931,C→T,0.052,V362I (GTT→ATT) ,atpD ←,F0F1 ATP synthase subunit beta
+13,minimal,5,650,467552,C→T,1,G155R (GGA→AGA) ,atpD ←,F0F1 ATP synthase subunit beta
+13,minimal,5,651,494037,C→G,0.297,E438Q (GAA→CAA) ,lgt ←,Diacylglyceryl transferase
+13,minimal,5,652,494038,C→T,0.297,K437K (AAG→AAA) ,lgt ←,Diacylglyceryl transferase
